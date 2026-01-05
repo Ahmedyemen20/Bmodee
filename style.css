@@ -1,0 +1,398 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+ :root{
+      --panel:#0b1220;
+      --accent:#ff6b35;
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      --transition:300ms cubic-bezier(.2,.9,.3,1);
+      --shadow: 0 8px 24px rgba(2,6,23,0.6);
+      font-family: "poppins", serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body{
+      margin:0;
+      background:#081726;
+      color:#e6eef8;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      padding:16px;
+    }
+
+    .hamburger{
+      width:52px;height:44px;
+      border-radius:10px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.04);
+      display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:var(--transition);
+      box-shadow:var(--shadow);
+    }
+
+    .hamburger .bar{display:block;width:22px;height:2px;background:linear-gradient(90deg,var(--accent),#ff8f61);border-radius:2px;position:relative}
+    .hamburger .bar::before,.hamburger .bar::after{content:'';position:absolute;left:0;width:22px;height:2px;background:inherit;border-radius:2px;transform-origin:center;transition:var(--transition)}
+    .hamburger .bar::before{top:-7px}
+    .hamburger .bar::after{top:7px}
+
+    .hamburger[aria-expanded="true"] .bar{background:transparent}
+    .hamburger[aria-expanded="true"] .bar::before{transform:rotate(45deg) translate(3px,3px)}
+    .hamburger[aria-expanded="true"] .bar::after{transform:rotate(-45deg) translate(3px,-3px)}
+
+    .overlay{
+      position:fixed;inset:0;background:rgba(2,6,23,0.6);opacity:0;pointer-events:none;transition:var(--transition);
+    }
+    .overlay.open{opacity:1;pointer-events:auto}
+
+    .sidebar{
+      display: flex;
+      gap: 20px;
+      flex-direction: column;
+      position:fixed;top:0;bottom:0;left:0;
+      width:250px;max-width:92vw;padding:22px 18px;background:linear-gradient(180deg,var(--panel),#08101a);box-shadow:var(--shadow);
+      transform:translateX(-110%);transition:transform var(--transition);
+      border-top-right-radius:20px;border-bottom-right-radius:20px;
+      z-index:60;
+    }
+    .sidebar.open{transform:translateX(0)}
+    
+    
+    .sidebar a {
+      text-decoration: none;
+      list-style: none;
+      color: white;
+      font-size: 25px;
+      margin-bottom: 50px;
+    }
+    
+   /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: #1e293b;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4
+      );
+    }
+
+    /* Logo */
+    .logo {
+       display: flex;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #facc15;
+      text-decoration: none;
+      width: 280px;
+    }
+    .logo span {
+      margin-top: 1px;
+      margin-right: 8px;
+      font-size: 24px; /* أيقونة أكبر */
+    }
+    
+    h1 {
+  text-align: center;
+  margin-top: 24px;
+  color: #facc15;
+}
+
+/* Grid للألعاب */
+  .games-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; max-width:1200px; margin:auto; }
+  .game-card { border-radius:12px; overflow:hidden; cursor:pointer; transition: transform 0.3s, box-shadow 0.3s; }
+  .game-card:hover { transform:translateY(-6px); box-shadow:0 10px 20px rgba(255,204,21,0.4); }
+  .game-card img { width:100%; display:block; }
+  .game-info { padding:8px; font-weight:bold; text-align:center; background:rgba(0,0,0,0.5); }
+  .pagination { display:flex; justify-content:center; align-items:center; gap:6px; margin-top:24px; flex-wrap:wrap; color:#fff; }
+  .pagination button { padding:6px 10px; border:none; border-radius:6px; cursor:pointer; background:#1e293b; color:#fff; transition:0.2s; }
+  .pagination button.active { background:#facc15; color:#000; }
+  .pagination button:hover { background:#facc15; color:#000; }
+  .pagination span { padding:6px 8px; }
+  
+    .Download-btn {
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 12px;
+  background:#facc15;
+  color:#000;
+  border-radius:6px;
+  font-weight:bold;
+  text-decoration:none;
+  transition:0.2s;
+}
+.Download-btn:hover {
+  background:#ffe670;
+}
+
+/* الشكل العام للأقسام */
+section {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #1e293b;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* العناوين */
+section h2 {
+  color: #facc15;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+
+/* النصوص */
+section p {
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 16px;
+}
+
+/* نموذج التواصل */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+input,
+textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* زر الإرسال */
+button {
+  background: #facc15;
+  color: #000;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #ffe670;
+}
+
+/* 🔎 شريط البحث */
+#searchInput {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 14px;
+  width: 60%;
+  max-width: 400px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #0f172a;
+  color: #facc15;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+
+#searchInput:focus {
+  background: #1e293b;
+  box-shadow: 0 4px 14px rgba(250,204,21,0.6);
+}
+
+/* 🕹 تحسين كرت اللعبة */
+.game-card {
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.game-info h3 {
+  color: #facc15;
+  margin: 6px 0;
+  font-size: 18px;
+}
+
+.game-info p {
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  background: #0b1220;
+  color: #fff;
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+.footer-links a {
+  color: #ff6b35;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+i {
+  font-size: 28px;
+  color: white;
+}
+
+.version-info {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.Download-btn.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* شبكة الألعاب */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+/* كرت اللعبة */
+.game-card {
+  background: var(--glass);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+}
+
+/* صورة اللعبة */
+.game-thumb {
+  position: relative;
+}
+
+.game-thumb img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+/* الوسم (Exclusive / Update) */
+.game-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--accent);
+  color: #000;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* تفاصيل اللعبة */
+.game-details {
+  padding: 10px;
+}
+
+.game-details h3 {
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+
+.game-details p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.ad-card {
+  grid-column: 1 / -1; /* يخليه بعرض الصف */
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+}
+
+.ad-card span {
+  font-size: 12px;
+  color: #888;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ad-box img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.game-page{
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+.game-cover{
+  width:120px;
+  border-radius:20px;
+}
+.version-card{
+  background:#1e293b;
+  margin:10px 0;
+  padding:12px;
+  border-radius:12px;
+}
+.version-card a{
+  background:#22c55e;
+  color:#000;
+  padding:8px 12px;
+  border-radius:8px;
+  text-decoration:none;
+}
+
+.ad-card {
+  grid-column: 1 / -1;
+  background: #111;
+  border: 2px dashed #2ecc71;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.ad-card p {
+  color: #2ecc71;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.ad-box {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+}

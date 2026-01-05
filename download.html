@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تحميل اللعبة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial;
+      background: #081726;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    }
+
+    h2 {
+      color: #facc15;
+      margin-bottom: 12px;
+    }
+
+    .info {
+      margin-bottom: 16px;
+      color: #e2e8f0;
+    }
+
+    .countdown {
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+
+    .download-btn {
+      display: none;
+      background: #facc15;
+      color: #000;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: .2s;
+    }
+
+    .download-btn:hover {
+      background: #ffe670;
+    }
+
+    .error {
+      color: #f87171;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box" id="content">
+    <h2 id="gameTitle"></h2>
+    <p class="info" id="gameInfo"></p>
+    <p class="countdown" id="countdown"></p>
+    <p style="font-size:13px;color:#9ca3af;margin-top:20px">
+  جميع الملفات المعروضة في هذه الصفحة هي إضافات (Mods) أو ملفات مساعدة،
+  ولا تحتوي على ملفات اللعبة الأصلية.
+  جميع الحقوق محفوظة لأصحابها.
+  في حال وجود أي انتهاك لحقوق النشر يرجى التواصل معنا وسيتم الحذف فورًا.
+</p>
+    <a id="downloadBtn" class="download-btn" target="_blank">⬇ تحميل الآن</a>
+  </div>
+
+<script>
+/* بيانات الألعاب (نفس البيانات الأساسية) */
+const games = [
+  {
+    name: "Hay Day",
+    versions: [
+      { v: "1.0", size: "150 MB", link: "https://www.mediafire.com/file/xxxx/hayday1.apk" },
+      { v: "2.1", size: "180 MB", link: "https://www.mediafire.com/file/yyyy/hayday2.apk" }
+    ]
+  },
+  {
+    name: "FIFA 23",
+    versions: [
+      { v: "1.0", size: "2.1 GB", link: "https://www.mediafire.com/file/zzzz/fifa23.apk" }
+    ]
+  },
+  
+  {
+    name: "Air flighters",
+    img: "https://i.postimg.cc/cLqRqNc2/V-2-1-180x180.webp",
+    desc: "Air flighters Mod for android",
+    versions: [
+      {
+        v: "4.3.1",
+        size: "139 MB",
+        link: "https://www.mediafire.com/file/xu74boi185ek8um/up-mod-airfighters-4-3-1-mod-unlocked-43101.apk/file"
+      }
+    ]
+  },
+  
+   {
+    name: "Truck of Europe 3",
+    img: "https://i.postimg.cc/jd6w8vg7/1656059656-truckers-of-europe-3.jpg",
+    desc: "Truck of Europe 3 mode mony",
+    versions: [
+      {
+        v: "4.3.1",
+        size: "536 MB",
+        link: "https://www.mediafire.com/file/kun8eypezvk4lul/truckers-of-europe-3-hashipro-0.46.2.apk/file"
+      }
+    ]
+  },
+  
+    {
+    name: "Jetpack Joyride",
+    img: "https://i.postimg.cc/SxJkFyLM/tnzyl-(1).webp",
+    desc: "Jetpack Joyride mod mony",
+    versions: [
+      {
+        v: "0.1.40",
+        size: "150 MB",
+        link: "https://www.mediafire.com/file/t0zcopdrfqdem33/Jetpack_Joyride_2_v0.1.40_Unlimited_Money-Offline_[eshrahle.net].apk/file"
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+    
+  },
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+  
+    {
+    name: "",
+    img: "",
+    desc: "",
+    versions: [
+      {
+        v: "",
+        size: "",
+        link: ""
+      }
+    ]
+  },
+];
+
+/* قراءة البراميترات */
+const params = new URLSearchParams(window.location.search);
+const gameName = params.get("game");
+const versionNumber = params.get("v");
+
+const title = document.getElementById("gameTitle");
+const info = document.getElementById("gameInfo");
+const countdownEl = document.getElementById("countdown");
+const btn = document.getElementById("downloadBtn");
+
+/* تحقق */
+if (!gameName || !versionNumber) {
+  document.getElementById("content").innerHTML =
+    "<p class='error'>اللعبة أو الإصدار غير موجود</p>";
+  throw new Error("Missing parameters");
+}
+
+/* البحث عن اللعبة */
+const game = games.find(g => g.name === gameName);
+if (!game) {
+  document.getElementById("content").innerHTML =
+    "<p class='error'>اللعبة غير موجودة</p>";
+  throw new Error("Game not found");
+}
+
+/* البحث عن الإصدار */
+const version = game.versions.find(v => v.v === versionNumber);
+if (!version) {
+  document.getElementById("content").innerHTML =
+    "<p class='error'>الإصدار غير موجود</p>";
+  throw new Error("Version not found");
+}
+
+/* عرض البيانات */
+title.textContent = game.name;
+info.textContent = `الإصدار: ${version.v} | الحجم: ${version.size}`;
+
+/* عداد التحميل */
+let seconds = 5;
+countdownEl.textContent = `سيبدأ التحميل خلال ${seconds} ثواني...`;
+
+const timer = setInterval(() => {
+  seconds--;
+  countdownEl.textContent = `سيبدأ التحميل خلال ${seconds} ثواني...`;
+
+  if (seconds === 0) {
+    clearInterval(timer);
+    countdownEl.textContent = "جاهز للتحميل ✅";
+    btn.href = version.link;
+    btn.style.display = "inline-block";
+  }
+}, 1000);
+</script>
+
+</body>
+</html>
