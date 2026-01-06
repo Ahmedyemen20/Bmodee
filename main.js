@@ -97,6 +97,19 @@ const allGames = [
       }
     ]
   },
+  
+   {
+    name: "RFS",
+    img: "",
+    desc: "RFS mode unlimited Money",
+    versions: [
+      {
+        v: "2.5.0",
+        size: "2.0 GB",
+        link: ""
+      }
+    ]
+  },
 ];
 
 

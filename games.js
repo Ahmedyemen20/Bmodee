@@ -54,6 +54,19 @@ const allGames = [
         link: "https://www.mediafire.com/file/t0zcopdrfqdem33/Jetpack_Joyride_2_v0.1.40_Unlimited_Money.apk/file"
       }
     ]
-  }
+  },
+  
+  {
+    name: "RFS",
+    img: "",
+    desc: "RFS mode unlimited Money",
+    versions: [
+      {
+        v: "2.5.0",
+        size: "2.0 GB",
+        link: ""
+      }
+    ]
+  },
   
 ];
