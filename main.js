@@ -238,33 +238,45 @@ function renderGames() {
 /* =========================
    البحث
 ========================= */
+/* =========================
+   البحث (معدّل لربط صفحة التفاصيل)
+========================= */
 const searchInput = document.getElementById('searchInput');
-if(searchInput){
+if (searchInput) {
   searchInput.addEventListener('input', () => {
     const term = searchInput.value.toLowerCase();
     gamesGrid.innerHTML = '';
+    
+    const filtered = allGames.filter(game =>
+      game.name.toLowerCase().includes(term) ||
+      game.desc.toLowerCase().includes(term)
+    );
+    
+    filtered.forEach(game => {
+      const card = document.createElement('div');
+      card.className = 'game-card';
+      
+      card.innerHTML = `
+        <div class="game-thumb">
+          <a href="game.html?game=${encodeURIComponent(game.name)}">
+            <img src="${game.img}" alt="${game.name}">
+          </a>
+        </div>
 
-    allGames
-      .filter(game =>
-        game.name.toLowerCase().includes(term) ||
-        game.desc.toLowerCase().includes(term)
-      )
-      .forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'game-card';
-        card.innerHTML = `
-          <div class="game-thumb">
-            <img src="${game.img}">
-          </div>
-          <div class="game-info">
-            <h3>${game.name}</h3>
-            <p>${game.desc}</p>
-          </div>
-        `;
-        gamesGrid.appendChild(card);
-      });
-
-    if(term === ''){
+        <div class="game-info">
+          <h3>
+            <a href="game.html?game=${encodeURIComponent(game.name)}">
+              ${game.name}
+            </a>
+          </h3>
+          <p>${game.desc}</p>
+        </div>
+      `;
+      
+      gamesGrid.appendChild(card);
+    });
+    
+    if (term === '') {
       renderGames();
       renderPagination();
     }
@@ -277,3 +289,5 @@ if(searchInput){
 ========================= */
 renderGames();
 renderPagination();
+
+

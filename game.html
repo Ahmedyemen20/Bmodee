@@ -1,25 +1,94 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>Game Details</title>
-  <link rel="stylesheet" href="style.css">
   
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title id="pageTitle">تفاصيل اللعبة</title>
+
+  <!-- SEO -->
+  <meta name="description" content="تحميل ألعاب أندرويد مود بأحدث الإصدارات مع روابط MediaFire مباشرة">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Google AdSense -->
+  <script async 
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488"
+    crossorigin="anonymous">
+  </script>
 </head>
+
 <body>
 
 <div class="game-page">
-  <img id="gameImg" class="game-cover">
 
+  <!-- صورة اللعبة -->
+  <div class="game-header">
+    <img id="gameImg" class="game-cover" alt="صورة اللعبة">
+  </div>
+
+  <!-- اسم اللعبة -->
   <h1 id="gameName"></h1>
-  <p id="gameDesc"></p>
 
-  <h3>الإصدارات</h3>
-  <div id="versions"></div>
+  <!-- التقييم + التحميلات -->
+  <div class="game-meta">
+    <span class="rating">⭐⭐⭐⭐☆ <b>4.5</b></span>
+    <span class="downloads">⬇️ أكثر من 1,000,000 تحميل</span>
+  </div>
+
+  <!-- وصف اللعبة -->
+  <p id="gameDesc" class="game-description"></p>
+
+  <!-- مميزات المود -->
+  <h3>⭐ مميزات النسخة المعدلة</h3>
+  <ul class="features">
+    <li>💰 أموال غير محدودة</li>
+    <li>🔓 فتح جميع المراحل</li>
+    <li>🚫 بدون إعلانات</li>
+    <li>⚡ أداء محسن</li>
+  </ul>
+
+  <!-- إعلان -->
+  <div class="ad-box">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-5307274526207488"
+      data-ad-slot="1234567890"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
+  <!-- الإصدارات -->
+  <h3>📦 الإصدارات المتوفرة</h3>
+  <div id="versions" class="versions-box"></div>
+
+  <!-- زر تحميل رئيسي -->
+  <a id="mainDownload" class="Download-btn big" target="_blank" style="display:none">
+    ⬇️ تحميل الآن
+  </a>
+
+  <!-- معلومات إضافية -->
+  <div class="extra-info">
+    <p>📱 النظام: Android</p>
+    <p>📆 آخر تحديث: 2025</p>
+    <p>🛡️ آمن 100%</p>
+  </div>
+
+  <!-- ألعاب مشابهة -->
+  <h3>🎮 ألعاب مشابهة</h3>
+  <div id="relatedGames" class="related-games">
+    <!-- يتم تعبئتها من JS لاحقًا -->
+  </div>
+
 </div>
 
+<!-- ملفات الجافاسكربت -->
 <script src="games.js"></script>
 <script src="game-details.js"></script>
+
 </body>
 </html>
