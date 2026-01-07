@@ -117,5 +117,29 @@
     }
   });
 </script>
+
+
+<!-- زر الإضافة -->
+<button id="addGameBtn" class="admin-add">+</button>
+
+<!-- نافذة الإضافة -->
+<div id="adminModal" class="admin-modal">
+  <div class="admin-box">
+    <h3>إضافة لعبة جديدة</h3>
+    
+    <input id="gName" placeholder="اسم اللعبة">
+    <input id="gImg" placeholder="رابط الصورة">
+    <input id="gDesc" placeholder="الوصف">
+    <input id="gVer" placeholder="الإصدار">
+    <input id="gSize" placeholder="الحجم">
+    <input id="gLink" placeholder="رابط التحميل">
+    
+    <div class="admin-actions">
+      <button id="saveGame">حفظ</button>
+      <button onclick="closeAdmin()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

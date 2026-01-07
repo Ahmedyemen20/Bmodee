@@ -551,3 +551,151 @@ body.light .sidebar {
 body.light .sidebar a {
   color: #0f172a;
 }
+
+/* =====================
+   🌤 Clean Light Theme
+===================== */
+body.light {
+  background: #f4f6f8;
+  color: #1e293b;
+}
+
+/* Navbar */
+body.light .navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Logo */
+body.light .logo {
+  color: #2563eb;
+}
+
+/* Sidebar */
+body.light .sidebar {
+  background: #ffffff;
+}
+
+body.light .sidebar a {
+  color: #1e293b;
+}
+
+body.light .sidebar a:hover {
+  color: #2563eb;
+}
+
+/* Search */
+body.light #searchInput {
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+}
+
+body.light #searchInput::placeholder {
+  color: #94a3b8;
+}
+
+/* Game Card */
+body.light .game-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+}
+
+body.light .game-card:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .1);
+}
+
+/* Game Info */
+body.light .game-info h3 {
+  color: #1e293b;
+}
+
+body.light .game-info p {
+  color: #475569;
+}
+
+/* Version select */
+body.light .version-select {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+/* Version info */
+body.light .version-info {
+  color: #64748b;
+}
+
+/* Download */
+body.light .Download-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+body.light .Download-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Pagination */
+body.light .pagination button {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+body.light .pagination button.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+/* Footer */
+body.light .footer {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+/* Ads */
+body.light .ad-card {
+  background: #ffffff;
+  border: 2px dashed #2563eb;
+}
+
+.admin-add {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #000;
+  font-size: 32px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
+  z-index: 999;
+}
+
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.admin-box {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
