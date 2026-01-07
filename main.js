@@ -234,3 +234,60 @@ renderGames();
 renderPagination();
 
 });
+
+/* =========================
+   تعديل الإصدار + حذف اللعبة
+========================= */
+
+const updateVersionBtn = document.getElementById('updateVersion');
+const deleteGameBtn = document.getElementById('deleteGame');
+
+/* تعديل إصدار */
+if (updateVersionBtn) {
+  updateVersionBtn.onclick = () => {
+    if (gameSelect.value === "") {
+      alert("اختر لعبة أولاً");
+      return;
+    }
+    
+    const game = allGames[gameSelect.value];
+    const versionIndex = game.versions.findIndex(v => v.v === gVer.value);
+    
+    if (versionIndex === -1) {
+      alert("الإصدار غير موجود");
+      return;
+    }
+    
+    game.versions[versionIndex] = {
+      v: gVer.value,
+      size: gSize.value,
+      link: gLink.value
+    };
+    
+    localStorage.setItem('adminGames', JSON.stringify(adminGames));
+    renderGames();
+    closeAdmin();
+    alert("تم تعديل الإصدار بنجاح ✅");
+  };
+}
+
+/* حذف لعبة */
+if (deleteGameBtn) {
+  deleteGameBtn.onclick = () => {
+    if (gameSelect.value === "") {
+      alert("اختر لعبة للحذف");
+      return;
+    }
+    
+    const confirmDelete = confirm("⚠️ هل أنت متأكد من حذف اللعبة؟");
+    if (!confirmDelete) return;
+    
+    allGames.splice(gameSelect.value, 1);
+    adminGames = adminGames.filter((_, i) => i !== gameSelect.value);
+    
+    localStorage.setItem('adminGames', JSON.stringify(adminGames));
+    renderGames();
+    renderPagination();
+    closeAdmin();
+  };
+}
