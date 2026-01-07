@@ -1,15 +1,18 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bmode</title>
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
+  <script async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -22,11 +25,11 @@
 <!-- Navbar -->
 <nav class="navbar">
   <div class="topbar">
-    <button class="hamburger" id="hamburger" aria-expanded="false">
+    <button class="hamburger" id="hamburger">
       <span class="bar"></span>
     </button>
 
-    <img class="logo" src="/تنزيل.svg" alt="logo" />
+    <img class="logo" src="/تنزيل.svg" alt="logo">
 
     <div class="theme-switch">
       <input type="checkbox" id="themeToggle">
@@ -80,30 +83,7 @@
   </nav>
 </footer>
 
-<!-- JS -->
-<script src="main.js"></script>
-
-<!-- Dark / Light mode -->
-<script>
-const toggle = document.getElementById("themeToggle");
-
-if (localStorage.getItem("theme") === "light") {
-  document.body.classList.add("light");
-  toggle.checked = true;
-}
-
-toggle.addEventListener("change", () => {
-  document.body.classList.toggle("light", toggle.checked);
-  localStorage.setItem("theme", toggle.checked ? "light" : "dark");
-});
-</script>
-
-<!-- زر الأدمن (واحد فقط) -->
-<button id="addGameBtn" class="admin-add">+</button>
-
-<!-- لوحة الأدمن -->
-<!-- لوحة الأدمن -->
-<!-- زر الأدمن -->
+<!-- زر الأدمن (يظهر فقط مع ?admin=true) -->
 <button id="adminBtn" class="admin-add">+</button>
 
 <!-- لوحة التحكم -->
@@ -112,18 +92,35 @@ toggle.addEventListener("change", () => {
     <h2>لوحة التحكم</h2>
     <button onclick="closeAdmin()">✕</button>
   </div>
-  
+
   <div class="admin-body">
     <input id="aName" placeholder="اسم اللعبة">
     <input id="aImg" placeholder="رابط صورة اللعبة">
     <textarea id="aDesc" placeholder="وصف اللعبة"></textarea>
-    
+
     <h3>الإصدارات</h3>
     <div id="versions"></div>
-    
+
     <button class="btn yellow" onclick="addVersion()">➕ إضافة إصدار</button>
     <button class="btn green" onclick="saveGame()">💾 حفظ اللعبة</button>
   </div>
 </div>
+
+<!-- JS -->
+<script src="main.js"></script>
+
+<!-- Dark / Light -->
+<script>
+const toggle = document.getElementById("themeToggle");
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light");
+  toggle.checked = true;
+}
+toggle.addEventListener("change", () => {
+  document.body.classList.toggle("light", toggle.checked);
+  localStorage.setItem("theme", toggle.checked ? "light" : "dark");
+});
+</script>
+
 </body>
 </html>
