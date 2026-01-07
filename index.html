@@ -69,10 +69,14 @@
   </form>
 </section>
 
+<!-- Footer -->
 <footer class="footer">
-  <p>© 2025 Bmode</p>
+  <p>© 2025 موقع الألعاب. جميع الحقوق محفوظة.</p>
+  <nav class="footer-links">
+    <a href="privacy.html">سياسة الخصوصية</a> |
+    <a href="terms.html">الشروط والأحكام</a>
+  </nav>
 </footer>
-
 <script src="main.js"></script>
 
 <!-- الوضع الفاتح -->
@@ -117,6 +121,19 @@ toggle.addEventListener("change", () => {
     </div>
   </div>
 </div>
+
+<!-- Admin Panel -->
+<div id="adminPanel" class="admin-panel">
+  <div class="admin-header">
+    <h2>لوحة التحكم</h2>
+    <button onclick="closeAdminPanel()">✕</button>
+  </div>
+
+  <div class="admin-list" id="adminGameList"></div>
+</div>
+
+<!-- زر الأدمن -->
+<button id="addGameBtn" class="admin-add">+</button>
 
 </body>
 </html>

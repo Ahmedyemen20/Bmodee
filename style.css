@@ -699,3 +699,82 @@ body.light .ad-card {
   flex-direction: column;
   gap: 10px;
 }
+
+.footer {
+  background: #0f0f0f;
+  color: #ccc;
+  text-align: center;
+  padding: 20px 10px;
+  margin-top: 40px;
+}
+
+.footer-links a {
+  color: #aaa;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.admin-add {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ff9800,#ff5722);
+  color: #fff;
+  font-size: 32px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  z-index: 999;
+}
+
+.admin-panel {
+  position: fixed;
+  inset: 0;
+  background: #0e0e0e;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #151515;
+}
+
+.admin-list {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.admin-game {
+  background: #1c1c1c;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.admin-game h4 {
+  margin: 0 0 8px;
+}
+
+.admin-actions button {
+  margin-right: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit { background:#2196f3;color:#fff }
+.addver { background:#4caf50;color:#fff }
+.del { background:#f44336;color:#fff }

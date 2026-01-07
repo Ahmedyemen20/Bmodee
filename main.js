@@ -291,3 +291,65 @@ if (deleteGameBtn) {
     closeAdmin();
   };
 }
+
+const adminPanel = document.getElementById('adminPanel');
+const adminGameList = document.getElementById('adminGameList');
+
+if (!location.search.includes("admin=true")) {
+  document.getElementById('addGameBtn').style.display = 'none';
+}
+
+addGameBtn.onclick = () => {
+  adminPanel.style.display = 'flex';
+  renderAdminGames();
+};
+
+function closeAdminPanel() {
+  adminPanel.style.display = 'none';
+}
+
+function renderAdminGames() {
+  adminGameList.innerHTML = '';
+  adminGames.forEach((game, index) => {
+    const div = document.createElement('div');
+    div.className = 'admin-game';
+    div.innerHTML = `
+      <h4>${game.name}</h4>
+      <div class="admin-actions">
+        <button class="edit" onclick="editGame(${index})">✏️ تعديل</button>
+        <button class="addver" onclick="addVersion(${index})">➕ إصدار</button>
+        <button class="del" onclick="deleteGame(${index})">🗑 حذف</button>
+      </div>
+    `;
+    adminGameList.appendChild(div);
+  });
+}
+
+function deleteGame(i) {
+  if (!confirm('حذف اللعبة؟')) return;
+  adminGames.splice(i, 1);
+  localStorage.setItem('adminGames', JSON.stringify(adminGames));
+  location.reload();
+}
+
+function addVersion(i) {
+  const v = prompt("رقم الإصدار:");
+  const s = prompt("الحجم:");
+  const l = prompt("رابط التحميل:");
+  if (!v || !l) return;
+  
+  adminGames[i].versions.push({ v, size: s, link: l });
+  localStorage.setItem('adminGames', JSON.stringify(adminGames));
+  alert('تمت إضافة الإصدار');
+}
+
+function editGame(i) {
+  const name = prompt("اسم اللعبة:", adminGames[i].name);
+  const desc = prompt("الوصف:", adminGames[i].desc);
+  if (!name) return;
+  
+  adminGames[i].name = name;
+  adminGames[i].desc = desc;
+  localStorage.setItem('adminGames', JSON.stringify(adminGames));
+  alert('تم التعديل');
+}
