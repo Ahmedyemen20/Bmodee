@@ -4,81 +4,63 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bmode</title>
-  
-  <link rel="stylesheet" href="style.css">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-<script type="text/javascript" src="cdn_modules/tailwindcss@4.1.13/colors.d.ts"></script>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
-  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
 </head>
+
 <body>
-  
-  <!-- Search Bar -->
+
+<!-- Search -->
 <div class="search-container">
   <input type="text" id="searchInput" placeholder="ابحث عن لعبة...">
 </div>
 
-    
-    <nav class="navbar">
-      
+<!-- Navbar -->
+<nav class="navbar">
   <div class="topbar">
-    <button class="hamburger" id="hamburger" aria-label="فتح القائمة" aria-controls="sidebar" aria-expanded="false">
-      <span class="bar" aria-hidden="true"></span>
+    <button class="hamburger" id="hamburger" aria-expanded="false">
+      <span class="bar"></span>
     </button>
-    
-   <img class="logo" src="/تنزيل.svg" alt="logo" />
-  
+
+    <img class="logo" src="/تنزيل.svg" alt="logo" />
+
     <div class="theme-switch">
-  <input type="checkbox" id="themeToggle">
-  <label for="themeToggle">
-    <span class="icon sun">☀</span>
-    <span class="icon moon">☾</span>
-    <span class="slider"></span>
-  </label>
-</div>
-</button>
+      <input type="checkbox" id="themeToggle">
+      <label for="themeToggle">
+        <span class="icon sun">☀</span>
+        <span class="icon moon">☾</span>
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
 </nav>
-  
-</nav>
-  <div class="overlay" id="overlay" tabindex="-1"></div>
 
-  <aside class="sidebar" id="sidebar" role="dialog" aria-modal="true">
-    
-<a href="#">Home <i class="fa-solid fa-house"></i></a>
-<a href="#about">About <i class="fa-solid fa-circle-exclamation"></i></a>
-<a href="">Games <i class="fa-solid fa-gamepad"></i></a>
-<a href="#about">Contact <i class="fa-solid fa-headset"></i></a>
+<div class="overlay" id="overlay"></div>
 
-
-  </aside>
+<aside class="sidebar" id="sidebar">
+  <a href="#">Home <i class="fa-solid fa-house"></i></a>
+  <a href="#about">About <i class="fa-solid fa-circle-exclamation"></i></a>
+  <a href="#">Games <i class="fa-solid fa-gamepad"></i></a>
+  <a href="#contact">Contact <i class="fa-solid fa-headset"></i></a>
+</aside>
 
 <h1>Games section</h1>
 
 <div class="games-grid" id="gamesGrid"></div>
 <div class="pagination" id="pagination"></div>
 
-
-
-<!-- About Section -->
+<!-- About -->
 <section id="about">
   <h2>عن الموقع</h2>
-  <p>
-    هذا الموقع مخصص لعرض أفضل الألعاب بشكل منظم وسهل التصفح.
-    يمكنك استعراض قائمة الألعاب، قراءة تفاصيلها، وتحميلها مباشرة.
-  </p>
+  <p>موقع لعرض الألعاب بشكل منظم وسهل.</p>
 </section>
 
-<!-- Contact Section -->
+<!-- Contact -->
 <section id="contact">
   <h2>تواصل معنا</h2>
-  <p>
-    إذا كانت لديك أي استفسارات أو اقتراحات، لا تتردد في مراسلتنا عبر النموذج التالي:
-  </p>
-  <!-- formspree -->
   <form action="https://formspree.io/f/xwpreyna" method="POST">
     <input type="text" name="name" placeholder="اسمك" required>
     <input type="email" name="email" placeholder="بريدك الإلكتروني" required>
@@ -87,53 +69,48 @@
   </form>
 </section>
 
-<!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 موقع الألعاب. جميع الحقوق محفوظة.</p>
-    <nav class="footer-links">
-      <a href="privacy.html">سياسة الخصوصية</a> |
-      <a href="terms.html">الشروط والأحكام</a>
-    </nav>
-  </footer>
- 
-  <script src="main.js"></script>
-  
-  <script>
-  const toggle = document.getElementById("themeToggle");
-  
-  // تحميل الوضع المحفوظ
-  if (localStorage.getItem("theme") === "light") {
-    document.body.classList.add("light");
-    toggle.checked = true;
-  }
-  
-  toggle.addEventListener("change", () => {
-    if (toggle.checked) {
-      document.body.classList.add("light");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.body.classList.remove("light");
-      localStorage.setItem("theme", "dark");
-    }
-  });
+<footer class="footer">
+  <p>© 2025 Bmode</p>
+</footer>
+
+<script src="main.js"></script>
+
+<!-- الوضع الفاتح -->
+<script>
+const toggle = document.getElementById("themeToggle");
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light");
+  toggle.checked = true;
+}
+toggle.addEventListener("change", () => {
+  document.body.classList.toggle("light", toggle.checked);
+  localStorage.setItem("theme", toggle.checked ? "light" : "dark");
+});
 </script>
 
-
-<!-- زر الإضافة -->
+<!-- زر الأدمن -->
 <button id="addGameBtn" class="admin-add">+</button>
 
-<!-- نافذة الإضافة -->
+<!-- نافذة الأدمن -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-box">
-    <h3>إضافة لعبة جديدة</h3>
-    
-    <input id="gName" placeholder="اسم اللعبة">
+    <h3 id="adminTitle">إضافة لعبة جديدة</h3>
+
+    <!-- اختيار لعبة -->
+    <select id="gameSelect">
+      <option value="">➕ لعبة جديدة</option>
+    </select>
+
+    <input id="gName" placeholder="اسم اللعبة (لعبة جديدة فقط)">
     <input id="gImg" placeholder="رابط الصورة">
     <input id="gDesc" placeholder="الوصف">
+
+    <hr>
+
     <input id="gVer" placeholder="الإصدار">
     <input id="gSize" placeholder="الحجم">
     <input id="gLink" placeholder="رابط التحميل">
-    
+
     <div class="admin-actions">
       <button id="saveGame">حفظ</button>
       <button onclick="closeAdmin()">إلغاء</button>
