@@ -168,5 +168,40 @@ function saveGame() {
   alert("✅ تم حفظ اللعبة");
   location.reload();
 }
-});
+  });
 
+
+window.addVersion = i=>{
+  const v=prompt("الإصدار:");
+  const s=prompt("الحجم:");
+  const l=prompt("الرابط:");
+  if(!v||!l) return;
+  adminGames[i].versions.push({v,size:s,link:l});
+  save();
+};
+
+window.editGame = i=>{
+  const n=prompt("اسم اللعبة",adminGames[i].name);
+  const d=prompt("الوصف",adminGames[i].desc);
+  if(!n) return;
+  adminGames[i].name=n;
+  adminGames[i].desc=d;
+  save();
+};
+
+window.removeGame = i=>{
+  if(!confirm("حذف اللعبة؟")) return;
+  adminGames.splice(i,1);
+  save();
+};
+
+function save(){
+  localStorage.setItem('adminGames',JSON.stringify(adminGames));
+  location.reload();
+}
+
+/* =========================
+   تشغيل أولي
+========================= */
+renderGames();
+renderPagination();
