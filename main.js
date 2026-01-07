@@ -88,20 +88,13 @@ function renderGames() {
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
-  <a href="game.html?name=${encodeURIComponent(game.name)}" class="game-link">
-    <img src="${game.img}">
-    <h3>${game.name}</h3>
-    <p>${game.desc || ''}</p>
-  </a>
-
-  ${location.search.includes("admin=true") && i >= baseGames.length ? `
-    <div class="admin-actions">
-      <button onclick="editGame(${i-baseGames.length})">✏️</button>
-      <button onclick="removeGame(${i-baseGames.length})">🗑</button>
-      <button onclick="addVersionPrompt(${i-baseGames.length})">➕ إصدار</button>
-    </div>
-  ` : ``}
-
+      <img src="${game.img}">
+      <h3>
+        <a href="game.html?id=${realIndex}">
+          ${game.name}
+        </a>
+      </h3>
+      <p>${game.desc || ''}</p>
 
       ${location.search.includes("admin=true") && realIndex >= baseGames.length ? `
         <div class="admin-actions">
