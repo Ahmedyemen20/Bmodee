@@ -846,3 +846,42 @@ body.light .ad-card {
   background:#facc15;
   border:none;
 }
+
+.game-details {
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.game-card.big img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.versions {
+  list-style: none;
+  padding: 0;
+}
+
+.versions li {
+  background: #111;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.download-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #f5c400;
+  color: #000;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.back-btn {
+  display: block;
+  margin: 10px;
+  color: #f5c400;
+  text-decoration: none;
+}

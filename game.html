@@ -1,94 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title id="pageTitle">تفاصيل اللعبة</title>
-
-  <!-- SEO -->
-  <meta name="description" content="تحميل ألعاب أندرويد مود بأحدث الإصدارات مع روابط MediaFire مباشرة">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تفاصيل اللعبة</title>
 
   <link rel="stylesheet" href="style.css">
-
-  <!-- Google AdSense -->
-  <script async 
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488"
-    crossorigin="anonymous">
-  </script>
 </head>
 
 <body>
 
-<div class="game-page">
+<a href="index.html" class="back-btn">⬅ رجوع</a>
 
-  <!-- صورة اللعبة -->
-  <div class="game-header">
-    <img id="gameImg" class="game-cover" alt="صورة اللعبة">
-  </div>
+<div class="game-details" id="gameDetails"></div>
 
-  <!-- اسم اللعبة -->
-  <h1 id="gameName"></h1>
+<script>
+const params = new URLSearchParams(location.search);
+const gameName = params.get("game");
 
-  <!-- التقييم + التحميلات -->
-  <div class="game-meta">
-    <span class="rating">⭐⭐⭐⭐☆ <b>4.5</b></span>
-    <span class="downloads">⬇️ أكثر من 1,000,000 تحميل</span>
-  </div>
+let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
-  <!-- وصف اللعبة -->
-  <p id="gameDesc" class="game-description"></p>
+let allGames = [
+  {
+    name: "Hay Day",
+    img: "/unnamed (2).jpg",
+    desc: "Hay Day Mod APK Unlimited Money",
+    versions: [{ v: "1.0", size: "150 MB", link: "#" }]
+  },
+  ...adminGames
+];
 
-  <!-- مميزات المود -->
-  <h3>⭐ مميزات النسخة المعدلة</h3>
-  <ul class="features">
-    <li>💰 أموال غير محدودة</li>
-    <li>🔓 فتح جميع المراحل</li>
-    <li>🚫 بدون إعلانات</li>
-    <li>⚡ أداء محسن</li>
-  </ul>
+const game = allGames.find(g => g.name === gameName);
 
-  <!-- إعلان -->
-  <div class="ad-box">
-    <ins class="adsbygoogle"
-      style="display:block"
-      data-ad-client="ca-pub-5307274526207488"
-      data-ad-slot="1234567890"
-      data-ad-format="auto"
-      data-full-width-responsive="true"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
+const container = document.getElementById("gameDetails");
 
-  <!-- الإصدارات -->
-  <h3>📦 الإصدارات المتوفرة</h3>
-  <div id="versions" class="versions-box"></div>
+if (!game) {
+  container.innerHTML = "<p>❌ اللعبة غير موجودة</p>";
+} else {
+  container.innerHTML = `
+    <div class="game-card big">
+      <img src="${game.img}">
+      <h1>${game.name}</h1>
+      <p>${game.desc}</p>
 
-  <!-- زر تحميل رئيسي -->
-  <a id="mainDownload" class="Download-btn big" target="_blank" style="display:none">
-    ⬇️ تحميل الآن
-  </a>
-
-  <!-- معلومات إضافية -->
-  <div class="extra-info">
-    <p>📱 النظام: Android</p>
-    <p>📆 آخر تحديث: 2025</p>
-    <p>🛡️ آمن 100%</p>
-  </div>
-
-  <!-- ألعاب مشابهة -->
-  <h3>🎮 ألعاب مشابهة</h3>
-  <div id="relatedGames" class="related-games">
-    <!-- يتم تعبئتها من JS لاحقًا -->
-  </div>
-
-</div>
-
-<!-- ملفات الجافاسكربت -->
-<script src="games.js"></script>
-<script src="game-details.js"></script>
+      <h3>📦 الإصدارات</h3>
+      <ul class="versions">
+        ${game.versions.map(v => `
+          <li>
+            <strong>الإصدار:</strong> ${v.v}<br>
+            <strong>الحجم:</strong> ${v.size || "-"}<br>
+            <a href="${v.link}" target="_blank" class="download-btn">⬇ تحميل</a>
+          </li>
+        `).join("")}
+      </ul>
+    </div>
+  `;
+}
+</script>
 
 </body>
 </html>
