@@ -103,26 +103,27 @@ toggle.addEventListener("change", () => {
 
 <!-- لوحة الأدمن -->
 <!-- لوحة الأدمن -->
+<!-- زر الأدمن -->
+<button id="adminBtn" class="admin-add">+</button>
+
+<!-- لوحة التحكم -->
 <div id="adminPanel" class="admin-panel">
   <div class="admin-header">
     <h2>لوحة التحكم</h2>
-    <button onclick="closeAdminPanel()">✕</button>
+    <button onclick="closeAdmin()">✕</button>
   </div>
   
-  <div class="admin-form">
-    <input id="adminGameName" placeholder="اسم اللعبة">
-    <input id="adminGameImg" placeholder="رابط صورة اللعبة">
-    <textarea id="adminGameDesc" placeholder="وصف اللعبة"></textarea>
-    
-    <hr>
+  <div class="admin-body">
+    <input id="aName" placeholder="اسم اللعبة">
+    <input id="aImg" placeholder="رابط صورة اللعبة">
+    <textarea id="aDesc" placeholder="وصف اللعبة"></textarea>
     
     <h3>الإصدارات</h3>
+    <div id="versions"></div>
     
-    <div id="versionsBox"></div>
-    
-    <button class="add-version" onclick="addVersionField()">➕ إضافة إصدار</button>
-    
-    <button class="save-game" onclick="saveAdminGame()">💾 حفظ اللعبة</button
-
+    <button class="btn yellow" onclick="addVersion()">➕ إضافة إصدار</button>
+    <button class="btn green" onclick="saveGame()">💾 حفظ اللعبة</button>
+  </div>
+</div>
 </body>
 </html>

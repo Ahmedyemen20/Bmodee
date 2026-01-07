@@ -777,3 +777,72 @@ body.light .ad-card {
 .edit { background:#2196f3;color:#fff }
 .addver { background:#4caf50;color:#fff }
 .del { background:#f44336;color:#fff }
+
+.admin-panel{
+  position:fixed;
+  inset:0;
+  background:#111;
+  z-index:9999;
+  display:none;
+  flex-direction:column;
+}
+
+.admin-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  background:#000;
+  color:#fff;
+}
+
+.admin-body{
+  padding:15px;
+  overflow-y:auto;
+}
+
+.admin-body input,
+.admin-body textarea{
+  width:100%;
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+
+.version-box{
+  background:#1a1a1a;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:8px;
+}
+
+.version-box input{
+  width:100%;
+  margin-bottom:5px;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+}
+
+.yellow{background:#facc15}
+.green{background:#22c55e}
+.red{background:#ef4444}
+
+.admin-add{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  font-size:30px;
+  background:#facc15;
+  border:none;
+}

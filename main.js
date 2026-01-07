@@ -107,91 +107,40 @@ if(searchInput){
 /* =========================
    لوحة الأدمن
 ========================= */
-const addBtn = document.getElementById('addGameBtn');
-const panel = document.getElementById('adminPanel');
-const list = document.getElementById('adminGameList');
+const adminBtn = document.getElementById("adminBtn");
+const adminPanel = document.getElementById("adminPanel");
+const versionsDiv = document.getElementById("versions");
 
-if(!location.search.includes("admin=true")){
-  addBtn.style.display='none';
+let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+
+if (!location.search.includes("admin=true")) {
+  adminBtn.style.display = "none";
 }
 
-addBtn.onclick = ()=>{
-  panel.style.display='flex';
-  renderAdmin();
+adminBtn.onclick = () => {
+  adminPanel.style.display = "flex";
 };
 
-window.closeAdminPanel = ()=> panel.style.display='none';
-
-function renderAdmin(){
-  list.innerHTML='';
-  adminGames.forEach((g,i)=>{
-    const d=document.createElement('div');
-    d.className='admin-game';
-    d.innerHTML=`
-      <strong>${g.name}</strong>
-      <button onclick="editGame(${i})">✏️</button>
-      <button onclick="addVersion(${i})">➕</button>
-      <button onclick="removeGame(${i})">🗑</button>
-    `;
-    list.appendChild(d);
-  });
+function closeAdmin() {
+  adminPanel.style.display = "none";
 }
 
-window.addVersion = i=>{
-  const v=prompt("الإصدار:");
-  const s=prompt("الحجم:");
-  const l=prompt("الرابط:");
-  if(!v||!l) return;
-  adminGames[i].versions.push({v,size:s,link:l});
-  save();
-};
-
-window.editGame = i=>{
-  const n=prompt("اسم اللعبة",adminGames[i].name);
-  const d=prompt("الوصف",adminGames[i].desc);
-  if(!n) return;
-  adminGames[i].name=n;
-  adminGames[i].desc=d;
-  save();
-};
-
-window.removeGame = i=>{
-  if(!confirm("حذف اللعبة؟")) return;
-  adminGames.splice(i,1);
-  save();
-};
-
-function save(){
-  localStorage.setItem('adminGames',JSON.stringify(adminGames));
-  location.reload();
-}
-
-/* =========================
-   تشغيل أولي
-========================= */
-renderGames();
-renderPagination();
-
-});
-
-const versionsBox = document.getElementById("versionsBox");
-
-function addVersionField() {
+function addVersion() {
   const div = document.createElement("div");
-  div.className = "version-row";
+  div.className = "version-box";
   div.innerHTML = `
-    <input placeholder="الإصدار (مثال 1.0)">
-    <input placeholder="الحجم (MB)">
+    <input placeholder="الإصدار">
+    <input placeholder="الحجم">
     <input placeholder="رابط التحميل">
-    <button onclick="this.parentElement.remove()">✕</button>
+    <button class="btn red" onclick="this.parentElement.remove()">حذف الإصدار</button>
   `;
-  versionsBox.appendChild(div);
+  versionsDiv.appendChild(div);
 }
 
-function saveAdminGame() {
-  const name = document.getElementById("adminGameName").value;
-  const img = document.getElementById("adminGameImg").value;
-  const desc = document.getElementById("adminGameDesc").value;
+function saveGame() {
+  const name = document.getElementById("aName").value;
+  const img = document.getElementById("aImg").value;
+  const desc = document.getElementById("aDesc").value;
   
   if (!name || !img) {
     alert("أدخل اسم اللعبة والصورة");
@@ -199,12 +148,12 @@ function saveAdminGame() {
   }
   
   const versions = [];
-  document.querySelectorAll(".version-row").forEach(row => {
-    const inputs = row.querySelectorAll("input");
+  document.querySelectorAll(".version-box").forEach(v => {
+    const i = v.querySelectorAll("input");
     versions.push({
-      v: inputs[0].value,
-      size: inputs[1].value,
-      link: inputs[2].value
+      v: i[0].value,
+      size: i[1].value,
+      link: i[2].value
     });
   });
   
@@ -213,12 +162,11 @@ function saveAdminGame() {
     return;
   }
   
-  const game = { name, img, desc, versions };
-  
-  let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
-  adminGames.unshift(game);
+  adminGames.unshift({ name, img, desc, versions });
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
   
-  alert("✅ تم إضافة اللعبة");
+  alert("✅ تم حفظ اللعبة");
   location.reload();
 }
+});
+
