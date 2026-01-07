@@ -54,10 +54,10 @@ const allGames = [
 ];
 
 /* =========================
-   ألعاب الأدمن (LocalStorage)
+   ألعاب الأدمن
 ========================= */
-const adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
-adminGames.reverse().forEach(g => allGames.unshift(g));
+let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
+adminGames.forEach(g => allGames.unshift(g));
 
 /* =========================
    Pagination
@@ -147,11 +147,13 @@ if(searchInput){
 }
 
 /* =========================
-   لوحة الأدمن (+)
+   لوحة الأدمن
 ========================= */
 const addGameBtn = document.getElementById('addGameBtn');
 const adminModal = document.getElementById('adminModal');
 const saveGame = document.getElementById('saveGame');
+const gameSelect = document.getElementById('gameSelect');
+const adminTitle = document.getElementById('adminTitle');
 
 const gName = document.getElementById('gName');
 const gImg = document.getElementById('gImg');
@@ -160,32 +162,65 @@ const gVer = document.getElementById('gVer');
 const gSize = document.getElementById('gSize');
 const gLink = document.getElementById('gLink');
 
-/* إخفاء الزر إلا لك */
+/* إخفاء الزر */
 if (!location.search.includes("admin=true") && addGameBtn) {
   addGameBtn.style.display = 'none';
 }
 
-if(addGameBtn){
-  addGameBtn.onclick = () => adminModal.style.display = 'flex';
+/* تعبئة قائمة الألعاب */
+function fillGameSelect(){
+  gameSelect.innerHTML = `<option value="">➕ لعبة جديدة</option>`;
+  allGames.forEach((g,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = g.name;
+    gameSelect.appendChild(opt);
+  });
 }
 
-window.closeAdmin = () => {
-  if(adminModal) adminModal.style.display = 'none';
-};
+if(gameSelect){
+  gameSelect.onchange = () => {
+    adminTitle.textContent = gameSelect.value === ""
+      ? "إضافة لعبة جديدة"
+      : "إضافة إصدار جديد";
+  };
+}
 
+if(addGameBtn){
+  addGameBtn.onclick = () => {
+    fillGameSelect();
+    adminModal.style.display = 'flex';
+  };
+}
+
+window.closeAdmin = () => adminModal.style.display = 'none';
+
+/* حفظ */
 if(saveGame){
   saveGame.onclick = () => {
-    const game = {
-      name: gName.value,
-      img: gImg.value,
-      desc: gDesc.value,
-      versions: [{ v: gVer.value, size: gSize.value, link: gLink.value }]
+
+    const versionData = {
+      v: gVer.value,
+      size: gSize.value,
+      link: gLink.value
     };
 
-    adminGames.unshift(game);
-    localStorage.setItem('adminGames', JSON.stringify(adminGames));
-    allGames.unshift(game);
+    if(gameSelect.value !== ""){
+      // إضافة إصدار
+      allGames[gameSelect.value].versions.push(versionData);
+    } else {
+      // لعبة جديدة
+      const game = {
+        name: gName.value,
+        img: gImg.value,
+        desc: gDesc.value,
+        versions: [versionData]
+      };
+      allGames.unshift(game);
+      adminGames.unshift(game);
+    }
 
+    localStorage.setItem('adminGames', JSON.stringify(adminGames));
     renderGames();
     renderPagination();
     closeAdmin();
