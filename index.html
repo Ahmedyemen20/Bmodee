@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
 </head>
 
@@ -40,6 +41,7 @@
 
 <div class="overlay" id="overlay"></div>
 
+<!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
   <a href="#">Home <i class="fa-solid fa-house"></i></a>
   <a href="#about">About <i class="fa-solid fa-circle-exclamation"></i></a>
@@ -77,52 +79,29 @@
     <a href="terms.html">الشروط والأحكام</a>
   </nav>
 </footer>
+
+<!-- JS -->
 <script src="main.js"></script>
 
-<!-- الوضع الفاتح -->
+<!-- Dark / Light mode -->
 <script>
 const toggle = document.getElementById("themeToggle");
+
 if (localStorage.getItem("theme") === "light") {
   document.body.classList.add("light");
   toggle.checked = true;
 }
+
 toggle.addEventListener("change", () => {
   document.body.classList.toggle("light", toggle.checked);
   localStorage.setItem("theme", toggle.checked ? "light" : "dark");
 });
 </script>
 
-<!-- زر الأدمن -->
+<!-- زر الأدمن (واحد فقط) -->
 <button id="addGameBtn" class="admin-add">+</button>
 
-<!-- نافذة الأدمن -->
-<div id="adminModal" class="admin-modal">
-  <div class="admin-box">
-    <h3 id="adminTitle">إضافة لعبة جديدة</h3>
-
-    <!-- اختيار لعبة -->
-    <select id="gameSelect">
-      <option value="">➕ لعبة جديدة</option>
-    </select>
-
-    <input id="gName" placeholder="اسم اللعبة (لعبة جديدة فقط)">
-    <input id="gImg" placeholder="رابط الصورة">
-    <input id="gDesc" placeholder="الوصف">
-
-    <hr>
-
-    <input id="gVer" placeholder="الإصدار">
-    <input id="gSize" placeholder="الحجم">
-    <input id="gLink" placeholder="رابط التحميل">
-
-    <div class="admin-actions">
-      <button id="saveGame">حفظ</button>
-      <button onclick="closeAdmin()">إلغاء</button>
-    </div>
-  </div>
-</div>
-
-<!-- Admin Panel -->
+<!-- لوحة الأدمن -->
 <div id="adminPanel" class="admin-panel">
   <div class="admin-header">
     <h2>لوحة التحكم</h2>
@@ -131,9 +110,6 @@ toggle.addEventListener("change", () => {
 
   <div class="admin-list" id="adminGameList"></div>
 </div>
-
-<!-- زر الأدمن -->
-<button id="addGameBtn" class="admin-add">+</button>
 
 </body>
 </html>
