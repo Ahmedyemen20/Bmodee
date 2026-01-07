@@ -173,3 +173,52 @@ renderGames();
 renderPagination();
 
 });
+
+const versionsBox = document.getElementById("versionsBox");
+
+function addVersionField() {
+  const div = document.createElement("div");
+  div.className = "version-row";
+  div.innerHTML = `
+    <input placeholder="الإصدار (مثال 1.0)">
+    <input placeholder="الحجم (MB)">
+    <input placeholder="رابط التحميل">
+    <button onclick="this.parentElement.remove()">✕</button>
+  `;
+  versionsBox.appendChild(div);
+}
+
+function saveAdminGame() {
+  const name = document.getElementById("adminGameName").value;
+  const img = document.getElementById("adminGameImg").value;
+  const desc = document.getElementById("adminGameDesc").value;
+  
+  if (!name || !img) {
+    alert("أدخل اسم اللعبة والصورة");
+    return;
+  }
+  
+  const versions = [];
+  document.querySelectorAll(".version-row").forEach(row => {
+    const inputs = row.querySelectorAll("input");
+    versions.push({
+      v: inputs[0].value,
+      size: inputs[1].value,
+      link: inputs[2].value
+    });
+  });
+  
+  if (versions.length === 0) {
+    alert("أضف إصدار واحد على الأقل");
+    return;
+  }
+  
+  const game = { name, img, desc, versions };
+  
+  let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+  adminGames.unshift(game);
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  
+  alert("✅ تم إضافة اللعبة");
+  location.reload();
+}
