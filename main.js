@@ -21,7 +21,7 @@ if (hamburger && sidebar && overlay) {
 /* =========================
    إعدادات
 ========================= */
-const gamesPerPage = 4;
+const gamesPerPage = 10;
 let currentPage = 1;
 
 const gamesGrid = document.getElementById('gamesGrid');
