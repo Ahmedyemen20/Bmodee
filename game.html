@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>تفاصيل اللعبة</title>
-
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -16,7 +15,7 @@
 
 <script>
 const params = new URLSearchParams(location.search);
-const gameName = params.get("game");
+const id = params.get("id");
 
 let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
@@ -25,31 +24,36 @@ let allGames = [
     name: "Hay Day",
     img: "/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
-    versions: [{ v: "1.0", size: "150 MB", link: "#" }]
+    rating: 4.8,
+    versions: [
+      { v: "1.0", size: "150 MB", link: "#" }
+    ]
   },
   ...adminGames
 ];
 
-const game = allGames.find(g => g.name === gameName);
-
-const container = document.getElementById("gameDetails");
+const game = allGames[id];
+const box = document.getElementById("gameDetails");
 
 if (!game) {
-  container.innerHTML = "<p>❌ اللعبة غير موجودة</p>";
+  box.innerHTML = "<p>❌ اللعبة غير موجودة</p>";
 } else {
-  container.innerHTML = `
+  box.innerHTML = `
     <div class="game-card big">
       <img src="${game.img}">
       <h1>${game.name}</h1>
+
+      <div class="rating">⭐ ${game.rating || "4.5"}</div>
+
       <p>${game.desc}</p>
 
       <h3>📦 الإصدارات</h3>
       <ul class="versions">
         ${game.versions.map(v => `
           <li>
-            <strong>الإصدار:</strong> ${v.v}<br>
-            <strong>الحجم:</strong> ${v.size || "-"}<br>
-            <a href="${v.link}" target="_blank" class="download-btn">⬇ تحميل</a>
+            <b>الإصدار:</b> ${v.v}<br>
+            <b>الحجم:</b> ${v.size || "-"}<br>
+            <a class="download-btn" href="${v.link}" target="_blank">⬇ تحميل</a>
           </li>
         `).join("")}
       </ul>
