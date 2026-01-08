@@ -47,7 +47,9 @@ const baseGames = [
 ];
 
 function getAllGames() {
-  return [...baseGames, ...adminGames];
+  return [...baseGames, ...adminGames].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 }
 
 function getFilteredGames() {
