@@ -46,10 +46,11 @@
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-  <a href="#">Home <i class="fa-solid fa-house"></i></a>
-  <a href="#about">About <i class="fa-solid fa-circle-exclamation"></i></a>
-  <a href="#">Games <i class="fa-solid fa-gamepad"></i></a>
-  <a href="#contact">Contact <i class="fa-solid fa-headset"></i></a>
+  <a href="#" onclick="renderAll()">كل الألعاب</a>
+  <a href="#" onclick="renderByCategory('action')">أكشن</a>
+  <a href="#" onclick="renderByCategory('sports')">رياضة</a>
+  <a href="#" onclick="renderByCategory('strategy')">استراتيجية</a>
+  <a href="#" onclick="renderByCategory('racing')">سباق</a>
 </aside>
 
 <h1>Games section</h1>
@@ -83,7 +84,7 @@
   </nav>
 </footer>
 
-<!-- زر الأدمن (يظهر فقط مع ?admin=true) -->
+<!-- زر الأدمن -->
 <button id="adminBtn" class="admin-add">+</button>
 
 <!-- لوحة التحكم -->
@@ -98,6 +99,15 @@
     <input id="aImg" placeholder="رابط صورة اللعبة">
     <textarea id="aDesc" placeholder="وصف اللعبة"></textarea>
 
+    <!-- اختيار القسم -->
+    <select id="aCategory">
+      <option value="">اختر القسم</option>
+      <option value="action">أكشن</option>
+      <option value="sports">رياضة</option>
+      <option value="strategy">استراتيجية</option>
+      <option value="racing">سباق</option>
+    </select>
+
     <h3>الإصدارات</h3>
     <div id="versions"></div>
 
@@ -106,7 +116,6 @@
   </div>
 </div>
 
-<!-- JS -->
 <script src="main.js"></script>
 
 <!-- Dark / Light -->

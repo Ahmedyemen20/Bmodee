@@ -23,12 +23,13 @@ if (hamburger && sidebar && overlay) {
 ========================= */
 const gamesPerPage = 10;
 let currentPage = 1;
+let currentCategory = "all";
 
 const gamesGrid = document.getElementById('gamesGrid');
 const pagination = document.getElementById('pagination');
 
 /* =========================
-   بيانات الألعاب
+   البيانات
 ========================= */
 let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
 
@@ -38,6 +39,7 @@ const baseGames = [
     img: "/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
     rating: 4.8,
+    category: "strategy",
     versions: [
       { v: "1.0", size: "150 MB", link: "#" }
     ]
@@ -48,6 +50,12 @@ function getAllGames() {
   return [...baseGames, ...adminGames];
 }
 
+function getFilteredGames() {
+  const games = getAllGames();
+  if (currentCategory === "all") return games;
+  return games.filter(g => g.category === currentCategory);
+}
+
 /* =========================
    Pagination
 ========================= */
@@ -55,7 +63,7 @@ function renderPagination() {
   if (!pagination) return;
   pagination.innerHTML = '';
 
-  const games = getAllGames();
+  const games = getFilteredGames();
   const pages = Math.ceil(games.length / gamesPerPage);
 
   for (let i = 1; i <= pages; i++) {
@@ -72,18 +80,18 @@ function renderPagination() {
 }
 
 /* =========================
-   عرض الألعاب (✔ رابط التفاصيل)
+   عرض الألعاب
 ========================= */
 function renderGames() {
   if (!gamesGrid) return;
   gamesGrid.innerHTML = '';
 
-  const games = getAllGames();
+  const games = getFilteredGames();
   const start = (currentPage - 1) * gamesPerPage;
   const slice = games.slice(start, start + gamesPerPage);
 
   slice.forEach((game, index) => {
-    const realIndex = start + index;
+    const realIndex = getAllGames().indexOf(game);
 
     const card = document.createElement('div');
     card.className = 'game-card';
@@ -124,9 +132,7 @@ if (searchInput) {
         c.className = 'game-card';
         c.innerHTML = `
           <img src="${game.img}">
-          <h3>
-            <a href="game.html?id=${i}">${game.name}</a>
-          </h3>
+          <h3><a href="game.html?id=${i}">${game.name}</a></h3>
         `;
         gamesGrid.appendChild(c);
       });
@@ -137,6 +143,23 @@ if (searchInput) {
     }
   };
 }
+
+/* =========================
+   الأقسام
+========================= */
+window.renderByCategory = cat => {
+  currentCategory = cat;
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+};
+
+window.renderAll = () => {
+  currentCategory = "all";
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+};
 
 /* =========================
    لوحة الأدمن
@@ -171,8 +194,10 @@ window.saveGame = () => {
   const name = aName.value;
   const img = aImg.value;
   const desc = aDesc.value;
+  const category = document.getElementById("aCategory").value;
 
-  if (!name || !img) return alert("أدخل اسم اللعبة والصورة");
+  if (!name || !img || !category)
+    return alert("أكمل البيانات");
 
   const versions = [];
   document.querySelectorAll(".version-box").forEach(v => {
@@ -182,13 +207,13 @@ window.saveGame = () => {
 
   if (!versions.length) return alert("أضف إصدار");
 
-  adminGames.unshift({ name, img, desc, rating: 4.5, versions });
+  adminGames.unshift({ name, img, desc, category, rating: 4.5, versions });
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
   location.reload();
 };
 
 /* =========================
-   تعديل / حذف / إضافة إصدار
+   تعديل / حذف / إصدار
 ========================= */
 window.editGame = i => {
   const n = prompt("اسم اللعبة", adminGames[i].name);
