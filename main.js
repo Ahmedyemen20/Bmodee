@@ -46,7 +46,7 @@ const baseGames = [
 ];
 
 /* =========================
-   دمج وترتيب
+   دمج وترتيب A-Z
 ========================= */
 function getAllGames() {
   return [...baseGames, ...adminGames].sort((a, b) =>
@@ -136,11 +136,7 @@ if (searchInput) {
         c.className = 'game-card';
         c.innerHTML = `
           <img src="${game.img}">
-          <h3>
-            <a href="game.html?id=${game.id}">
-              ${game.name}
-            </a>
-          </h3>
+          <h3><a href="game.html?id=${game.id}">${game.name}</a></h3>
         `;
         gamesGrid.appendChild(c);
       });
@@ -172,6 +168,8 @@ window.renderAll = () => {
 /* =========================
    لوحة الأدمن
 ========================= */
+const versionsDiv = document.getElementById("versions");
+
 window.addVersion = () => {
   const div = document.createElement("div");
   div.className = "version-box";
@@ -181,27 +179,43 @@ window.addVersion = () => {
     <input placeholder="رابط التحميل">
     <button onclick="this.parentElement.remove()">🗑</button>
   `;
-  versions.appendChild(div);
+  versionsDiv.appendChild(div);
 };
 
 window.saveGame = () => {
-  if (!aName.value || !aImg.value || !aCategory.value)
-    return alert("أكمل البيانات");
+  const name = aName.value.trim();
+  const img = aImg.value.trim();
+  const desc = aDesc.value.trim();
+  const category = aCategory.value;
+
+  if (!name || !img || !category) {
+    alert("أكمل البيانات");
+    return;
+  }
 
   const versionsArr = [];
   document.querySelectorAll(".version-box").forEach(v => {
     const i = v.querySelectorAll("input");
-    versionsArr.push({ v: i[0].value, size: i[1].value, link: i[2].value });
+    if (i[0].value && i[2].value) {
+      versionsArr.push({
+        v: i[0].value,
+        size: i[1].value,
+        link: i[2].value
+      });
+    }
   });
 
-  if (!versionsArr.length) return alert("أضف إصدار");
+  if (!versionsArr.length) {
+    alert("أضف إصدار واحد على الأقل");
+    return;
+  }
 
   adminGames.unshift({
-    id: Date.now().toString(),
-    name: aName.value,
-    img: aImg.value,
-    desc: aDesc.value,
-    category: aCategory.value,
+    id: crypto.randomUUID(),
+    name,
+    img,
+    desc,
+    category,
     rating: 4.5,
     versions: versionsArr
   });
