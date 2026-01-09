@@ -35,17 +35,19 @@ let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
 
 const baseGames = [
   {
+    id: "base-1",
     name: "Hay Day",
     img: "/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
     rating: 4.8,
     category: "strategy",
-    versions: [
-      { v: "1.0", size: "150 MB", link: "#" }
-    ]
+    versions: [{ v: "1.0", size: "150 MB", link: "#" }]
   }
 ];
 
+/* =========================
+   دمج وترتيب
+========================= */
 function getAllGames() {
   return [...baseGames, ...adminGames].sort((a, b) =>
     a.name.localeCompare(b.name)
@@ -92,25 +94,25 @@ function renderGames() {
   const start = (currentPage - 1) * gamesPerPage;
   const slice = games.slice(start, start + gamesPerPage);
 
-  slice.forEach((game, index) => {
-    const realIndex = getAllGames().indexOf(game);
+  slice.forEach(game => {
+    const isAdminGame = adminGames.some(g => g.id === game.id);
 
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
       <img src="${game.img}">
       <h3>
-        <a href="game.html?id=${realIndex}">
+        <a href="game.html?id=${game.id}">
           ${game.name}
         </a>
       </h3>
       <p>${game.desc || ''}</p>
 
-      ${location.search.includes("admin=true") && realIndex >= baseGames.length ? `
+      ${location.search.includes("admin=true") && isAdminGame ? `
         <div class="admin-actions">
-          <button onclick="editGame(${realIndex - baseGames.length})">✏️</button>
-          <button onclick="removeGame(${realIndex - baseGames.length})">🗑</button>
-          <button onclick="addVersionPrompt(${realIndex - baseGames.length})">➕ إصدار</button>
+          <button onclick="editGame('${game.id}')">✏️</button>
+          <button onclick="removeGame('${game.id}')">🗑</button>
+          <button onclick="addVersionPrompt('${game.id}')">➕ إصدار</button>
         </div>
       ` : ``}
     `;
@@ -129,12 +131,16 @@ if (searchInput) {
 
     getAllGames()
       .filter(g => g.name.toLowerCase().includes(v))
-      .forEach((game, i) => {
+      .forEach(game => {
         const c = document.createElement('div');
         c.className = 'game-card';
         c.innerHTML = `
           <img src="${game.img}">
-          <h3><a href="game.html?id=${i}">${game.name}</a></h3>
+          <h3>
+            <a href="game.html?id=${game.id}">
+              ${game.name}
+            </a>
+          </h3>
         `;
         gamesGrid.appendChild(c);
       });
@@ -166,20 +172,6 @@ window.renderAll = () => {
 /* =========================
    لوحة الأدمن
 ========================= */
-const adminBtn = document.getElementById("adminBtn");
-const adminPanel = document.getElementById("adminPanel");
-const versionsDiv = document.getElementById("versions");
-
-if (adminBtn) {
-  if (!location.search.includes("admin=true")) {
-    adminBtn.style.display = "none";
-  } else {
-    adminBtn.onclick = () => adminPanel.style.display = "flex";
-  }
-}
-
-window.closeAdmin = () => adminPanel.style.display = "none";
-
 window.addVersion = () => {
   const div = document.createElement("div");
   div.className = "version-box";
@@ -189,60 +181,71 @@ window.addVersion = () => {
     <input placeholder="رابط التحميل">
     <button onclick="this.parentElement.remove()">🗑</button>
   `;
-  versionsDiv.appendChild(div);
+  versions.appendChild(div);
 };
 
 window.saveGame = () => {
-  const name = aName.value;
-  const img = aImg.value;
-  const desc = aDesc.value;
-  const category = document.getElementById("aCategory").value;
-
-  if (!name || !img || !category)
+  if (!aName.value || !aImg.value || !aCategory.value)
     return alert("أكمل البيانات");
 
-  const versions = [];
+  const versionsArr = [];
   document.querySelectorAll(".version-box").forEach(v => {
     const i = v.querySelectorAll("input");
-    versions.push({ v: i[0].value, size: i[1].value, link: i[2].value });
+    versionsArr.push({ v: i[0].value, size: i[1].value, link: i[2].value });
   });
 
-  if (!versions.length) return alert("أضف إصدار");
+  if (!versionsArr.length) return alert("أضف إصدار");
 
-  adminGames.unshift({ name, img, desc, category, rating: 4.5, versions });
-  localStorage.setItem("adminGames", JSON.stringify(adminGames));
-  location.reload();
+  adminGames.unshift({
+    id: Date.now().toString(),
+    name: aName.value,
+    img: aImg.value,
+    desc: aDesc.value,
+    category: aCategory.value,
+    rating: 4.5,
+    versions: versionsArr
+  });
+
+  save();
 };
 
 /* =========================
    تعديل / حذف / إصدار
 ========================= */
-window.editGame = i => {
-  const n = prompt("اسم اللعبة", adminGames[i].name);
-  const d = prompt("الوصف", adminGames[i].desc);
+window.editGame = id => {
+  const game = adminGames.find(g => g.id === id);
+  if (!game) return;
+
+  const n = prompt("اسم اللعبة", game.name);
+  const d = prompt("الوصف", game.desc);
   if (!n) return;
-  adminGames[i].name = n;
-  adminGames[i].desc = d;
+
+  game.name = n;
+  game.desc = d;
   save();
 };
 
-window.removeGame = i => {
+window.removeGame = id => {
   if (!confirm("حذف اللعبة؟")) return;
-  adminGames.splice(i, 1);
+  adminGames = adminGames.filter(g => g.id !== id);
   save();
 };
 
-window.addVersionPrompt = i => {
+window.addVersionPrompt = id => {
+  const game = adminGames.find(g => g.id === id);
+  if (!game) return;
+
   const v = prompt("الإصدار:");
   const s = prompt("الحجم:");
   const l = prompt("الرابط:");
   if (!v || !l) return;
-  adminGames[i].versions.push({ v, size: s, link: l });
+
+  game.versions.push({ v, size: s, link: l });
   save();
 };
 
 function save() {
-  localStorage.setItem('adminGames', JSON.stringify(adminGames));
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
   location.reload();
 }
 
