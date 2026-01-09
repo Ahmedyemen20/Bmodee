@@ -246,6 +246,32 @@ function save() {
    تشغيل أولي
 ========================= */
 renderGames();
+
+
+/* =========================
+   الأقسام (الهامبرجر)
+========================= */
+window.renderByCategory = category => {
+  currentCategory = category;
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  closeMenu();
+};
+
+window.renderAll = () => {
+  currentCategory = "all";
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  closeMenu();
+};
+
+window.closeMenu = () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+};
+
 renderPagination();
 
 });
