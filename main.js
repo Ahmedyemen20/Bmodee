@@ -35,7 +35,6 @@ let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
 
 const baseGames = [
   {
-    id: "base-1",
     name: "Hay Day",
     img: "/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
@@ -46,7 +45,7 @@ const baseGames = [
 ];
 
 /* =========================
-   دمج وترتيب A-Z
+   دمج + ترتيب (عرض فقط)
 ========================= */
 function getAllGames() {
   return [...baseGames, ...adminGames].sort((a, b) =>
@@ -95,24 +94,23 @@ function renderGames() {
   const slice = games.slice(start, start + gamesPerPage);
 
   slice.forEach(game => {
-    const isAdminGame = adminGames.some(g => g.id === game.id);
+
+    // نحدد هل اللعبة من الأدمن + index الحقيقي
+    const adminIndex = adminGames.findIndex(g => g === game);
+    const isAdminGame = adminIndex !== -1;
 
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
       <img src="${game.img}">
-      <h3>
-        <a href="game.html?id=${game.id}">
-          ${game.name}
-        </a>
-      </h3>
+      <h3>${game.name}</h3>
       <p>${game.desc || ''}</p>
 
       ${location.search.includes("admin=true") && isAdminGame ? `
         <div class="admin-actions">
-          <button onclick="editGame('${game.id}')">✏️</button>
-          <button onclick="removeGame('${game.id}')">🗑</button>
-          <button onclick="addVersionPrompt('${game.id}')">➕ إصدار</button>
+          <button onclick="editGame(${adminIndex})">✏️</button>
+          <button onclick="removeGame(${adminIndex})">🗑</button>
+          <button onclick="addVersionPrompt(${adminIndex})">➕ إصدار</button>
         </div>
       ` : ``}
     `;
@@ -136,7 +134,7 @@ if (searchInput) {
         c.className = 'game-card';
         c.innerHTML = `
           <img src="${game.img}">
-          <h3><a href="game.html?id=${game.id}">${game.name}</a></h3>
+          <h3>${game.name}</h3>
         `;
         gamesGrid.appendChild(c);
       });
@@ -149,26 +147,24 @@ if (searchInput) {
 }
 
 /* =========================
-   الأقسام
-========================= */
-window.renderByCategory = cat => {
-  currentCategory = cat;
-  currentPage = 1;
-  renderGames();
-  renderPagination();
-};
-
-window.renderAll = () => {
-  currentCategory = "all";
-  currentPage = 1;
-  renderGames();
-  renderPagination();
-};
-
-/* =========================
    لوحة الأدمن
 ========================= */
+const adminBtn = document.getElementById("adminBtn");
+const adminPanel = document.getElementById("adminPanel");
 const versionsDiv = document.getElementById("versions");
+
+if (adminBtn && adminPanel) {
+  adminBtn.style.display = "none";
+
+  if (location.search.includes("admin=true")) {
+    adminBtn.style.display = "block";
+    adminBtn.onclick = () => adminPanel.style.display = "flex";
+  }
+}
+
+window.closeAdmin = () => {
+  adminPanel.style.display = "none";
+};
 
 window.addVersion = () => {
   const div = document.createElement("div");
@@ -183,21 +179,14 @@ window.addVersion = () => {
 };
 
 window.saveGame = () => {
-  const name = aName.value.trim();
-  const img = aImg.value.trim();
-  const desc = aDesc.value.trim();
-  const category = aCategory.value;
+  if (!aName.value || !aImg.value || !aCategory.value)
+    return alert("أكمل البيانات");
 
-  if (!name || !img || !category) {
-    alert("أكمل البيانات");
-    return;
-  }
-
-  const versionsArr = [];
+  const versions = [];
   document.querySelectorAll(".version-box").forEach(v => {
     const i = v.querySelectorAll("input");
     if (i[0].value && i[2].value) {
-      versionsArr.push({
+      versions.push({
         v: i[0].value,
         size: i[1].value,
         link: i[2].value
@@ -205,19 +194,15 @@ window.saveGame = () => {
     }
   });
 
-  if (!versionsArr.length) {
-    alert("أضف إصدار واحد على الأقل");
-    return;
-  }
+  if (!versions.length) return alert("أضف إصدار");
 
   adminGames.unshift({
-    id: crypto.randomUUID(),
-    name,
-    img,
-    desc,
-    category,
+    name: aName.value,
+    img: aImg.value,
+    desc: aDesc.value,
+    category: aCategory.value,
     rating: 4.5,
-    versions: versionsArr
+    versions
   });
 
   save();
@@ -226,34 +211,28 @@ window.saveGame = () => {
 /* =========================
    تعديل / حذف / إصدار
 ========================= */
-window.editGame = id => {
-  const game = adminGames.find(g => g.id === id);
-  if (!game) return;
-
+window.editGame = index => {
+  const game = adminGames[index];
   const n = prompt("اسم اللعبة", game.name);
   const d = prompt("الوصف", game.desc);
   if (!n) return;
-
   game.name = n;
   game.desc = d;
   save();
 };
 
-window.removeGame = id => {
+window.removeGame = index => {
   if (!confirm("حذف اللعبة؟")) return;
-  adminGames = adminGames.filter(g => g.id !== id);
+  adminGames.splice(index, 1);
   save();
 };
 
-window.addVersionPrompt = id => {
-  const game = adminGames.find(g => g.id === id);
-  if (!game) return;
-
+window.addVersionPrompt = index => {
+  const game = adminGames[index];
   const v = prompt("الإصدار:");
   const s = prompt("الحجم:");
   const l = prompt("الرابط:");
   if (!v || !l) return;
-
   game.versions.push({ v, size: s, link: l });
   save();
 };
