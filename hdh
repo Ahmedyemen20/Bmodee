@@ -1,0 +1,13 @@
+	#aiHelperBtn {
+	  position: fixed;
+	  bottom: 20px;
+	  left: 20px;
+	  width: 55px;
+	  height: 55px;
+	  border-radius: 50%;
+	  border: none;
+	  background: #4caf50;
+	  color: white;
+	  font-size: 24px;
+	  cursor: pointer;
+	  z-index: 9999;
