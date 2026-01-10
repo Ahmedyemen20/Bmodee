@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
 
 /* =========================
@@ -46,7 +45,7 @@ const baseGames = [
 ];
 
 /* =========================
-   دمج + ترتيب (عرض فقط)
+   دمج + ترتيب
 ========================= */
 function getAllGames() {
   return [...baseGames, ...adminGames].sort((a, b) =>
@@ -95,8 +94,6 @@ function renderGames() {
   const slice = games.slice(start, start + gamesPerPage);
 
   slice.forEach(game => {
-
-    // نحدد هل اللعبة من الأدمن + index الحقيقي
     const adminIndex = adminGames.findIndex(g => g === game);
     const isAdminGame = adminIndex !== -1;
 
@@ -163,10 +160,11 @@ if (adminBtn && adminPanel) {
   }
 }
 
-window.closeAdmin = () => {
-  adminPanel.style.display = "none";
-};
+window.closeAdmin = () => adminPanel.style.display = "none";
 
+/* =========================
+   الإصدارات
+========================= */
 window.addVersion = () => {
   const div = document.createElement("div");
   div.className = "version-box";
@@ -179,6 +177,9 @@ window.addVersion = () => {
   versionsDiv.appendChild(div);
 };
 
+/* =========================
+   حفظ لعبة
+========================= */
 window.saveGame = () => {
   if (!aName.value || !aImg.value || !aCategory.value)
     return alert("أكمل البيانات");
@@ -187,11 +188,7 @@ window.saveGame = () => {
   document.querySelectorAll(".version-box").forEach(v => {
     const i = v.querySelectorAll("input");
     if (i[0].value && i[2].value) {
-      versions.push({
-        v: i[0].value,
-        size: i[1].value,
-        link: i[2].value
-      });
+      versions.push({ v: i[0].value, size: i[1].value, link: i[2].value });
     }
   });
 
@@ -210,7 +207,7 @@ window.saveGame = () => {
 };
 
 /* =========================
-   تعديل / حذف / إصدار
+   تعديل / حذف
 ========================= */
 window.editGame = index => {
   const game = adminGames[index];
@@ -244,20 +241,15 @@ function save() {
 }
 
 /* =========================
-   تشغيل أولي
+   الأقسام
 ========================= */
-renderGames();
-
-
-/* =========================
-   الأقسام (الهامبرجر)
-========================= */
-window.renderByCategory = category => {
-  currentCategory = category;
+window.renderByCategory = cat => {
+  currentCategory = cat;
   currentPage = 1;
   renderGames();
   renderPagination();
-  closeMenu();
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
 };
 
 window.renderAll = () => {
@@ -265,14 +257,53 @@ window.renderAll = () => {
   currentPage = 1;
   renderGames();
   renderPagination();
-  closeMenu();
-};
-
-window.closeMenu = () => {
   sidebar.classList.remove('open');
   overlay.classList.remove('open');
 };
 
+/* =========================
+   إضافة ذكية (أدمن فقط)
+========================= */
+
+// صورة تلقائية أفضل
+function autoImage(name) {
+  return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
+}
+
+function autoCategory(name) {
+  name = name.toLowerCase();
+  if (name.includes("gta") || name.includes("call") || name.includes("pubg")) return "action";
+  if (name.includes("fifa") || name.includes("pes")) return "sports";
+  if (name.includes("clash") || name.includes("hay")) return "strategy";
+  return "other";
+}
+
+function autoDesc(name) {
+  return `${name} Mod APK for Android with premium features.`;
+}
+
+window.smartAddGame = () => {
+  if (!location.search.includes("admin=true")) return;
+
+  const name = prompt("اكتب اسم اللعبة:");
+  if (!name) return;
+
+  adminGames.unshift({
+    name,
+    img: autoImage(name),
+    desc: autoDesc(name),
+    category: autoCategory(name),
+    rating: 4.5,
+    versions: [{ v: "Latest", size: "—", link: "#" }]
+  });
+
+  save();
+};
+
+/* =========================
+   تشغيل أولي
+========================= */
+renderGames();
 renderPagination();
 
 });
