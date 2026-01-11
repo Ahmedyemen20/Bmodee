@@ -156,13 +156,18 @@ if (searchInput) {
 const adminBtn = document.getElementById("adminBtn");
 const adminPanel = document.getElementById("adminPanel");
 
-if (adminBtn && adminPanel && location.search.includes("admin=true")) {
-  adminBtn.style.display = "block";
-  adminBtn.onclick = () => adminPanel.style.display = "flex";
+if (adminBtn) {
+  // نخفيه افتراضيًا عن الكل
+  adminBtn.style.display = "none";
+
+  // نطلعه فقط لو أدمن
+  if (location.search.includes("admin=true")) {
+    adminBtn.style.display = "block";
+    adminBtn.onclick = () => {
+      adminPanel.style.display = "flex";
+    };
+  }
 }
-
-window.closeAdmin = () => adminPanel.style.display = "none";
-
 /* =========================
    زر الإضافة الذكية (ثابت)
 ========================= */
