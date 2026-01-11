@@ -83,7 +83,7 @@ function renderPagination() {
 }
 
 /* =========================
-   عرض الألعاب
+   عرض الألعاب (✔️ تم إصلاح الدخول للتفاصيل)
 ========================= */
 function renderGames() {
   if (!gamesGrid) return;
@@ -99,19 +99,26 @@ function renderGames() {
 
     const card = document.createElement('div');
     card.className = 'game-card';
+
+    // 👇 رجّعنا فتح صفحة التفاصيل
+    card.onclick = () => {
+      window.location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+    };
+
     card.innerHTML = `
       <img src="${game.img}" onerror="this.src='/no-image.png'">
       <h3>${game.name}</h3>
       <p>${game.desc || ''}</p>
 
       ${location.search.includes("admin=true") && isAdminGame ? `
-        <div class="admin-actions">
+        <div class="admin-actions" onclick="event.stopPropagation()">
           <button onclick="editGame(${adminIndex})">✏️</button>
           <button onclick="removeGame(${adminIndex})">🗑</button>
           <button onclick="addVersionPrompt(${adminIndex})">➕ إصدار</button>
         </div>
       ` : ``}
     `;
+
     gamesGrid.appendChild(card);
   });
 }
@@ -130,6 +137,9 @@ if (searchInput) {
       .forEach(game => {
         const c = document.createElement('div');
         c.className = 'game-card';
+        c.onclick = () => {
+          window.location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+        };
         c.innerHTML = `
           <img src="${game.img}">
           <h3>${game.name}</h3>
@@ -270,7 +280,7 @@ window.renderAll = () => {
 };
 
 /* =========================
-   الإضافة الذكية (اسم + صورة يدوية)
+   إضافة ذكية
 ========================= */
 function autoImage(name) {
   return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
@@ -291,14 +301,12 @@ function autoDesc(name) {
 window.smartAddGame = () => {
   if (!location.search.includes("admin=true")) return;
 
-  const name = prompt("اكتب اسم اللعبة:");
+  const name = prompt("اسم اللعبة:");
   if (!name) return;
-
-  const img = prompt("رابط صورة اللعبة (اختياري – اتركه فاضي للتلقائي):");
 
   adminGames.unshift({
     name,
-    img: img && img.trim() !== "" ? img : autoImage(name),
+    img: autoImage(name),
     desc: autoDesc(name),
     category: autoCategory(name),
     rating: 4.5,
@@ -315,4 +323,3 @@ renderGames();
 renderPagination();
 
 });
-
