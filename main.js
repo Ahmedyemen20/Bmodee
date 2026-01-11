@@ -36,7 +36,7 @@ let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
 const baseGames = [
   {
     name: "Hay Day",
-    img: "images/unnamed (2).jpg",
+    img: "/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
     rating: 4.8,
     category: "strategy",
@@ -100,7 +100,7 @@ function renderGames() {
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
-<img src="${game.img}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+      <img src="${game.img}" onerror="this.src='/no-image.png'">
       <h3>${game.name}</h3>
       <p>${game.desc || ''}</p>
 
@@ -163,7 +163,7 @@ if (adminBtn && adminPanel) {
 window.closeAdmin = () => adminPanel.style.display = "none";
 
 /* =========================
-   زر الإضافة الذكية
+   زر الإضافة الذكية (أدمن فقط)
 ========================= */
 const smartBtn = document.getElementById("smartBtn");
 if (smartBtn && location.search.includes("admin=true")) {
@@ -270,22 +270,10 @@ window.renderAll = () => {
 };
 
 /* =========================
-   صور رسمية للألعاب
-========================= */
-const gameImages = {
-  "clash of clans": "https://play-lh.googleusercontent.com/8b1Fq7J5c6o0n5Qf8FZtC2ZQ=s512-rw",
-  "brawl stars": "https://play-lh.googleusercontent.com/JzJZsU8=s512-rw",
-  "boom beach": "https://play-lh.googleusercontent.com/boom=s512-rw",
-  "hay day": "https://play-lh.googleusercontent.com/hay=s512-rw"
-};
-
-/* =========================
-   إضافة ذكية
+   الإضافة الذكية (اسم + صورة يدوية)
 ========================= */
 function autoImage(name) {
-  const key = name.toLowerCase().trim();
-  return gameImages[key] ||
-    `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
+  return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
 }
 
 function autoCategory(name) {
@@ -306,9 +294,11 @@ window.smartAddGame = () => {
   const name = prompt("اكتب اسم اللعبة:");
   if (!name) return;
 
+  const img = prompt("رابط صورة اللعبة (اختياري – اتركه فاضي للتلقائي):");
+
   adminGames.unshift({
     name,
-    img: autoImage(name),
+    img: img && img.trim() !== "" ? img : autoImage(name),
     desc: autoDesc(name),
     category: autoCategory(name),
     rating: 4.5,
@@ -325,3 +315,4 @@ renderGames();
 renderPagination();
 
 });
+
