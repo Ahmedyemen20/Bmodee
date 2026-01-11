@@ -14,52 +14,61 @@
 <div class="game-details" id="gameDetails"></div>
 
 <script>
-const params = new URLSearchParams(location.search);
-const id = params.get("id");
+document.addEventListener("DOMContentLoaded", () => {
 
-let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+  const params = new URLSearchParams(window.location.search);
+  const gameName = params.get("name");
 
-let allGames = [
-  {
-    name: "Hay Day",
-    img: "/unnamed (2).jpg",
-    desc: "Hay Day Mod APK Unlimited Money",
-    rating: 4.8,
-    versions: [
-      { v: "1.0", size: "150 MB", link: "#" }
-    ]
-  },
-  ...adminGames
-];
+  const adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
-const game = allGames[id];
-const box = document.getElementById("gameDetails");
+  const baseGames = [
+    {
+      name: "Hay Day",
+      img: "/unnamed (2).jpg",
+      desc: "Hay Day Mod APK Unlimited Money",
+      rating: 4.8,
+      category: "strategy",
+      versions: [{ v: "1.0", size: "150 MB", link: "#" }]
+    }
+  ];
 
-if (!game) {
-  box.innerHTML = "<p>❌ اللعبة غير موجودة</p>";
-} else {
-  box.innerHTML = `
-    <div class="game-card big">
-      <img src="${game.img}">
-      <h1>${game.name}</h1>
+  const allGames = [...baseGames, ...adminGames];
 
-      <div class="rating">⭐ ${game.rating || "4.5"}</div>
+  const game = allGames.find(
+    g => g.name.toLowerCase() === gameName?.toLowerCase()
+  );
 
-      <p>${game.desc}</p>
+  if (!game) {
+    document.body.innerHTML = `
+      <div style="color:red;text-align:center;margin-top:50px;font-size:18px">
+        ❌ اللعبة غير موجودة
+      </div>
+      <div style="text-align:center;margin-top:20px">
+        <a href="index.html" style="color:gold">⬅ رجوع</a>
+      </div>
+    `;
+    return;
+  }
 
-      <h3>📦 الإصدارات</h3>
-      <ul class="versions">
-        ${game.versions.map(v => `
-          <li>
-            <b>الإصدار:</b> ${v.v}<br>
-            <b>الحجم:</b> ${v.size || "-"}<br>
-            <a class="download-btn" href="${v.link}" target="_blank">⬇ تحميل</a>
-          </li>
-        `).join("")}
-      </ul>
-    </div>
-  `;
-}
+  document.getElementById("gameImg").src = game.img;
+  document.getElementById("gameName").textContent = game.name;
+  document.getElementById("gameDesc").textContent = game.desc || "";
+
+  const versionsDiv = document.getElementById("versions");
+  versionsDiv.innerHTML = "";
+
+  game.versions.forEach(v => {
+    const div = document.createElement("div");
+    div.className = "version";
+    div.innerHTML = `
+      <span>${v.v}</span>
+      <span>${v.size || ""}</span>
+      <a href="${v.link}" target="_blank">تحميل</a>
+    `;
+    versionsDiv.appendChild(div);
+  });
+
+});
 </script>
 
 </body>
