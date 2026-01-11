@@ -312,3 +312,5 @@ renderGames();
 renderPagination();
 
 });
+
+
