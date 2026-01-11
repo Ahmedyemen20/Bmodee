@@ -36,7 +36,7 @@ let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
 const baseGames = [
   {
     name: "Hay Day",
-    img: "/unnamed (2).jpg",
+    img: "images/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
     rating: 4.8,
     category: "strategy",
