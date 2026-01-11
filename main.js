@@ -40,7 +40,7 @@ const baseGames = [
     desc: "Hay Day Mod APK Unlimited Money",
     rating: 4.8,
     category: "strategy",
-    versions: [{ v: "3.0", size: "150 MB", link: "#" }]
+    versions: [{ v: "1.0", size: "150 MB", link: "#" }]
   }
 ];
 
@@ -101,6 +101,7 @@ function renderGames() {
     card.className = 'game-card';
     card.innerHTML = `
       <img src="${game.img}">
+	onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
       <h3>${game.name}</h3>
       <p>${game.desc || ''}</p>
 
