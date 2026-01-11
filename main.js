@@ -18,6 +18,26 @@ if (hamburger && sidebar && overlay) {
   };
 }
 
+/*الاقسام*/
+
+window.renderByCategory = cat => {
+  currentCategory = cat;
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+};
+
+window.renderAll = () => {
+  currentCategory = "all";
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+};
+
 /* =========================
    إعدادات
 ========================= */
