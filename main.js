@@ -40,7 +40,7 @@ const baseGames = [
     desc: "Hay Day Mod APK Unlimited Money",
     rating: 4.8,
     category: "strategy",
-    versions: [{ v: "1.0", size: "150 MB", link: "#" }]
+    versions: [{ v: "3.0", size: "150 MB", link: "#" }]
   }
 ];
 
@@ -163,7 +163,7 @@ if (adminBtn && adminPanel) {
 window.closeAdmin = () => adminPanel.style.display = "none";
 
 /* =========================
-   إظهار زر الإضافة الذكية (أدمن فقط)
+   زر الإضافة الذكية
 ========================= */
 const smartBtn = document.getElementById("smartBtn");
 if (smartBtn && location.search.includes("admin=true")) {
@@ -270,10 +270,22 @@ window.renderAll = () => {
 };
 
 /* =========================
-   إضافة ذكية (أدمن فقط)
+   صور رسمية للألعاب
+========================= */
+const gameImages = {
+  "clash of clans": "https://play-lh.googleusercontent.com/8b1Fq7J5c6o0n5Qf8FZtC2ZQ=s512-rw",
+  "brawl stars": "https://play-lh.googleusercontent.com/JzJZsU8=s512-rw",
+  "boom beach": "https://play-lh.googleusercontent.com/boom=s512-rw",
+  "hay day": "https://play-lh.googleusercontent.com/hay=s512-rw"
+};
+
+/* =========================
+   إضافة ذكية
 ========================= */
 function autoImage(name) {
-  return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
+  const key = name.toLowerCase().trim();
+  return gameImages[key] ||
+    `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
 }
 
 function autoCategory(name) {
