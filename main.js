@@ -54,8 +54,9 @@ function getAllGames() {
 }
 
 function getFilteredGames() {
-  if (currentCategory === "all") return getAllGames();
-  return getAllGames().filter(g => g.category === currentCategory);
+  const games = getAllGames();
+  if (currentCategory === "all") return games;
+  return games.filter(g => g.category === currentCategory);
 }
 
 /* =========================
@@ -82,7 +83,7 @@ function renderPagination() {
 }
 
 /* =========================
-   عرض الألعاب
+   عرض الألعاب (✔️ تم إصلاح الدخول للتفاصيل)
 ========================= */
 function renderGames() {
   if (!gamesGrid) return;
@@ -93,13 +94,15 @@ function renderGames() {
   const slice = games.slice(start, start + gamesPerPage);
 
   slice.forEach(game => {
-    const adminIndex = adminGames.indexOf(game);
+    const adminIndex = adminGames.findIndex(g => g === game);
     const isAdminGame = adminIndex !== -1;
 
     const card = document.createElement('div');
     card.className = 'game-card';
+
+    // 👇 رجّعنا فتح صفحة التفاصيل
     card.onclick = () => {
-      location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+      window.location.href = `game.html?name=${encodeURIComponent(game.name)}`;
     };
 
     card.innerHTML = `
@@ -112,7 +115,8 @@ function renderGames() {
           <button onclick="editGame(${adminIndex})">✏️</button>
           <button onclick="removeGame(${adminIndex})">🗑</button>
           <button onclick="addVersionPrompt(${adminIndex})">➕ إصدار</button>
-        </div>` : ``}
+        </div>
+      ` : ``}
     `;
 
     gamesGrid.appendChild(card);
@@ -134,7 +138,7 @@ if (searchInput) {
         const c = document.createElement('div');
         c.className = 'game-card';
         c.onclick = () => {
-          location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+          window.location.href = `game.html?name=${encodeURIComponent(game.name)}`;
         };
         c.innerHTML = `
           <img src="${game.img}">
@@ -143,7 +147,7 @@ if (searchInput) {
         gamesGrid.appendChild(c);
       });
 
-    if (!v) {
+    if (v === "") {
       renderGames();
       renderPagination();
     }
@@ -155,21 +159,25 @@ if (searchInput) {
 ========================= */
 const adminBtn = document.getElementById("adminBtn");
 const adminPanel = document.getElementById("adminPanel");
+const versionsDiv = document.getElementById("versions");
 
-if (adminBtn && adminPanel && location.search.includes("admin=true")) {
-  adminBtn.style.display = "block";
-  adminBtn.onclick = () => adminPanel.style.display = "flex";
+if (adminBtn && adminPanel) {
+  adminBtn.style.display = "none";
+
+  if (location.search.includes("admin=true")) {
+    adminBtn.style.display = "block";
+    adminBtn.onclick = () => adminPanel.style.display = "flex";
+  }
 }
 
 window.closeAdmin = () => adminPanel.style.display = "none";
 
 /* =========================
-   زر الإضافة الذكية (ثابت)
+   زر الإضافة الذكية (أدمن فقط)
 ========================= */
 const smartBtn = document.getElementById("smartBtn");
 if (smartBtn && location.search.includes("admin=true")) {
   smartBtn.style.display = "block";
-  smartBtn.onclick = smartAddGame;
 }
 
 /* =========================
@@ -184,14 +192,25 @@ window.addVersion = () => {
     <input placeholder="رابط التحميل">
     <button onclick="this.parentElement.remove()">🗑</button>
   `;
-  document.getElementById("versions").appendChild(div);
+  versionsDiv.appendChild(div);
 };
 
 /* =========================
-   حفظ / تعديل / حذف
+   حفظ لعبة
 ========================= */
 window.saveGame = () => {
-  if (!aName.value || !aImg.value || !aCategory.value) return alert("أكمل البيانات");
+  if (!aName.value || !aImg.value || !aCategory.value)
+    return alert("أكمل البيانات");
+
+  const versions = [];
+  document.querySelectorAll(".version-box").forEach(v => {
+    const i = v.querySelectorAll("input");
+    if (i[0].value && i[2].value) {
+      versions.push({ v: i[0].value, size: i[1].value, link: i[2].value });
+    }
+  });
+
+  if (!versions.length) return alert("أضف إصدار");
 
   adminGames.unshift({
     name: aName.value,
@@ -199,28 +218,66 @@ window.saveGame = () => {
     desc: aDesc.value,
     category: aCategory.value,
     rating: 4.5,
-    versions: [{ v: "Latest", size: "—", link: "#" }]
+    versions
   });
 
   save();
 };
 
-window.editGame = i => {
-  adminGames[i].name = prompt("اسم اللعبة", adminGames[i].name);
+/* =========================
+   تعديل / حذف
+========================= */
+window.editGame = index => {
+  const game = adminGames[index];
+  const n = prompt("اسم اللعبة", game.name);
+  const d = prompt("الوصف", game.desc);
+  if (!n) return;
+  game.name = n;
+  game.desc = d;
   save();
 };
 
-window.removeGame = i => {
-  if (confirm("حذف؟")) {
-    adminGames.splice(i, 1);
-    save();
-  }
+window.removeGame = index => {
+  if (!confirm("حذف اللعبة؟")) return;
+  adminGames.splice(index, 1);
+  save();
+};
+
+window.addVersionPrompt = index => {
+  const game = adminGames[index];
+  const v = prompt("الإصدار:");
+  const s = prompt("الحجم:");
+  const l = prompt("الرابط:");
+  if (!v || !l) return;
+  game.versions.push({ v, size: s, link: l });
+  save();
 };
 
 function save() {
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
   location.reload();
 }
+
+/* =========================
+   الأقسام
+========================= */
+window.renderByCategory = cat => {
+  currentCategory = cat;
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+};
+
+window.renderAll = () => {
+  currentCategory = "all";
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+};
 
 /* =========================
    إضافة ذكية
@@ -231,24 +288,25 @@ function autoImage(name) {
 
 function autoCategory(name) {
   name = name.toLowerCase();
-  if (name.includes("clash")) return "strategy";
-  if (name.includes("gta") || name.includes("call")) return "action";
+  if (name.includes("gta") || name.includes("call") || name.includes("pubg")) return "action";
+  if (name.includes("fifa") || name.includes("pes")) return "sports";
+  if (name.includes("clash") || name.includes("hay")) return "strategy";
   return "other";
 }
 
 function autoDesc(name) {
-  return `${name} Mod APK for Android`;
+  return `${name} Mod APK for Android with premium features.`;
 }
 
-function smartAddGame() {
+window.smartAddGame = () => {
+  if (!location.search.includes("admin=true")) return;
+
   const name = prompt("اسم اللعبة:");
   if (!name) return;
 
-  const img = prompt("رابط الصورة (اختياري):") || autoImage(name);
-
   adminGames.unshift({
     name,
-    img,
+    img: autoImage(name),
     desc: autoDesc(name),
     category: autoCategory(name),
     rating: 4.5,
@@ -256,7 +314,7 @@ function smartAddGame() {
   });
 
   save();
-}
+};
 
 /* =========================
    تشغيل أولي
