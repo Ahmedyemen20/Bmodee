@@ -246,16 +246,23 @@ function autoDesc(name) {
 }
 
 function smartAddGame() {
+  if (!location.search.includes("admin=true")) return;
+
   const name = prompt("اسم اللعبة:");
   if (!name) return;
 
   const img = prompt("رابط الصورة (اختياري):") || autoImage(name);
 
+  const category = prompt(
+    "اكتب القسم:\naction / strategy / sports / other",
+    "action"
+  );
+
   adminGames.unshift({
     name,
     img,
     desc: autoDesc(name),
-    category: autoCategory(name),
+    category: category || "other",
     rating: 4.5,
     versions: [{ v: "Latest", size: "—", link: "#" }]
   });
