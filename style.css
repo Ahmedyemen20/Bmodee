@@ -944,4 +944,5 @@ body.light .ad-card {
   font-size: 24px;
   cursor: pointer;
   z-index: 9999;
+  display: block;
 }
