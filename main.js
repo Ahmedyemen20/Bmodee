@@ -100,8 +100,7 @@ function renderGames() {
     const card = document.createElement('div');
     card.className = 'game-card';
     card.innerHTML = `
-      <img src="${game.img}">
-	onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+<img src="${game.img}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
       <h3>${game.name}</h3>
       <p>${game.desc || ''}</p>
 
