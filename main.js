@@ -83,7 +83,7 @@ function renderPagination() {
 }
 
 /* =========================
-   عرض الألعاب
+   عرض الألعاب (✔️ تم إصلاح الدخول للتفاصيل)
 ========================= */
 function renderGames() {
   if (!gamesGrid) return;
@@ -94,26 +94,31 @@ function renderGames() {
   const slice = games.slice(start, start + gamesPerPage);
 
   slice.forEach(game => {
-    const adminIndex = adminGames.indexOf(game);
+    const adminIndex = adminGames.findIndex(g => g === game);
     const isAdminGame = adminIndex !== -1;
 
     const card = document.createElement('div');
     card.className = 'game-card';
+
+    // 👇 رجّعنا فتح صفحة التفاصيل
+    card.onclick = () => {
+      window.location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+    };
+
     card.innerHTML = `
-      <a href="game.html?name=${encodeURIComponent(game.name)}">
-        <img src="${game.img}">
-        <h3>${game.name}</h3>
-        <p>${game.desc || ''}</p>
-      </a>
+      <img src="${game.img}" onerror="this.src='/no-image.png'">
+      <h3>${game.name}</h3>
+      <p>${game.desc || ''}</p>
 
       ${location.search.includes("admin=true") && isAdminGame ? `
-        <div class="admin-actions">
+        <div class="admin-actions" onclick="event.stopPropagation()">
           <button onclick="editGame(${adminIndex})">✏️</button>
           <button onclick="removeGame(${adminIndex})">🗑</button>
           <button onclick="addVersionPrompt(${adminIndex})">➕ إصدار</button>
         </div>
       ` : ``}
     `;
+
     gamesGrid.appendChild(card);
   });
 }
@@ -132,11 +137,12 @@ if (searchInput) {
       .forEach(game => {
         const c = document.createElement('div');
         c.className = 'game-card';
+        c.onclick = () => {
+          window.location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+        };
         c.innerHTML = `
-          <a href="game.html?name=${encodeURIComponent(game.name)}">
-            <img src="${game.img}">
-            <h3>${game.name}</h3>
-          </a>
+          <img src="${game.img}">
+          <h3>${game.name}</h3>
         `;
         gamesGrid.appendChild(c);
       });
@@ -165,6 +171,14 @@ if (adminBtn && adminPanel) {
 }
 
 window.closeAdmin = () => adminPanel.style.display = "none";
+
+/* =========================
+   زر الإضافة الذكية (أدمن فقط)
+========================= */
+const smartBtn = document.getElementById("smartBtn");
+if (smartBtn && location.search.includes("admin=true")) {
+  smartBtn.style.display = "block";
+}
 
 /* =========================
    الإصدارات
@@ -266,7 +280,7 @@ window.renderAll = () => {
 };
 
 /* =========================
-   إضافة ذكية (أدمن فقط)
+   إضافة ذكية
 ========================= */
 function autoImage(name) {
   return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
@@ -287,15 +301,12 @@ function autoDesc(name) {
 window.smartAddGame = () => {
   if (!location.search.includes("admin=true")) return;
 
-  const name = prompt("اكتب اسم اللعبة:");
+  const name = prompt("اسم اللعبة:");
   if (!name) return;
-
-  const imgInput = prompt("رابط صورة اللعبة (اتركه فاضي لو تبي تلقائي):");
-  const img = imgInput && imgInput.trim() !== "" ? imgInput : autoImage(name);
 
   adminGames.unshift({
     name,
-    img,
+    img: autoImage(name),
     desc: autoDesc(name),
     category: autoCategory(name),
     rating: 4.5,
@@ -312,5 +323,6 @@ renderGames();
 renderPagination();
 
 });
+
 
 
