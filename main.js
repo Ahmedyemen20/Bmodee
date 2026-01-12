@@ -1,6 +1,6 @@
 /* main.js — جاهز للنسخ
-   يعالج عرض الألعاب، الصفحات، وأدوات الأدمن.
-   أضفنا رابط المصدر إلى Google Play (بحث حسب اسم اللعبة).
+   يعالج عرض الألعاب، الهامبرقر، لوحة الأدمن، والإضافة الذكية مع جلب صورة تلقائيًا.
+   التعليقات بالعربية لتسهيل المتابعة.
 */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -60,10 +60,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      دالة تولّد رابط Google Play بحث بالاسم
-     هذا يعطي رابط بحث في متجر جوجل حسب اسم اللعبة
   ========================== */
   function getPlayStoreSearchLink(name) {
     return `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
+  }
+
+  /* =========================
+     دالة لجلب صورة مناسبة من الإنترنت بحسب اسم اللعبة
+     تستخدم مصادر بدون حاجة لمفتاح API: Unsplash Source أو LoremFlickr كاحتياط.
+     تعيد رابط صورة صالح بعد تجربة التحميل.
+  ========================== */
+  function tryLoadImage(url) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve({ ok: true, url });
+      img.onerror = () => resolve({ ok: false });
+      // عند بعض المصادر قد يمنع CORS تحميل الصورة في بعض البيئات، لكن عادة تعمل للعرض
+      img.src = url;
+    });
+  }
+
+  async function fetchImageForName(name) {
+    if (!name) return "/no-image.png";
+
+    // محاولة 1: Unsplash Source (صورة ذات علاقة بالكلمة المفتاحية)
+    const unsplash = `https://source.unsplash.com/640x360/?${encodeURIComponent(name)},game`;
+    const res1 = await tryLoadImage(unsplash);
+    if (res1.ok) return res1.url;
+
+    // محاولة 2: LoremFlickr (كبديل)
+    const flickr = `https://loremflickr.com/640/360/${encodeURIComponent(name)}`;
+    const res2 = await tryLoadImage(flickr);
+    if (res2.ok) return res2.url;
+
+    // محاولة 3: صورة افتراضية محلية
+    return "/no-image.png";
   }
 
   /* =========================
@@ -85,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (smartBtn) {
       smartBtn.style.display = "block";
-      smartBtn.onclick = smartAddGame;
+      smartBtn.onclick = () => window.smartAddGame && window.smartAddGame();
     }
   }
 
@@ -311,23 +342,30 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* =========================
-     إضافة ذكية بسيطة
+     إضافة ذكية مُحسّنة: تبحث عن صورة تلقائياً
+     سلوك: تطلب اسم اللعبة، تجلب صورة تلقائياً ثم تفتح لوحة الأدمن مع تعبئة الحقول
+     (حتى تتأكد قبل الحفظ).
   ========================== */
-  function smartAddGame() {
-    const name = prompt("اسم اللعبة (إضافة ذكية)");
+  async function smartAddGame() {
+    const name = prompt("اسم اللعبة (الإضافة الذكية) - اكتب اسم اللعبة:");
     if (!name) return;
-    const newGame = {
-      name,
-      img: "/no-image.png",
-      desc: "تمت الإضافة بواسطة الإضافة الذكية",
-      category: "action",
-      versions: [{ v: "1.0", size: "", link: "#" }]
-    };
-    adminGames.push(newGame);
-    localStorage.setItem("adminGames", JSON.stringify(adminGames));
-    alert("تمت الإضافة بنجاح");
-    renderGames();
-    renderPagination();
+
+    // حاول جلب صورة مناسبة
+    const imgUrl = await fetchImageForName(name);
+
+    // املأ الحقول في لوحة الأدمن وافتحها للمراجعة
+    editingIndex = null;
+    tempVersions = [{ v: "1.0", size: "", link: "#" }];
+    if (aName) aName.value = name;
+    if (aImg) aImg.value = imgUrl;
+    if (aDesc) aDesc.value = "تمت الإضافة بواسطة الإضافة الذكية";
+    if (aCategory) aCategory.value = "action";
+    renderVersionsInPanel();
+
+    if (adminPanel) adminPanel.style.display = "flex";
+
+    // إخطار المستخدم أن الصورة تمت إضافتها تلقائياً
+    alert("تم جلب صورة تلقائيًا. راجع الحقول ثم اضغط حفظ.");
   }
   window.smartAddGame = smartAddGame;
 
