@@ -1,3 +1,8 @@
+/* main.js — جاهز للنسخ
+   يعالج عرض الألعاب، الصفحات، وأدوات الأدمن.
+   أضفنا رابط المصدر إلى Google Play (بحث حسب اسم اللعبة).
+*/
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
@@ -54,6 +59,14 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   /* =========================
+     دالة تولّد رابط Google Play بحث بالاسم
+     هذا يعطي رابط بحث في متجر جوجل حسب اسم اللعبة
+  ========================== */
+  function getPlayStoreSearchLink(name) {
+    return `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
+  }
+
+  /* =========================
      أدوات الأدمن — إظهار/إخفاء الأزرار
      يعتمد على ?admin=true أو localStorage.isAdmin
   ========================== */
@@ -96,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      عرض الألعاب
-     لاحظ: أزرار التعديل تظهر فقط للألعاب الموجودة في adminGames
+     أضفنا رابط "مصدر (Google Play)" في البطاقة
   ========================== */
   function renderGames() {
     if (!gamesGrid) return;
@@ -120,6 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="${game.img}" onerror="this.src='/no-image.png'">
         <h3>${game.name}</h3>
         <p>${game.desc || ""}</p>
+        <p>
+          <a class="source-link" href="${getPlayStoreSearchLink(game.name)}" target="_blank" rel="noopener">
+            مصدر (Google Play)
+          </a>
+        </p>
         ${isAdmin && isAdminGame ? `
           <div class="admin-actions" onclick="event.stopPropagation()">
             <button onclick="editGame(${index})" class="edit">✏️</button>
