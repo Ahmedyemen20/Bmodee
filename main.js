@@ -200,17 +200,6 @@ if (smartBtn && location.search.includes("admin=true")) {
 /* =========================
    الإصدارات
 ========================= */
-window.addVersion = () => {
-  const div = document.createElement("div");
-  div.className = "version-box";
-  div.innerHTML = `
-    <input placeholder="الإصدار">
-    <input placeholder="الحجم">
-    <input placeholder="رابط التحميل">
-    <button onclick="this.parentElement.remove()">🗑</button>
-  `;
-  document.getElementById("versions").appendChild(div);
-};
 
 /* =========================
    حفظ / تعديل / حذف
@@ -230,9 +219,64 @@ window.saveGame = () => {
   save();
 };
 
-window.editGame = i => {
-  adminGames[i].name = prompt("اسم اللعبة", adminGames[i].name);
-  save();
+// =========================
+// عرض الإصدارات + تعديل
+// =========================
+const versionsDiv = document.getElementById("versions");
+versionsDiv.innerHTML = "";
+
+game.versions.forEach((v, index) => {
+  const div = document.createElement("div");
+  div.className = "version";
+
+  div.innerHTML = `
+    <span>${v.v}</span>
+    <span>${v.size || ""}</span>
+    <a href="${v.link}" target="_blank">تحميل</a>
+
+    ${location.search.includes("admin=true") ? `
+      <button class="edit-version" onclick="editVersion(${index})">✏️</button>
+    ` : ``}
+  `;
+
+  versionsDiv.appendChild(div);
+});
+
+// =========================
+// تعديل الإصدار (أدمن فقط)
+// =========================
+window.editVersion = index => {
+  const params = new URLSearchParams(location.search);
+  const gameName = params.get("name");
+
+  let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+
+  const game = adminGames.find(
+    g => g.name.toLowerCase() === gameName.toLowerCase()
+  );
+
+  if (!game) {
+    alert("اللعبة غير موجودة في الأدمن");
+    return;
+  }
+
+  const version = game.versions[index];
+
+  const newV = prompt("رقم الإصدار", version.v);
+  if (!newV) return;
+
+  const newSize = prompt("الحجم", version.size || "");
+  if (newSize === null) return;
+
+  const newLink = prompt("رابط التحميل", version.link);
+  if (!newLink) return;
+
+  version.v = newV;
+  version.size = newSize;
+  version.link = newLink;
+
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  location.reload();
 };
 
 window.removeGame = i => {
