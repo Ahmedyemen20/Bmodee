@@ -1,3 +1,4 @@
+/* main.js — متحسّن، يتضمن زر المساعد الذكي (AI-fill) داخل لوحة الأدمن */
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const adminBtn = document.getElementById("adminBtn");
   const adminPanel = document.getElementById("adminPanel");
   const smartBtn = document.getElementById("smartBtn");
+  const aiFillBtn = document.getElementById("aiFillBtn");
 
   const aName = document.getElementById("aName");
   const aImg = document.getElementById("aImg");
@@ -38,8 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let gamesPerPage = 10;
   let currentPage = 1;
   let currentCategory = "all";
-  let searchQuery = ""; // نص البحث
-  let searchTimeout = null; // للتأخير (debounce)
+  let searchQuery = "";
+  let searchTimeout = null;
 
   /* =========================
      البيانات
@@ -58,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      أدوات الأدمن — إظهار/إخفاء الأزرار
-     يعتمد على ?admin=true أو localStorage.isAdmin
   ========================== */
   if (adminBtn) adminBtn.style.display = "none";
   if (smartBtn) smartBtn.style.display = "none";
@@ -109,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      عرض الألعاب
-     أزرار الأدمن تظهر فقط للألعاب المخزنة في adminGames
   ========================== */
   function renderGames() {
     if (!gamesGrid) return;
@@ -144,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
       gamesGrid.appendChild(card);
     });
 
-    // رسالة عند عدم وجود نتائج
     if (games.length === 0) {
       const msg = document.createElement("div");
       msg.className = "no-results";
@@ -182,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const val = e.target.value || "";
-      // تأخير بسيط لتقليل عمليات إعادة الرندر أثناء الكتابة
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         searchQuery = val.trim();
@@ -194,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     الأقسام (تغلق sidebar عند اختيار قسم)
+     الأقسام
   ========================== */
   window.renderByCategory = cat => {
     currentCategory = cat;
@@ -306,11 +304,11 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   };
 
-  /* تحرير وحذف مرتبطة بالـ window لأن HTML يستخدم onclick داخلي */
+  /* تحرير وحذف مرتبطان بالـ window لأن HTML يستخدم onclick داخلي */
   window.editGame = (index) => {
     const g = adminGames[index];
     if (!g) {
-      alert("ا��لعبة غير موجودة في إضافات الأدمن");
+      alert("اللعبة غير موجودة في إضافات الأدمن");
       return;
     }
     editingIndex = index;
@@ -332,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* =========================
-     إضافة ذكية بسيطة
+     إضافة ذكية بسيطة (زر عالمي)
   ========================== */
   function smartAddGame() {
     const name = prompt("اسم اللعبة (إضافة ذكية)");
@@ -353,10 +351,83 @@ document.addEventListener("DOMContentLoaded", () => {
   window.smartAddGame = smartAddGame;
 
   /* =========================
+     المساعد الذكي داخل لوحة الأدمن (AI-fill)
+     1) يبحث محلياً أولاً
+     2) إذا لم يجد يجرب جلب من ويكيبيديا عبر AllOrigins
+     (يحتاج اتصال إنترنت — قد يفشل عند CORS أو انقطاع)
+  ========================== */
+  async function aiFillHandler() {
+    if (!aName) { alert("حقل اسم اللعبة غير موجود"); return; }
+    const name = aName.value.trim();
+    if (!name) { alert("اكتب اسم اللعبة أولاً"); return; }
+
+    if (!aiFillBtn) return;
+    aiFillBtn.disabled = true;
+    const origText = aiFillBtn.textContent;
+    aiFillBtn.textContent = "جا��ي البحث...";
+
+    try {
+      // 1) بحث محلي
+      const local = getAllGames().find(g => g.name.toLowerCase() === name.toLowerCase() || g.name.toLowerCase().includes(name.toLowerCase()));
+      if (local) {
+        if (aImg) aImg.value = local.img || "/no-image.png";
+        if (aDesc) aDesc.value = local.desc || "";
+        alert("تمت التعبئة من قاعدة البيانات المحلية.");
+        return;
+      }
+
+      // 2) جلب من ويكيبيديا عبر AllOrigins (CORS proxy)
+      const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(name.replace(/\s+/g, "_"))}`;
+      const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(wikiUrl)}`;
+      const res = await fetch(proxy);
+      if (!res.ok) throw new Error("فشل جلب الصفحة");
+
+      const html = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      // صورة (meta og:image)
+      const og = doc.querySelector('meta[property="og:image"], meta[name="og:image"]');
+      const image = og ? (og.getAttribute("content") || og.content) : "";
+
+      // وصف: أول فقرة ذات نص معقول داخل محتوى ويكيبيديا
+      let desc = "";
+      const content = doc.querySelector('#mw-content-text');
+      if (content) {
+        const p = content.querySelector('p');
+        if (p) desc = p.textContent || "";
+      }
+      if (!desc) {
+        const p2 = doc.querySelector('p');
+        if (p2) desc = p2.textContent || "";
+      }
+      // إزالة الاقتباسات [1], [2] الخ.
+      desc = desc.replace(/\[[^\]]+\]/g, "").trim();
+
+      if (image && aImg) aImg.value = image;
+      if (desc && aDesc) aDesc.value = desc.slice(0, 800); // حدود الوصف
+
+      if (!image && !desc) {
+        alert("لم أجد تفاصيل على ويكيبيديا. حاول تعبئة يدوياً أو تحقق من اسم اللعبة.");
+      } else {
+        alert("تمت التعبئة بنجاح (مصدر: ويكيبيديا إذا لم يكن محلياً).");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("فشل جلب المعلومات التلقائية. تأكد من اتصال الإنترنت أو عبّي التفاصيل يدوياً.");
+    } finally {
+      aiFillBtn.disabled = false;
+      aiFillBtn.textContent = origText;
+    }
+  }
+
+  if (aiFillBtn) aiFillBtn.addEventListener("click", aiFillHandler);
+  window.aiFillHandler = aiFillHandler;
+
+  /* =========================
      تهيئة أولية
   ========================== */
   (function init() {
-    // لو في قيمة في حقل البحث من رابط أو localStorage نعبيها
     if (searchInput && location.search) {
       const params = new URLSearchParams(location.search);
       const q = params.get("q");

@@ -80,10 +80,6 @@
 <!-- Footer -->
 <footer class="footer">
   <p>© 2025 موقع الألعاب. جميع الحقوق محفوظة.</p>
-  <nav class="footer-links">
-    <a href="privacy.html">سياسة الخصوصية</a> |
-    <a href="terms.html">الشروط والأحكام</a>
-  </nav>
 </footer>
 
 <!-- زر الأدمن -->
@@ -109,13 +105,18 @@
       <option value="action">أكشن</option>
       <option value="sports">رياضة</option>
       <option value="strategy">استراتيجية</option>
-      <option value="racing">سباق</option><option value="car">سيارات</option>
+      <option value="racing">سباق</option>
+      <option value="car">سيارات</option>
     </select>
 
     <h3>الإصدارات</h3>
     <div id="versions"></div>
 
     <button class="btn yellow" onclick="addVersionPrompt()">➕ إضافة إصدار</button>
+
+    <!-- زر المساعد الذكي داخل لوحة الأدمن -->
+    <button id="aiFillBtn" class="btn blue">مساعد ذكي</button>
+
     <button class="btn green" onclick="saveGame()">💾 حفظ اللعبة</button>
   </div>
 </div>
@@ -130,8 +131,13 @@ if (localStorage.getItem("theme") === "light") {
   toggle.checked = true;
 }
 toggle.addEventListener("change", () => {
-  document.body.classList.toggle("light", toggle.checked);
-  localStorage.setItem("theme", toggle.checked ? "light" : "dark");
+  if (toggle.checked) {
+    document.body.classList.add("light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.body.classList.remove("light");
+    localStorage.removeItem("theme");
+  }
 });
 </script>
 
