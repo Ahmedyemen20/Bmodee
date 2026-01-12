@@ -1,4 +1,4 @@
-/* main.js — متحسّن، يتضمن زر المساعد الذكي (AI-fill) داخل لوحة الأدمن */
+/* main.js — متضمن تعديل: وِصف المساعد الذكي يصبح "اسم اللعبة + mod Ultimate money" */
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
@@ -352,69 +352,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      المساعد الذكي داخل لوحة الأدمن (AI-fill)
-     1) يبحث محلياً أولاً
-     2) إذا لم يجد يجرب جلب من ويكيبيديا عبر AllOrigins
-     (يحتاج اتصال إنترنت — قد يفشل عند CORS أو انقطاع)
+     الآن الوصف يصبح: "اسم اللعبة + mod Ultimate money"
   ========================== */
   async function aiFillHandler() {
     if (!aName) { alert("حقل اسم اللعبة غير موجود"); return; }
     const name = aName.value.trim();
     if (!name) { alert("اكتب اسم اللعبة أولاً"); return; }
 
+    // الوصف المطلوب دائمًا
+    const modDesc = `${name} mod Ultimate money`;
+
     if (!aiFillBtn) return;
     aiFillBtn.disabled = true;
     const origText = aiFillBtn.textContent;
-    aiFillBtn.textContent = "جا��ي البحث...";
+    aiFillBtn.textContent = "جاري البحث...";
 
     try {
       // 1) بحث محلي
       const local = getAllGames().find(g => g.name.toLowerCase() === name.toLowerCase() || g.name.toLowerCase().includes(name.toLowerCase()));
       if (local) {
         if (aImg) aImg.value = local.img || "/no-image.png";
-        if (aDesc) aDesc.value = local.desc || "";
+        if (aDesc) aDesc.value = modDesc; // تعيين الوصف المطلوب
         alert("تمت التعبئة من قاعدة البيانات المحلية.");
         return;
       }
 
-      // 2) جلب من ويكيبيديا عبر AllOrigins (CORS proxy)
+      // 2) جلب من ويكيبيديا عبر AllOrigins (CORS proxy) — فقط للحصول على صورة إضافية إن وُجدت
       const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(name.replace(/\s+/g, "_"))}`;
       const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(wikiUrl)}`;
-      const res = await fetch(proxy);
-      if (!res.ok) throw new Error("فشل جلب الصفحة");
-
-      const html = await res.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-
-      // صورة (meta og:image)
-      const og = doc.querySelector('meta[property="og:image"], meta[name="og:image"]');
-      const image = og ? (og.getAttribute("content") || og.content) : "";
-
-      // وصف: أول فقرة ذات نص معقول داخل محتوى ويكيبيديا
-      let desc = "";
-      const content = doc.querySelector('#mw-content-text');
-      if (content) {
-        const p = content.querySelector('p');
-        if (p) desc = p.textContent || "";
+      let image = "";
+      try {
+        const res = await fetch(proxy);
+        if (res.ok) {
+          const html = await res.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+          const og = doc.querySelector('meta[property="og:image"], meta[name="og:image"]');
+          image = og ? (og.getAttribute("content") || "") : "";
+        }
+      } catch (e) {
+        // تجاهل فشل البروكسي — نملأ على أي حال
+        console.warn("wiki fetch failed", e);
       }
-      if (!desc) {
-        const p2 = doc.querySelector('p');
-        if (p2) desc = p2.textContent || "";
-      }
-      // إزالة الاقتباسات [1], [2] الخ.
-      desc = desc.replace(/\[[^\]]+\]/g, "").trim();
 
-      if (image && aImg) aImg.value = image;
-      if (desc && aDesc) aDesc.value = desc.slice(0, 800); // حدود الوصف
+      if (aImg) aImg.value = image || "/no-image.png";
+      if (aDesc) aDesc.value = modDesc; // تعيين الوصف المطلوب
 
-      if (!image && !desc) {
-        alert("لم أجد تفاصيل على ويكيبيديا. حاول تعبئة يدوياً أو تحقق من اسم اللعبة.");
-      } else {
-        alert("تمت التعبئة بنجاح (مصدر: ويكيبيديا إذا لم يكن محلياً).");
-      }
+      alert("تمت التعبئة بنجاح (الوصف تم توليده حسب طلبك).");
     } catch (err) {
       console.error(err);
-      alert("فشل جلب المعلومات التلقائية. تأكد من اتصال الإنترنت أو عبّي التفاصيل يدوياً.");
+      alert("فشل جلب المعلومات التلقائية. تم توليد الوصف محلياً.");
+      if (aDesc) aDesc.value = modDesc;
     } finally {
       aiFillBtn.disabled = false;
       aiFillBtn.textContent = origText;
