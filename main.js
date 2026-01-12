@@ -176,6 +176,21 @@ window.saveGame = () => {
 };
 
 /* =========================
+   الإصدارات
+========================= */
+window.addVersion = () => {
+  const div = document.createElement("div");
+  div.className = "version-box";
+  div.innerHTML = `
+    <input placeholder="الإصدار">
+    <input placeholder="الحجم">
+    <input placeholder="رابط التحميل">
+    <button onclick="this.parentElement.remove()">🗑</button>
+  `;
+  versionsDiv.appendChild(div);
+};
+
+/* =========================
    تعديل / حذف
 ========================= */
 window.editGame = i => {
