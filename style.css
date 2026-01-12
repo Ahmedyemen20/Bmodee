@@ -378,6 +378,16 @@ i {
   color: var(--muted);
 }
 
+.game-details img {
+  width: 100%;
+  max-width: 320px;   /* نفس حجم الصور الحلو */
+  height: 320px;
+  object-fit: cover;  /* أهم شي */
+  border-radius: 16px;
+  display: block;
+  margin: 20px auto;
+}
+
 .ad-card {
   grid-column: 1 / -1; /* يخليه بعرض الصف */
   background: #fff;
