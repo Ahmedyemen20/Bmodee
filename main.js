@@ -1,7 +1,3 @@
-/* main.js — جاهز للنسخ
-   تأكد: ربط أقسام sidebar، تكبير نص الأقسام في CSS، تحسين footer، search يعمل.
-*/
-
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ======= هامبرغر / sidebar / overlay ======= */
