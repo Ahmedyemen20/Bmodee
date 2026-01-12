@@ -1,24 +1,22 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>تفاصيل اللعبة</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<a href="index.html" class="back-btn">⬅ رجوع</a>
+  <div class="game-details">
+    <img id="gameImg" src="/no-image.png" alt="صورة اللعبة">
+    <h2 id="gameName">اسم اللعبة</h2>
+    <p id="gameDesc"></p>
+    <p><a id="gameSource" class="source-link" target="_blank" rel="noopener">مصدر</a></p>
 
-<div class="game-details" id="gameDetails">
-  <img id="gameImg" class="game-img">
-  <h1 id="gameName"></h1>
-  <p id="gameDesc"></p>
-
-  <h3>الإصدارات</h3>
-  <div id="versions"></div>
-</div>
+    <h3>الإصدارات</h3>
+    <div id="versions"></div>
+  </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -66,6 +64,14 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("gameImg").src = game.img;
   document.getElementById("gameName").textContent = game.name;
   document.getElementById("gameDesc").textContent = game.desc || "";
+
+  // رابط المصدر: بحث Google Play حسب اسم اللعبة
+  const playLink = `https://play.google.com/store/search?q=${encodeURIComponent(game.name)}&c=apps`;
+  const gameSourceEl = document.getElementById("gameSource");
+  if (gameSourceEl) {
+    gameSourceEl.href = playLink;
+    gameSourceEl.textContent = "عرض على Google Play";
+  }
 
   const versionsDiv = document.getElementById("versions");
   versionsDiv.innerHTML = "";

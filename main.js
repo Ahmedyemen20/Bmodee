@@ -1,4 +1,8 @@
-/* main.js — متضمن تعديل: وِصف المساعد الذكي يصبح "اسم اللعبة + mod Ultimate money" */
+/* main.js — جاهز للنسخ
+   يعالج عرض الألعاب، الصفحات، وأدوات الأدمن.
+   أضفنا رابط المصدر إلى Google Play (بحث حسب اسم اللعبة).
+*/
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
@@ -20,16 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     عناصر البحث والعرض والـ DOM
+     الإعدادات والـ DOM عناصر
   ========================== */
-  const searchInput = document.getElementById("searchInput");
   const gamesGrid = document.getElementById("gamesGrid");
   const pagination = document.getElementById("pagination");
 
   const adminBtn = document.getElementById("adminBtn");
   const adminPanel = document.getElementById("adminPanel");
   const smartBtn = document.getElementById("smartBtn");
-  const aiFillBtn = document.getElementById("aiFillBtn");
 
   const aName = document.getElementById("aName");
   const aImg = document.getElementById("aImg");
@@ -40,8 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let gamesPerPage = 10;
   let currentPage = 1;
   let currentCategory = "all";
-  let searchQuery = "";
-  let searchTimeout = null;
 
   /* =========================
      البيانات
@@ -59,7 +59,16 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   /* =========================
+     دالة تولّد رابط Google Play بحث بالاسم
+     هذا يعطي رابط بحث في متجر جوجل حسب اسم اللعبة
+  ========================== */
+  function getPlayStoreSearchLink(name) {
+    return `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
+  }
+
+  /* =========================
      أدوات الأدمن — إظهار/إخفاء الأزرار
+     يعتمد على ?admin=true أو localStorage.isAdmin
   ========================== */
   if (adminBtn) adminBtn.style.display = "none";
   if (smartBtn) smartBtn.style.display = "none";
@@ -87,29 +96,20 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* =========================
-     دوال جلب وتصفيه الألعاب (تدعم البحث + الأقسام)
+     دوال جلب وتصفيه الألعاب
   ========================== */
   function getAllGames() {
     return [...baseGames, ...adminGames];
   }
 
   function getFilteredGames() {
-    let list = getAllGames();
-    if (currentCategory && currentCategory !== "all") {
-      list = list.filter(g => g.category === currentCategory);
-    }
-    if (searchQuery && searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(g =>
-        (g.name && g.name.toLowerCase().includes(q)) ||
-        (g.desc && g.desc.toLowerCase().includes(q))
-      );
-    }
-    return list;
+    if (currentCategory === "all") return getAllGames();
+    return getAllGames().filter(g => g.category === currentCategory);
   }
 
   /* =========================
      عرض الألعاب
+     أضفنا رابط "مصدر (Google Play)" في البطاقة
   ========================== */
   function renderGames() {
     if (!gamesGrid) return;
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const slice = games.slice(start, start + gamesPerPage);
 
     slice.forEach(game => {
-      const index = adminGames.findIndex(g => g.name === game.name && JSON.stringify(g.versions) === JSON.stringify(game.versions));
+      const index = adminGames.findIndex(g => g.name === game.name && g.versions && JSON.stringify(g.versions) === JSON.stringify(game.versions));
       const isAdminGame = index !== -1;
 
       const card = document.createElement("div");
@@ -133,6 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="${game.img}" onerror="this.src='/no-image.png'">
         <h3>${game.name}</h3>
         <p>${game.desc || ""}</p>
+        <p>
+          <a class="source-link" href="${getPlayStoreSearchLink(game.name)}" target="_blank" rel="noopener">
+            مصدر (Google Play)
+          </a>
+        </p>
         ${isAdmin && isAdminGame ? `
           <div class="admin-actions" onclick="event.stopPropagation()">
             <button onclick="editGame(${index})" class="edit">✏️</button>
@@ -143,13 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       gamesGrid.appendChild(card);
     });
-
-    if (games.length === 0) {
-      const msg = document.createElement("div");
-      msg.className = "no-results";
-      msg.textContent = "لا توجد نتائج للبحث.";
-      gamesGrid.appendChild(msg);
-    }
   }
 
   /* =========================
@@ -158,8 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderPagination() {
     if (!pagination) return;
     pagination.innerHTML = "";
-    const total = Math.max(1, getFilteredGames().length);
-    const pages = Math.max(1, Math.ceil(total / gamesPerPage));
+    const pages = Math.max(1, Math.ceil(getFilteredGames().length / gamesPerPage));
 
     for (let i = 1; i <= pages; i++) {
       const btn = document.createElement("button");
@@ -173,22 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
       };
       pagination.appendChild(btn);
     }
-  }
-
-  /* =========================
-     التعامل مع البحث (debounce)
-  ========================== */
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      const val = e.target.value || "";
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        searchQuery = val.trim();
-        currentPage = 1;
-        renderGames();
-        renderPagination();
-      }, 200);
-    });
   }
 
   /* =========================
@@ -304,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   };
 
-  /* تحرير وحذف مرتبطان بالـ window لأن HTML يستخدم onclick داخلي */
+  /* تحرير وحذف مرتبطة بالـ window لأن HTML يستخدم onclick داخلي */
   window.editGame = (index) => {
     const g = adminGames[index];
     if (!g) {
@@ -330,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* =========================
-     إضافة ذكية بسيطة (زر عالمي)
+     إضافة ذكية بسيطة
   ========================== */
   function smartAddGame() {
     const name = prompt("اسم اللعبة (إضافة ذكية)");
@@ -351,79 +332,9 @@ document.addEventListener("DOMContentLoaded", () => {
   window.smartAddGame = smartAddGame;
 
   /* =========================
-     المساعد الذكي داخل لوحة الأدمن (AI-fill)
-     الآن الوصف يصبح: "اسم اللعبة + mod Ultimate money"
-  ========================== */
-  async function aiFillHandler() {
-    if (!aName) { alert("حقل اسم اللعبة غير موجود"); return; }
-    const name = aName.value.trim();
-    if (!name) { alert("اكتب اسم اللعبة أولاً"); return; }
-
-    // الوصف المطلوب دائمًا
-    const modDesc = `${name} mod Ultimate money`;
-
-    if (!aiFillBtn) return;
-    aiFillBtn.disabled = true;
-    const origText = aiFillBtn.textContent;
-    aiFillBtn.textContent = "جاري البحث...";
-
-    try {
-      // 1) بحث محلي
-      const local = getAllGames().find(g => g.name.toLowerCase() === name.toLowerCase() || g.name.toLowerCase().includes(name.toLowerCase()));
-      if (local) {
-        if (aImg) aImg.value = local.img || "/no-image.png";
-        if (aDesc) aDesc.value = modDesc; // تعيين الوصف المطلوب
-        alert("تمت التعبئة من قاعدة البيانات المحلية.");
-        return;
-      }
-
-      // 2) جلب من ويكيبيديا عبر AllOrigins (CORS proxy) — فقط للحصول على صورة إضافية إن وُجدت
-      const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(name.replace(/\s+/g, "_"))}`;
-      const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(wikiUrl)}`;
-      let image = "";
-      try {
-        const res = await fetch(proxy);
-        if (res.ok) {
-          const html = await res.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, "text/html");
-          const og = doc.querySelector('meta[property="og:image"], meta[name="og:image"]');
-          image = og ? (og.getAttribute("content") || "") : "";
-        }
-      } catch (e) {
-        // تجاهل فشل البروكسي — نملأ على أي حال
-        console.warn("wiki fetch failed", e);
-      }
-
-      if (aImg) aImg.value = image || "/no-image.png";
-      if (aDesc) aDesc.value = modDesc; // تعيين الوصف المطلوب
-
-      alert("تمت التعبئة بنجاح (الوصف تم توليده حسب طلبك).");
-    } catch (err) {
-      console.error(err);
-      alert("فشل جلب المعلومات التلقائية. تم توليد الوصف محلياً.");
-      if (aDesc) aDesc.value = modDesc;
-    } finally {
-      aiFillBtn.disabled = false;
-      aiFillBtn.textContent = origText;
-    }
-  }
-
-  if (aiFillBtn) aiFillBtn.addEventListener("click", aiFillHandler);
-  window.aiFillHandler = aiFillHandler;
-
-  /* =========================
      تهيئة أولية
   ========================== */
   (function init() {
-    if (searchInput && location.search) {
-      const params = new URLSearchParams(location.search);
-      const q = params.get("q");
-      if (q) {
-        searchQuery = q;
-        searchInput.value = q;
-      }
-    }
     renderGames();
     renderPagination();
   })();
