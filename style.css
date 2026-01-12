@@ -42,7 +42,7 @@
     }
 
     .hamburger .bar{display:block;width:22px;height:2px;background:linear-gradient(90deg,var(--accent),#ff8f61);border-radius:2px;position:relative}
-    .hamburger .bar::before,.hamburger .bar::after{content:'';position:absolute;left:0;width:22px;height:2px;background:inherit;border-radius:2px;transform-origin:center;transition:var(--transitio)
+    .hamburger .bar::before,.hamburger .bar::after{content:'';position:absolute;left:0;width:22px;height:2px;background:inherit;border-radius:2px;transform-origin:center;transition:var(--transition)}
     .hamburger .bar::before{top:-7px}
     .hamburger .bar::after{top:7px}
 
@@ -110,7 +110,7 @@
 }
 
 /* Grid للألعاب */
-  ./* شبكة الألعاب */
+  /* شبكة الألعاب */
 .games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -378,33 +378,6 @@ i {
   color: var(--muted);
 }
 
-.game-details img {
-  width: 100%;
-  max-width: 320px;   /* نفس حجم الصور الحلو */
-  height: 320px;
-  object-fit: cover;  /* أهم شي */
-  border-radius: 16px;
-  display: block;
-  margin: 20px auto;
-}
-
-.game-details a {
-  display: inline-block;
-  background: linear-gradient(135deg, #f7c600, #ff9f00);
-  color: #000;
-  padding: 10px 22px;
-  border-radius: 12px;
-  font-weight: bold;
-  text-decoration: none;   /* أهم سطر */
-  margin-top: 10px;
-  transition: 0.3s;
-}
-
-.game-details a:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(255, 183, 0, 0.4);
-}
-
 .ad-card {
   grid-column: 1 / -1; /* يخليه بعرض الصف */
   background: #fff;
@@ -622,10 +595,6 @@ body.light .sidebar {
 
 body.light .sidebar a {
   color: #0f172a;
-}
-
-body.light .sidebar a:hover {
-  color: #2563eb;
 }
 
 /* =====================
@@ -975,5 +944,4 @@ body.light .ad-card {
   font-size: 24px;
   cursor: pointer;
   z-index: 9999;
-  display: block;
 }
