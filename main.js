@@ -1,6 +1,5 @@
-/* main.js — نسخة كاملة مع الإضافات (المساعد الذكي + جلب صورة تلقائي)
-   استبدل هذا الملف في مشروعك ليعمل كما السابق مع الوظائف الجديدة.
-   لا أضفت console.debug أو لوقز إضافية — فقط وظائف كاملة.
+/* main.js — نسخة كاملة مع إضافة المساعد الذكي (الوصف: "اسم اللعبة Mod Ultimate money 💰")
+   لا أغير أي سلوك آخر في الملف، الصق هذا الملف مكان الملف الحالي.
 */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -253,8 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.renderByCategory(cat);
       });
     });
-    // روابط <a onclick="renderByCategory('...')"> أو href="#" موجودة في HTML السابق will work without binding
-    // لكن إذا كانت <a href="?category=..."> نمنع السلوك الافتراضي ونستخدم renderByCategory
+    // روابط <a href="?category=...">
     const catLinks = sidebar.querySelectorAll('a[href*="category="]');
     catLinks.forEach(a => {
       a.addEventListener('click', (e) => {
@@ -408,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      المساعد الذكي (smartAddGame)
-     يطلب اسم اللعبة، يجلب صورة، يملأ الحقول ويفتح لوحة الأدمن
+     السلوك المعدل: الوصف = "اسم اللعبة Mod Ultimate money 💰"
   ========================== */
   async function smartAddGame() {
     const name = prompt("اسم اللعبة (الإضافة الذكي) - اكتب اسم اللعبة:");
@@ -422,8 +420,13 @@ document.addEventListener("DOMContentLoaded", () => {
     window.tempVersions = [{ v: "1.0", size: "", link: "#" }];
     if (aName) aName.value = name;
     if (aImg) aImg.value = imgUrl || "/no-image.png";
-    if (aDesc) aDesc.value = "تمت الإضافة بواسطة الإضافة الذكية";
-    if (aCategory) aCategory.value = aCategory.options.length ? aCategory.options[1]?.value || "" : "";
+
+    // الوصف المطلوب: اسم اللعبة + " Mod Ultimate money 💰"
+    if (aDesc) aDesc.value = `${name} Mod Ultimate money 💰`;
+
+    if (aCategory && aCategory.options.length) {
+      aCategory.value = aCategory.options[1]?.value || "";
+    }
     renderVersionsInPanel();
 
     if (adminPanel) adminPanel.style.display = "flex";
