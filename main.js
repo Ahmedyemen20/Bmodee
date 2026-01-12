@@ -193,11 +193,29 @@ window.addVersion = () => {
 /* =========================
    تعديل / حذف
 ========================= */
+
 window.editGame = i => {
-  const n = prompt("اسم اللعبة", adminGames[i].name);
-  if (!n) return;
-  adminGames[i].name = n;
+  const game = adminGames[i];
+
+  const name = prompt("اسم اللعبة", game.name);
+  if (!name) return;
+
+  const img = prompt("رابط الصورة", game.img);
+  if (!img) return;
+
+  const desc = prompt("الوصف", game.desc || "");
+  if (desc === null) return;
+
+  const category = prompt("القسم", game.category);
+  if (!category) return;
+
+  game.name = name;
+  game.img = img;
+  game.desc = desc;
+  game.category = category;
+
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  alert("تم التعديل ✅");
   location.reload();
 };
 
@@ -206,6 +224,29 @@ window.removeGame = i => {
   adminGames.splice(i, 1);
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
   location.reload();
+};
+
+// =========================
+// إضافة إصدار جديد (أدمن)
+// =========================
+window.addVersionPrompt = gameIndex => {
+  const v = prompt("رقم الإصدار:");
+  if (!v) return;
+
+  const size = prompt("الحجم:");
+  if (size === null) return;
+
+  const link = prompt("رابط التحميل:");
+  if (!link) return;
+
+  adminGames[gameIndex].versions.push({
+    v,
+    size,
+    link
+  });
+
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  alert("تم إضافة الإصدار ✅");
 };
 
 /* =========================
