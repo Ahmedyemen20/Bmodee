@@ -1,20 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 /* =========================
-   الهامبرجر
+   الهامبرقر
 ========================= */
-const hamburger = document.getElementById('hamburger');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
+const hamburger = document.getElementById("hamburger");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
 
 if (hamburger && sidebar && overlay) {
   hamburger.onclick = () => {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('open');
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("open");
   };
   overlay.onclick = () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('open');
+    sidebar.classList.remove("open");
+    overlay.classList.remove("open");
   };
 }
 
@@ -25,32 +25,29 @@ const gamesPerPage = 10;
 let currentPage = 1;
 let currentCategory = "all";
 
-const gamesGrid = document.getElementById('gamesGrid');
-const pagination = document.getElementById('pagination');
+const gamesGrid = document.getElementById("gamesGrid");
+const pagination = document.getElementById("pagination");
 
 /* =========================
    البيانات
 ========================= */
-let adminGames = JSON.parse(localStorage.getItem('adminGames')) || [];
+let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
 const baseGames = [
   {
     name: "Hay Day",
     img: "/unnamed (2).jpg",
     desc: "Hay Day Mod APK Unlimited Money",
-    rating: 4.8,
     category: "strategy",
     versions: [{ v: "1.0", size: "150 MB", link: "#" }]
   }
 ];
 
 /* =========================
-   دمج وترتيب
+   دمج الألعاب
 ========================= */
 function getAllGames() {
-  return [...baseGames, ...adminGames].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  return [...baseGames, ...adminGames];
 }
 
 function getFilteredGames() {
@@ -59,19 +56,53 @@ function getFilteredGames() {
 }
 
 /* =========================
+   عرض الألعاب
+========================= */
+function renderGames() {
+  gamesGrid.innerHTML = "";
+
+  const games = getFilteredGames();
+  const start = (currentPage - 1) * gamesPerPage;
+  const slice = games.slice(start, start + gamesPerPage);
+
+  slice.forEach(game => {
+    const index = adminGames.indexOf(game);
+    const isAdminGame = index !== -1;
+
+    const card = document.createElement("div");
+    card.className = "game-card";
+    card.onclick = () => {
+      location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+    };
+
+    card.innerHTML = `
+      <img src="${game.img}" onerror="this.src='/no-image.png'">
+      <h3>${game.name}</h3>
+      <p>${game.desc || ""}</p>
+
+      ${location.search.includes("admin=true") && isAdminGame ? `
+        <div class="admin-actions" onclick="event.stopPropagation()">
+          <button onclick="editGame(${index})">✏️</button>
+          <button onclick="removeGame(${index})">🗑</button>
+        </div>
+      ` : ``}
+    `;
+
+    gamesGrid.appendChild(card);
+  });
+}
+
+/* =========================
    Pagination
 ========================= */
 function renderPagination() {
-  if (!pagination) return;
-  pagination.innerHTML = '';
-
-  const games = getFilteredGames();
-  const pages = Math.ceil(games.length / gamesPerPage);
+  pagination.innerHTML = "";
+  const pages = Math.ceil(getFilteredGames().length / gamesPerPage);
 
   for (let i = 1; i <= pages; i++) {
-    const btn = document.createElement('button');
+    const btn = document.createElement("button");
     btn.textContent = i;
-    if (i === currentPage) btn.classList.add('active');
+    if (i === currentPage) btn.classList.add("active");
     btn.onclick = () => {
       currentPage = i;
       renderGames();
@@ -82,101 +113,6 @@ function renderPagination() {
 }
 
 /* =========================
-   أزرار الأدمن (إخفاء/إظهار)
-========================= */
-const adminBtn = document.getElementById("adminBtn");
-const adminPanel = document.getElementById("adminPanel");
-const smartBtn = document.getElementById("smartBtn");
-
-// نخفي الكل افتراضيًا
-if (adminBtn) adminBtn.style.display = "none";
-if (smartBtn) smartBtn.style.display = "none";
-
-// نظهر فقط للأدمن
-if (location.search.includes("admin=true")) {
-  if (adminBtn) {
-    adminBtn.style.display = "block";
-    adminBtn.onclick = () => {
-      adminPanel.style.display = "flex";
-    };
-  }
-
-  if (smartBtn) {
-    smartBtn.style.display = "block";
-    smartBtn.onclick = smartAddGame;
-  }
-}
-
-window.closeAdmin = () => {
-  if (adminPanel) adminPanel.style.display = "none";
-};
-
-/* =========================
-   عرض الألعاب
-========================= */
-function renderGames() {
-  if (!gamesGrid) return;
-  saysGrid.innerHTML = '';
-
-  const games = getFilteredGames();
-  const start = (currentPage - 1) * gamesPerPage;
-  const slice = games.slice(start, start + gamesPerPage);
-
-  slice.forEach(game => {
-    const adminIndex = adminGames.indexOf(game);
-    const isAdminGame = adminIndex !== -1;
-
-    const card = document.createElement('div');
-    card.className = 'game-card';
-    card.onclick = () => {
-      location.href = `game.html?name=${encodeURIComponent(game.name)}`;
-    };
-
-    card.innerHTML = `
-      <img src="${game.img}" onerror="this.src='/no-image.png'">
-      <h3>${game.name}</h3>
-      <p>${game.desc || ''}</p>
-
-      ${location.search.includes("admin=true") && isAdminGame ? `
-        <div class="admin-actions" onclick="event.stopPropagation()">
-          <button onclick="editGame(${adminIndex})">✏️</button>
-          <button onclick="removeGame(${adminIndex})">🗑</button>
-        </div>` : ``}
-    `;
-
-    gamesGrid.appendChild(card);
-  });
-}
-
-/* =========================
-   البحث
-========================= */
-const searchInput = document.getElementById('searchInput');
-if (searchInput) {
-  searchInput.oninput = () => {
-    const v = searchInput.value.toLowerCase();
-    gamesGrid.innerHTML = '';
-
-    getAllGames()
-      .filter(g => g.name.toLowerCase().includes(v))
-      .forEach(game => {
-        const c = document.createElement('div');
-        c.className = 'game-card';
-        c.onclick = () => {
-          location.href = `game.html?name=${encodeURIComponent(game.name)}`;
-        };
-        c.innerHTML = `<img src="${game.img}"><h3>${game.name}</h3>`;
-        gamesGrid.appendChild(c);
-      });
-
-    if (!v) {
-      renderGames();
-      renderPagination();
-    }
-  };
-}
-
-/* =========================
    الأقسام
 ========================= */
 window.renderByCategory = cat => {
@@ -184,38 +120,54 @@ window.renderByCategory = cat => {
   currentPage = 1;
   renderGames();
   renderPagination();
-  sidebar?.classList.remove('open');
-  overlay?.classList.remove('open');
+  sidebar.classList.remove("open");
+  overlay.classList.remove("open");
 };
 
 window.renderAll = () => renderByCategory("all");
 
 /* =========================
-   إضافة ذكية
+   لوحة الأدمن
 ========================= */
-function autoImage(name) {
-  return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
+const adminBtn = document.getElementById("adminBtn");
+const adminPanel = document.getElementById("adminPanel");
+const smartBtn = document.getElementById("smartBtn");
+
+if (adminBtn) adminBtn.style.display = "none";
+if (smartBtn) smartBtn.style.display = "none";
+
+if (location.search.includes("admin=true")) {
+  adminBtn.style.display = "block";
+  adminBtn.onclick = () => adminPanel.style.display = "flex";
+
+  smartBtn.style.display = "block";
+  smartBtn.onclick = smartAddGame;
 }
 
-function autoDesc(name) {
-  return `${name} Mod APK for Android`;
-}
+window.closeAdmin = () => adminPanel.style.display = "none";
 
-window.smartAddGame = () => {
-  if (!location.search.includes("admin=true")) return;
+/* =========================
+   عناصر الفورم
+========================= */
+const aName = document.getElementById("aName");
+const aImg = document.getElementById("aImg");
+const aDesc = document.getElementById("aDesc");
+const aCategory = document.getElementById("aCategory");
 
-  const name = prompt("اسم اللعبة:");
-  if (!name) return;
-
-  const img = prompt("رابط الصورة (اختياري):") || autoImage(name);
-  const category = prompt("القسم:", "action") || "other";
+/* =========================
+   إضافة لعبة عادية
+========================= */
+window.saveGame = () => {
+  if (!aName.value || !aImg.value || !aCategory.value) {
+    alert("كمّل البيانات");
+    return;
+  }
 
   adminGames.unshift({
-    name,
-    img,
-    desc: autoDesc(name),
-    category,
-    rating: 4.5,
+    name: aName.value,
+    img: aImg.value,
+    desc: aDesc.value,
+    category: aCategory.value,
     versions: [{ v: "Latest", size: "—", link: "#" }]
   });
 
@@ -224,7 +176,7 @@ window.smartAddGame = () => {
 };
 
 /* =========================
-   تعديل / حذف لعبة
+   تعديل / حذف
 ========================= */
 window.editGame = i => {
   const n = prompt("اسم اللعبة", adminGames[i].name);
@@ -235,14 +187,47 @@ window.editGame = i => {
 };
 
 window.removeGame = i => {
-  if (!confirm("حذف اللعبة؟")) return;
+  if (!confirm("حذف؟")) return;
   adminGames.splice(i, 1);
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
   location.reload();
 };
 
 /* =========================
-   تشغيل
+   إضافة ذكية
+========================= */
+function autoImage(name) {
+  return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
+}
+
+function autoCategory(name) {
+  name = name.toLowerCase();
+  if (name.includes("clash")) return "strategy";
+  if (name.includes("gta") || name.includes("call")) return "action";
+  return "other";
+}
+
+function smartAddGame() {
+  const name = prompt("اسم اللعبة:");
+  if (!name) return;
+
+  const img = prompt("رابط الصورة (اختياري):") || autoImage(name);
+  const cat = prompt("القسم:", autoCategory(name));
+
+  adminGames.unshift({
+    name,
+    img,
+    desc: `${name} Mod APK`,
+    category: cat || "other",
+    versions: [{ v: "Latest", size: "—", link: "#" }]
+  });
+
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  location.reload();
+}
+
+/* =========================
+   تشغيل أولي
 ========================= */
 renderGames();
 renderPagination();
