@@ -970,7 +970,6 @@ body.light .ad-card {
   color: white;
   font-size: 24px;
   cursor: pointer;
-  z-index: 100001;
-  pointer-events: auto !important;
+  z-index: 9999;
   display: block;
 }
