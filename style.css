@@ -1,5 +1,7 @@
 /* style.css — كامل جاهز للنسخ
-   تحسينات إضافية على Footer وتنسيق sidebar/search
+   - زدت حجم خط أقسام الـ sidebar
+   - عدّلت Footer ليظهر منظمًا
+   - حافظت على بقية الأنماط للأدمن والمساعد والهامبرغر
 */
 
 /* قواعد عامة */
@@ -61,21 +63,33 @@ header{
   position:fixed;
   top:64px;
   left:-300px;
-  width:260px;
+  width:280px;
   height:calc(100% - 64px);
   background:var(--panel-bg);
-  padding:14px;
+  padding:18px;
   transition:left .28s ease;
   z-index:9997;
   overflow:auto;
   border-right:1px solid rgba(255,255,255,0.02);
 }
 .sidebar.open{ left:0; }
-.sidebar h3{ color:#fff; margin-bottom:8px; }
+.sidebar h3{ color:#fff; margin-bottom:12px; font-size:18px; }
 .cat-list{ list-style:none; margin-bottom:10px; padding:0; }
-.cat-list li{ margin-bottom:6px; }
-.cat-list button{ width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer; }
-.cat-list button:hover{ background:rgba(255,255,255,0.02); color:#fff; }
+.cat-list li{ margin-bottom:8px; }
+/* زدنا حجم الخط والتباعد لأزرار الأقسام */
+.cat-list button{
+  width:100%;
+  text-align:left;
+  padding:12px 12px;
+  border-radius:10px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:16px; /* أكبر حجم خط */
+  font-weight:600;
+}
+.cat-list button:hover{ background:rgba(255,255,255,0.03); color:#fff; transform: translateX(4px); transition: transform .12s ease; }
 
 /* Overlay */
 .overlay{ position:fixed; inset:0; background:rgba(0,0,0,0); pointer-events:none; opacity:0; transition:background .2s ease, opacity .2s ease; z-index:99989; }

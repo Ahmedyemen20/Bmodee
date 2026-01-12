@@ -1,5 +1,5 @@
 /* main.js — جاهز للنسخ
-   إصلاح: ربط أقسام الشريط الجانبي، دعم ?category=، تحسين التصفية والبحث، إبقاء وظائف الأدمن والمساعد الذكي.
+   تأكد: ربط أقسام sidebar، تكبير نص الأقسام في CSS، تحسين footer، search يعمل.
 */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ======= عناصر DOM وإعدادات ======= */
+  /* ======= عناصر DOM & إعدادات ======= */
   const gamesGrid = document.getElementById("gamesGrid");
   const pagination = document.getElementById("pagination");
   const searchInput = document.getElementById("searchInput");
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   };
 
-  /* ======= البحث (search) ======= */
+  /* ======= بحث (search) ======= */
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       searchQuery = (e.target.value || "").trim().toLowerCase();
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ======= تصفية ودمج الألعاب ======= */
+  /* ======= دمج وتصفيه الألعاب ======= */
   function getAllGames() {
     return [...baseGames, ...adminGames];
   }
@@ -220,25 +220,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ======= ربط أقسام sidebar (دعم data-category) ======= */
-  // يتعامل مع أزرار تحمل data-category="..." أو روابط داخل sidebar
+  /* ======= ربط أزرار الأقسام في sidebar (data-category) ======= */
   function bindSidebarCategories() {
     if (!sidebar) return;
-    // أزرار بعنصر data-category
-    const catButtons = sidebar.querySelectorAll('[data-category]');
+    const catButtons = sidebar.querySelectorAll('.cat-list button[data-category]');
     catButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         const cat = btn.dataset.category || "all";
-        window.renderByCategory(cat);
-      });
-    });
-    // روابط <a href="?category=..."> أيضاً: نمنع السلوك الافتراضي ونستخدم renderByCategory
-    const catLinks = sidebar.querySelectorAll('a[href*="category="]');
-    catLinks.forEach(a => {
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        const u = new URL(a.href, location.href);
-        const cat = u.searchParams.get('category') || "all";
         window.renderByCategory(cat);
       });
     });
@@ -248,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.renderByCategory = cat => {
     currentCategory = cat || "all";
     currentPage = 1;
-    // إفراغ البحث عند اختيار قسم (اختياري)
+    // افراغ البحث عند اختيار قسم (اختياري)
     searchQuery = "";
     if (searchInput) searchInput.value = "";
     renderGames();
@@ -383,18 +371,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.smartAddGame = smartAddGame;
 
-  /* ======= ربط الأقسام وقراءة باراميتر category من URL عند التحميل ======= */
+  /* ======= bind & init ======= */
   bindSidebarCategories();
 
-  // قراءة category من الـ URL عند التحميل (مثال: index.html?category=action)
+  // قراءة category من URL عند التحميل
   const urlParams = new URLSearchParams(location.search);
   const initialCategory = urlParams.get('category');
   if (initialCategory) {
-    // استخدم renderByCategory (المعلنة على window)
     window.renderByCategory(initialCategory);
   }
 
-  /* ======= تهيئة أولية ======= */
   (function init() {
     renderGames();
     renderPagination();

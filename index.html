@@ -14,25 +14,24 @@
 
     <div class="header-center">
       <h1 class="site-title"><a href="index.html">Bmodee</a></h1>
+
       <div class="search-wrap">
         <input id="searchInput" type="search" placeholder="ابحث عن لعبة..." aria-label="بحث">
         <button id="searchClear" title="مسح">✕</button>
       </div>
     </div>
-
-    <!-- يمكن إضافة عناصر رأسية أخرى هنا -->
   </header>
 
   <!-- Sidebar (الهامبرغر) -->
   <nav id="sidebar" class="sidebar" aria-hidden="true">
     <h3>الأقسام</h3>
     <ul class="cat-list">
-      <li><button onclick="renderAll()">الكل</button></li>
-      <li><button onclick="renderByCategory('action')">أكشن</button></li>
-      <li><button onclick="renderByCategory('sports')">رياضة</button></li>
-      <li><button onclick="renderByCategory('strategy')">استراتيجية</button></li>
-      <li><button onclick="renderByCategory('racing')">سباق</button></li>
-      <li><button onclick="renderByCategory('car')">سيارات</button></li>
+      <li><button data-category="all">الكل</button></li>
+      <li><button data-category="action">أكشن</button></li>
+      <li><button data-category="sports">رياضة</button></li>
+      <li><button data-category="strategy">استراتيجية</button></li>
+      <li><button data-category="racing">سباق</button></li>
+      <li><button data-category="car">سيارات</button></li>
     </ul>
 
     <hr>
@@ -76,7 +75,7 @@
     <div class="footer-inner">
       <nav class="footer-links">
         <a href="privacy.html">سياسة الخصوصية</a>
-        <span> | </span>
+        <span class="sep">|</span>
         <a href="terms.html">الشروط والأحكام</a>
       </nav>
       <p class="copyright">© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
