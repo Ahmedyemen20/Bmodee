@@ -388,6 +388,23 @@ i {
   margin: 20px auto;
 }
 
+.game-details a {
+  display: inline-block;
+  background: linear-gradient(135deg, #f7c600, #ff9f00);
+  color: #000;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-weight: bold;
+  text-decoration: none;   /* أهم سطر */
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.game-details a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 183, 0, 0.4);
+}
+
 .ad-card {
   grid-column: 1 / -1; /* يخليه بعرض الصف */
   background: #fff;
