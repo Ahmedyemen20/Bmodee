@@ -19,8 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     الإعدادات والـ DOM عناصر
+     عناصر البحث والعرض والـ DOM
   ========================== */
+  const searchInput = document.getElementById("searchInput");
   const gamesGrid = document.getElementById("gamesGrid");
   const pagination = document.getElementById("pagination");
 
@@ -37,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let gamesPerPage = 10;
   let currentPage = 1;
   let currentCategory = "all";
+  let searchQuery = ""; // نص البحث
+  let searchTimeout = null; // للتأخير (debounce)
 
   /* =========================
      البيانات
@@ -83,20 +86,30 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* =========================
-     دوال جلب وتصفيه الألعاب
+     دوال جلب وتصفيه الألعاب (تدعم البحث + الأقسام)
   ========================== */
   function getAllGames() {
     return [...baseGames, ...adminGames];
   }
 
   function getFilteredGames() {
-    if (currentCategory === "all") return getAllGames();
-    return getAllGames().filter(g => g.category === currentCategory);
+    let list = getAllGames();
+    if (currentCategory && currentCategory !== "all") {
+      list = list.filter(g => g.category === currentCategory);
+    }
+    if (searchQuery && searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(g =>
+        (g.name && g.name.toLowerCase().includes(q)) ||
+        (g.desc && g.desc.toLowerCase().includes(q))
+      );
+    }
+    return list;
   }
 
   /* =========================
      عرض الألعاب
-     لاحظ: أزرار التعديل تظهر فقط للألعاب الموجودة في adminGames
+     أزرار الأدمن تظهر فقط للألعاب المخزنة في adminGames
   ========================== */
   function renderGames() {
     if (!gamesGrid) return;
@@ -107,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const slice = games.slice(start, start + gamesPerPage);
 
     slice.forEach(game => {
-      const index = adminGames.findIndex(g => g.name === game.name && g.versions && JSON.stringify(g.versions) === JSON.stringify(game.versions));
+      const index = adminGames.findIndex(g => g.name === game.name && JSON.stringify(g.versions) === JSON.stringify(game.versions));
       const isAdminGame = index !== -1;
 
       const card = document.createElement("div");
@@ -130,6 +143,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       gamesGrid.appendChild(card);
     });
+
+    // رسالة عند عدم وجود نتائج
+    if (games.length === 0) {
+      const msg = document.createElement("div");
+      msg.className = "no-results";
+      msg.textContent = "لا توجد نتائج للبحث.";
+      gamesGrid.appendChild(msg);
+    }
   }
 
   /* =========================
@@ -138,7 +159,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderPagination() {
     if (!pagination) return;
     pagination.innerHTML = "";
-    const pages = Math.max(1, Math.ceil(getFilteredGames().length / gamesPerPage));
+    const total = Math.max(1, getFilteredGames().length);
+    const pages = Math.max(1, Math.ceil(total / gamesPerPage));
 
     for (let i = 1; i <= pages; i++) {
       const btn = document.createElement("button");
@@ -155,7 +177,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     الأقسام
+     التعامل مع البحث (debounce)
+  ========================== */
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const val = e.target.value || "";
+      // تأخير بسيط لتقليل عمليات إعادة الرندر أثناء الكتابة
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchQuery = val.trim();
+        currentPage = 1;
+        renderGames();
+        renderPagination();
+      }, 200);
+    });
+  }
+
+  /* =========================
+     الأقسام (تغلق sidebar عند اختيار قسم)
   ========================== */
   window.renderByCategory = cat => {
     currentCategory = cat;
@@ -271,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.editGame = (index) => {
     const g = adminGames[index];
     if (!g) {
-      alert("اللعبة غير موجودة في إضافات الأدمن");
+      alert("ا��لعبة غير موجودة في إضافات الأدمن");
       return;
     }
     editingIndex = index;
@@ -317,6 +356,15 @@ document.addEventListener("DOMContentLoaded", () => {
      تهيئة أولية
   ========================== */
   (function init() {
+    // لو في قيمة في حقل البحث من رابط أو localStorage نعبيها
+    if (searchInput && location.search) {
+      const params = new URLSearchParams(location.search);
+      const q = params.get("q");
+      if (q) {
+        searchQuery = q;
+        searchInput.value = q;
+      }
+    }
     renderGames();
     renderPagination();
   })();
