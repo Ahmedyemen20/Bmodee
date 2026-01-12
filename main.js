@@ -82,6 +82,36 @@ function renderPagination() {
 }
 
 /* =========================
+   أزرار الأدمن (إخفاء/إظهار)
+========================= */
+const adminBtn = document.getElementById("adminBtn");
+const adminPanel = document.getElementById("adminPanel");
+const smartBtn = document.getElementById("smartBtn");
+
+// نخفي الكل افتراضيًا
+if (adminBtn) adminBtn.style.display = "none";
+if (smartBtn) smartBtn.style.display = "none";
+
+// نظهر فقط للأدمن
+if (location.search.includes("admin=true")) {
+  if (adminBtn) {
+    adminBtn.style.display = "block";
+    adminBtn.onclick = () => {
+      adminPanel.style.display = "flex";
+    };
+  }
+
+  if (smartBtn) {
+    smartBtn.style.display = "block";
+    smartBtn.onclick = smartAddGame;
+  }
+}
+
+window.closeAdmin = () => {
+  if (adminPanel) adminPanel.style.display = "none";
+};
+
+/* =========================
    عرض الألعاب
 ========================= */
 function renderGames() {
