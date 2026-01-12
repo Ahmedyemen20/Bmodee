@@ -1,12 +1,6 @@
-/* style.css — ملف كامل جاهز للنسخ
-   دمجت الأنماط الأصلية الموجودة بالمستودع مع التعديلات الأخيرة:
-   - الهامبرغر / الشريط الجانبي / overlay
-   - شبكة البطاقات، بطاقات الألعاب، pagination
-   - زر الأدمن (حاوية) + زر المساعد الذكي الداخلي
-   - لوحة الأدمن (admin-panel) مع الحقول والإصدارات
-   - footer وروابط سياسة الخصوصية والشروط
-   - تحسينات z-index لمنع تغطية الأزرار
-   ملاحظة: عدّل القيم والألوان حسب رغبتك.
+/* style.css — كامل جاهز للنسخ
+   يستعيد سلوك الهامبرغر وكان متوافق مع الهيكل الأصلي.
+   احتفظت بتعديلات الأدمن والمساعد الذكي، مع ضمان أن overlay لا يغطي الأزرار.
 */
 
 /* =========================
@@ -18,7 +12,6 @@
   --muted: #9ca3af;
   --accent: #ff6a00;
   --accent-2: #ff3d00;
-  --glass: rgba(255,255,255,0.03);
   --panel-bg: #071226;
 }
 
@@ -31,11 +24,12 @@ body {
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: 100px; /* مساحة للفوتر */
+  padding-bottom: 100px;
 }
 
 /* =========================
    رأس الموقع و هامبرغر / الشريط الجانبي
+   هذا الجزء مهم لعمل الهامبرغر كما السابق
 ========================= */
 header {
   position: fixed;
@@ -47,8 +41,6 @@ header {
   padding: 10px 16px;
   z-index: 9999;
   background: linear-gradient(90deg, rgba(0,0,0,0.3), rgba(0,0,0,0.2));
-  backdrop-filter: blur(4px);
-  width: 100%;
 }
 
 .hamburger {
@@ -62,7 +54,7 @@ header {
 .sidebar {
   position: fixed;
   top: 60px;
-  left: -300px;
+  left: -300px; /* مخفي افتراضياً */
   width: 260px;
   height: calc(100% - 60px);
   background: var(--panel-bg);
@@ -75,7 +67,7 @@ header {
 }
 
 .sidebar.open {
-  left: 0;
+  left: 0; /* يظهر عند إضافة الصنف open */
 }
 
 .sidebar a {
@@ -106,7 +98,7 @@ header {
 }
 
 /* =========================
-   المحتوى الرئيسي - شبكة الألعاب
+   المحتوى الرئيسي
 ========================= */
 main {
   max-width: 1120px;
@@ -152,38 +144,11 @@ main {
 }
 .game-card p { color: var(--muted); font-size: 13px; margin-top: 2px; }
 
-/* رابط المصدر */
-.source-link {
-  color: #a5d8ff;
-  font-size: 13px;
-  text-decoration: none;
-}
+.source-link { color: #a5d8ff; font-size: 13px; text-decoration: none; }
 .source-link:hover { text-decoration: underline; }
 
-/* أزرار إدارة داخل البطاقة */
-.admin-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: auto;
-}
-.admin-actions button {
-  padding: 6px 8px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-}
-.admin-actions .edit { background: #2196f3; color: #fff; }
-.admin-actions .addver { background: #4caf50; color: #fff; }
-.admin-actions .del { background: #f44336; color: #fff; }
-
 /* Pagination */
-.pagination {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 8px;
-}
+.pagination { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
 .pagination button {
   background: transparent;
   color: var(--muted);
@@ -199,29 +164,8 @@ main {
 }
 
 /* =========================
-   About / Contact / Footer
+   زر الأدمن + مساعد ذكي داخلي
 ========================= */
-section { max-width: 1120px; margin: 20px auto; padding: 0 16px; }
-.footer {
-  background: #050509;
-  color: var(--muted);
-  text-align: center;
-  padding: 20px 10px;
-  margin-top: 40px;
-  position: relative;
-  z-index: 1;
-}
-.footer-links a {
-  color: var(--muted);
-  text-decoration: none;
-  margin: 0 6px;
-}
-.footer-links a:hover { color: #fff; }
-
-/* =========================
-   زر الأدمن (حاوية) + المساعد الذكي الداخلي
-========================= */
-/* الحاوية الدائرية للأدمن */
 .admin-add {
   position: fixed;
   bottom: 25px;
@@ -237,19 +181,11 @@ section { max-width: 1120px; margin: 20px auto; padding: 0 16px; }
   font-size: 32px;
   border: none;
   cursor: pointer;
-  z-index: 100000; /* أعلى من overlay */
+  z-index: 100000;
   box-shadow: 0 8px 28px rgba(0,0,0,0.6);
-  user-select: none;
-  -webkit-user-select: none;
 }
+.admin-add .admin-plus { pointer-events: none; font-weight: 700; }
 
-/* علامة + داخل الحاوية */
-.admin-add .admin-plus {
-  pointer-events: none;
-  font-weight: 700;
-}
-
-/* الزر الداخلي للمساعد الذكي */
 .smart-inner, #smartBtn {
   position: absolute;
   top: -8px;
@@ -267,18 +203,10 @@ section { max-width: 1120px; margin: 20px auto; padding: 0 16px; }
   cursor: pointer;
   box-shadow: 0 6px 16px rgba(0,0,0,0.45);
   z-index: 100005;
-  transition: transform .12s ease;
 }
-.smart-inner:active { transform: scale(.98); }
-
-/* تحفظ قابلية النقر */
-#smartBtn, .smart-inner { pointer-events: auto; }
-
-/* اجعل overlay تحت الأزرار الافتراضية */
-#overlay.open { z-index: 99990; }
 
 /* =========================
-   لوحة الأدمن (admin-panel)
+   لوحة الأدمن
 ========================= */
 .admin-panel {
   position: fixed;
@@ -315,10 +243,7 @@ section { max-width: 1120px; margin: 20px auto; padding: 0 16px; }
   max-height: 70vh;
 }
 
-/* الحقول في لوحة الأدمن */
-.admin-body input,
-.admin-body textarea,
-.admin-body select {
+.admin-body input, .admin-body textarea, .admin-body select {
   width: 100%;
   padding: 10px 12px;
   margin-bottom: 10px;
@@ -330,179 +255,40 @@ section { max-width: 1120px; margin: 20px auto; padding: 0 16px; }
 }
 .admin-body textarea { min-height: 80px; resize: vertical; }
 
-.admin-version {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
-}
-.admin-version input { flex: 1; font-size: 13px; padding: 8px; }
-
-/* أزرار الحفظ والإضافة */
+/* أزرار */
 .btn { padding: 10px 12px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; }
 .btn.green { background: #22c55e; color: #000; }
 .btn.yellow { background: #ffd166; color: #000; }
-.btn.red { background: #f43f5e; color: #fff; }
-
-/* =========================
-   مكونات إضافية ظاهرة سابقاً بالمستودع
-   (نسخ من السطور الموجودة في المستودع لضمان التوافق)
-========================= */
-
-/* مثال على زر إضافة دائرية (مكررة من النسخة السابقة لكن متوافقة) */
-.admin-add {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #22c55e;
-  color: #000;
-  font-size: 32px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
-  z-index: 999;
-}
-
-/* مودال/نافذة بسيطة */
-.admin-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.admin-box {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Footer variant and links (ensuring they reappear) */
-.footer {
-  background: #0f0f0f;
-  color: #ccc;
-  text-align: center;
-  padding: 20px 10px;
-  margin-top: 40px;
-}
-.footer-links a {
-  color: #aaa;
-  text-decoration: none;
-  margin: 0 5px;
-}
-.footer-links a:hover {
-  color: #fff;
-}
-
-/* إضافات تحسين المظهر للزر الأدمن (تكرار من النسخة السابقة مع z-index أعلى) */
-.admin-add {
-  position: fixed;
-  bottom: 25px;
-  right: 25px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,#ff9800,#ff5722);
-  color: #fff;
-  font-size: 32px;
-  border: none;
-  cursor: pointer;
-  z-index: 100000; /* مهم */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
-}
-
-/* لوحة أدوات الأدمن (تكرار/تحسين) */
-.admin-panel {
-  position: fixed;
-  inset: 0;
-  background: #111;
-  z-index: 9999;
-  display: none;
-  flex-direction: column;
-}
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background: #000;
-  color: #fff;
-}
-.admin-body {
-  padding: 15px;
-}
-.admin-body input,
-.admin-body textarea {
-  width: 100%;
-}
 
 /* =========================
    عناصر صفحة تفاصيل اللعبة
 ========================= */
-.game-details {
-  max-width: 900px;
-  margin: 86px auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.game-details img {
-  width: 100%;
-  max-height: 420px;
-  object-fit: cover;
-  border-radius: 12px;
-}
-.version {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  background: #071226;
-  border-radius: 10px;
-  margin-bottom: 8px;
-}
-.download-btn {
-  background: linear-gradient(90deg,#06b6d4,#0ea5e9);
-  color: #fff;
-  padding: 8px 10px;
-  border-radius: 8px;
-  text-decoration: none;
-}
+.game-details { max-width: 900px; margin: 86px auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.game-details img { width: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; }
+.version { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 10px; background: #071226; border-radius: 10px; margin-bottom: 8px; }
+.download-btn { background: linear-gradient(90deg,#06b6d4,#0ea5e9); color: #fff; padding: 8px 10px; border-radius: 8px; text-decoration: none; }
 
-/* =========================
-   تحسينات الاستجابة (Responsive)
-========================= */
+/* Footer and links (تأكد أنها موجودة) */
+.footer { background: #0f0f0f; color: #ccc; text-align: center; padding: 20px 10px; margin-top: 40px; position: relative; z-index: 1; }
+.footer-links a { color: #aaa; text-decoration: none; margin: 0 5px; }
+.footer-links a:hover { color: #fff; }
+
+/* Responsive */
 @media (max-width: 720px) {
   .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .admin-add { width: 56px; height: 56px; right: 18px; bottom: 18px; }
   .smart-inner { top: -6px; left: -6px; width: 32px; height: 32px; font-size: 16px; }
-  header { padding: 8px 12px; }
 }
 
-/* Accessibility / Focus */
+/* Accessibility focus */
 button:focus, a:focus, input:focus, select:focus, textarea:focus {
   outline: 3px solid rgba(99,102,241,0.14);
   outline-offset: 2px;
 }
 
-/* إصلاحات محتملة للتغطية (ensure overlay is below admin buttons) */
+/* إصلاح ترتيب الطبقات */
 #overlay.open { z-index: 99990; }
 .admin-add { z-index: 100000; }
 .smart-inner, #smartBtn { z-index: 100005; }
 
-/* =========================
-   نهاية الملف
-========================= */
+/* نهاية الملف */

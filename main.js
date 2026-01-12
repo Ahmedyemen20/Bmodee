@@ -1,12 +1,11 @@
 /* main.js — جاهز للنسخ
-   - الهامبرغر
-   - لوحة الأدمن + زر الأدمن الذي يحتوي مساعد ذكي داخلي
-   - المساعد الذكي يجلب صورة تلقائياً كما في النسخة السابقة
+   سلوك الهامبرغر يعود للعمل كما سابقاً، مع بقاء لوحة الأدمن والمساعد الذكي.
 */
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
-     الهامبرقر
+     الهامبرغر
   ========================== */
   const hamburger = document.getElementById("hamburger");
   const sidebar = document.getElementById("sidebar");
@@ -24,12 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     DOM عناصر وإعدادات
+     DOM عناصر وإعدادات عامة
   ========================== */
   const gamesGrid = document.getElementById("gamesGrid");
   const pagination = document.getElementById("pagination");
 
-  // ملاحظة: adminBtn الآن عنصر يحتوي smartBtn بداخله
+  // adminBtn عنصر حاوية قد يحتوي smartBtn داخله
   const adminBtn = document.getElementById("adminBtn");
   const adminPanel = document.getElementById("adminPanel");
   const smartBtn = document.getElementById("smartBtn");
@@ -91,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     تفعيل أزرار الأدمن والمساعد الذكي (الآن داخل نفس العنصر)
+     تفعيل أزرار الأدمن والمساعد الذكي
      شرط الظهور: ?admin=true أو localStorage.isAdmin === 'true'
   ========================== */
   if (adminBtn) adminBtn.style.display = "none";
@@ -101,12 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (isAdmin) {
     if (adminBtn) {
-      adminBtn.style.display = "flex"; // adminBtn عنصر حاوية الآن
-      // فتح اللوحة عند الضغط على المساحة الأساسية (ليس على زر المساعد)
+      adminBtn.style.display = "flex";
+      // فتح اللوحة عند الضغط على الحاوية (باستثناء الضغط على زر المساعد الذكي الداخلي)
       adminBtn.addEventListener('click', (e) => {
-        // إذا تم الضغط على الزر الداخلي (smartBtn) لا نفّتح اللوحة هنا
         if (e.target && (e.target.id === 'smartBtn' || e.target.closest && e.target.closest('#smartBtn'))) {
-          return;
+          return; // الضغط على المساعد الذكي يجب ألا يفتح اللوحة
         }
         if (adminPanel) {
           adminPanel.style.display = "flex";
@@ -117,11 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (smartBtn) {
       smartBtn.style.display = "inline-flex";
-      // اجعل الزر الداخلي قابل للنقر فوق العناصر الأخرى
       smartBtn.style.zIndex = '100005';
       smartBtn.style.pointerEvents = 'auto';
       smartBtn.addEventListener('click', async (e) => {
-        e.stopPropagation(); // منع فتح اللوحة
+        e.stopPropagation();
         console.log('[DEBUG] smartBtn clicked');
         try {
           if (typeof smartAddGame === 'function') {
@@ -299,6 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const category = aCategory ? aCategory.value : "";
 
     if (!name) { alert("الرجاء إدخال اسم اللعبة"); return; }
+
     if (tempVersions.length === 0) tempVersions.push({ v: "1.0", size: "", link: "#" });
 
     const gameObj = { name, img: img || "/no-image.png", desc, category, versions: tempVersions.map(v => ({ v: v.v, size: v.size, link: v.link })) };
@@ -335,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* =========================
-     المساعد الذكي — كما قبل: يجلب صورة ويملأ الحقول ثم يفتح اللوحة
+     المساعد الذكي — يجلب صورة ويملأ الحقول ثم يفتح اللوحة
   ========================== */
   async function smartAddGame() {
     const name = prompt("اسم اللعبة (الإضافة الذكية) - اكتب اسم اللعبة:");
