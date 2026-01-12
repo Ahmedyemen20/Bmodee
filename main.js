@@ -190,6 +190,26 @@ window.addVersion = () => {
   versionsDiv.appendChild(div);
 };
 
+const versionsDiv = document.getElementById("versions");
+versionsDiv.innerHTML = "";
+
+game.versions.forEach((v, index) => {
+  const div = document.createElement("div");
+  div.className = "version";
+
+  div.innerHTML = `
+    <span class="ver">${v.v}</span>
+    <span class="size">${v.size || ""}</span>
+    <a class="download-btn" href="${v.link}" target="_blank">تحميل</a>
+
+    ${location.search.includes("admin=true") ? `
+      <button class="edit-btn" onclick="editVersion(${index})">✏️</button>
+    ` : ``}
+  `;
+
+  versionsDiv.appendChild(div);
+});
+
 /* =========================
    تعديل / حذف
 ========================= */
