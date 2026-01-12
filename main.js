@@ -1,3 +1,8 @@
+// main.js — v20260112-debug
+// يطبع لوق للتأكد من أن الملف محمّل ويربط أزرار الأقسام مع تتبع النقرات
+
+console.log('main.js loaded v20260112-debug');
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ======= هامبرغر / sidebar / overlay ======= */
@@ -18,6 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sidebar.setAttribute('aria-hidden', 'true');
       overlay.setAttribute('aria-hidden', 'true');
     });
+  } else {
+    console.warn('hamburger/sidebar/overlay element missing', { hamburger, sidebar, overlay });
   }
 
   /* ======= عناصر DOM & إعدادات ======= */
@@ -123,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   };
 
-  /* ======= بحث (search) ======= */
+  /* ======= البحث (search) ======= */
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       searchQuery = (e.target.value || "").trim().toLowerCase();
@@ -218,11 +225,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======= ربط أزرار الأقسام في sidebar (data-category) ======= */
   function bindSidebarCategories() {
-    if (!sidebar) return;
+    if (!sidebar) {
+      console.warn('bindSidebarCategories: sidebar not found');
+      return;
+    }
     const catButtons = sidebar.querySelectorAll('.cat-list button[data-category]');
+    console.log('bindSidebarCategories: found', catButtons.length, 'buttons');
     catButtons.forEach(btn => {
+      console.log('binding category button', btn.dataset.category, btn);
       btn.addEventListener('click', (e) => {
         const cat = btn.dataset.category || "all";
+        console.log('category clicked:', cat);
         window.renderByCategory(cat);
       });
     });
@@ -230,6 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======= وظائف قابلة للاستدعاء من HTML ======= */
   window.renderByCategory = cat => {
+    console.log('renderByCategory called with', cat);
     currentCategory = cat || "all";
     currentPage = 1;
     // افراغ البحث عند اختيار قسم (اختياري)
@@ -370,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ======= bind & init ======= */
   bindSidebarCategories();
 
-  // قراءة category من URL عند التحميل
+  // قراءة category من URL عند التحميل (مثال: index.html?category=action)
   const urlParams = new URLSearchParams(location.search);
   const initialCategory = urlParams.get('category');
   if (initialCategory) {
