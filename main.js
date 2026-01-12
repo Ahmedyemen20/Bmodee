@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 /* =========================
-   الهامبرقر
+   الهامبرجر
 ========================= */
 const hamburger = document.getElementById('hamburger');
 const sidebar = document.getElementById('sidebar');
@@ -18,28 +18,8 @@ if (hamburger && sidebar && overlay) {
   };
 }
 
-/*الاقسام*/
-
-window.renderByCategory = cat => {
-  currentCategory = cat;
-  currentPage = 1;
-  renderGames();
-  renderPagination();
-  sidebar.classList.remove('open');
-  overlay.classList.remove('open');
-};
-
-window.renderAll = () => {
-  currentCategory = "all";
-  currentPage = 1;
-  renderGames();
-  renderPagination();
-  sidebar.classList.remove('open');
-  overlay.classList.remove('open');
-};
-
 /* =========================
-   إعدادات
+   الإعدادات
 ========================= */
 const gamesPerPage = 10;
 let currentPage = 1;
@@ -65,7 +45,7 @@ const baseGames = [
 ];
 
 /* =========================
-   دمج + ترتيب
+   دمج وترتيب
 ========================= */
 function getAllGames() {
   return [...baseGames, ...adminGames].sort((a, b) =>
@@ -106,7 +86,7 @@ function renderPagination() {
 ========================= */
 function renderGames() {
   if (!gamesGrid) return;
-  gamesGrid.innerHTML = '';
+  saysGrid.innerHTML = '';
 
   const games = getFilteredGames();
   const start = (currentPage - 1) * gamesPerPage;
@@ -131,7 +111,6 @@ function renderGames() {
         <div class="admin-actions" onclick="event.stopPropagation()">
           <button onclick="editGame(${adminIndex})">✏️</button>
           <button onclick="removeGame(${adminIndex})">🗑</button>
-          <button onclick="addVersionPrompt(${adminIndex})">➕ إصدار</button>
         </div>` : ``}
     `;
 
@@ -156,10 +135,7 @@ if (searchInput) {
         c.onclick = () => {
           location.href = `game.html?name=${encodeURIComponent(game.name)}`;
         };
-        c.innerHTML = `
-          <img src="${game.img}">
-          <h3>${game.name}</h3>
-        `;
+        c.innerHTML = `<img src="${game.img}"><h3>${game.name}</h3>`;
         gamesGrid.appendChild(c);
       });
 
@@ -171,125 +147,18 @@ if (searchInput) {
 }
 
 /* =========================
-   لوحة الأدمن
+   الأقسام
 ========================= */
-const adminBtn = document.getElementById("adminBtn");
-const adminPanel = document.getElementById("adminPanel");
-
-if (adminBtn) {
-  // نخفيه افتراضيًا عن الكل
-  adminBtn.style.display = "none";
-
-  // نطلعه فقط لو أدمن
-  if (location.search.includes("admin=true")) {
-    adminBtn.style.display = "block";
-    adminBtn.onclick = () => {
-      adminPanel.style.display = "flex";
-    };
-  }
-}
-/* =========================
-   زر الإضافة الذكية (ثابت)
-========================= */
-const smartBtn = document.getElementById("smartBtn");
-if (smartBtn && location.search.includes("admin=true")) {
-  smartBtn.style.display = "block";
-  smartBtn.onclick = smartAddGame;
-}
-
-/* =========================
-   الإصدارات
-========================= */
-
-/* =========================
-   حفظ / تعديل / حذف
-========================= */
-window.saveGame = () => {
-  if (!aName.value || !aImg.value || !aCategory.value) return alert("أكمل البيانات");
-
-  adminGames.unshift({
-    name: aName.value,
-    img: aImg.value,
-    desc: aDesc.value,
-    category: aCategory.value,
-    rating: 4.5,
-    versions: [{ v: "Latest", size: "—", link: "#" }]
-  });
-
-  save();
+window.renderByCategory = cat => {
+  currentCategory = cat;
+  currentPage = 1;
+  renderGames();
+  renderPagination();
+  sidebar?.classList.remove('open');
+  overlay?.classList.remove('open');
 };
 
-// =========================
-// عرض الإصدارات + تعديل
-// =========================
-const versionsDiv = document.getElementById("versions");
-versionsDiv.innerHTML = "";
-
-game.versions.forEach((v, index) => {
-  const div = document.createElement("div");
-  div.className = "version";
-
-  div.innerHTML = `
-    <span>${v.v}</span>
-    <span>${v.size || ""}</span>
-    <a href="${v.link}" target="_blank">تحميل</a>
-
-    ${location.search.includes("admin=true") ? `
-      <button class="edit-version" onclick="editVersion(${index})">✏️</button>
-    ` : ``}
-  `;
-
-  versionsDiv.appendChild(div);
-});
-
-// =========================
-// تعديل الإصدار (أدمن فقط)
-// =========================
-window.editVersion = index => {
-  const params = new URLSearchParams(location.search);
-  const gameName = params.get("name");
-
-  let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
-
-  const game = adminGames.find(
-    g => g.name.toLowerCase() === gameName.toLowerCase()
-  );
-
-  if (!game) {
-    alert("اللعبة غير موجودة في الأدمن");
-    return;
-  }
-
-  const version = game.versions[index];
-
-  const newV = prompt("رقم الإصدار", version.v);
-  if (!newV) return;
-
-  const newSize = prompt("الحجم", version.size || "");
-  if (newSize === null) return;
-
-  const newLink = prompt("رابط التحميل", version.link);
-  if (!newLink) return;
-
-  version.v = newV;
-  version.size = newSize;
-  version.link = newLink;
-
-  localStorage.setItem("adminGames", JSON.stringify(adminGames));
-  location.reload();
-};
-
-window.removeGame = i => {
-  if (confirm("حذف؟")) {
-    adminGames.splice(i, 1);
-    save();
-  }
-};
-
-function save() {
-  localStorage.setItem("adminGames", JSON.stringify(adminGames));
-  location.reload();
-}
+window.renderAll = () => renderByCategory("all");
 
 /* =========================
    إضافة ذكية
@@ -298,44 +167,52 @@ function autoImage(name) {
   return `https://source.unsplash.com/600x400/?${encodeURIComponent(name)} game`;
 }
 
-function autoCategory(name) {
-  name = name.toLowerCase();
-  if (name.includes("clash")) return "strategy";
-  if (name.includes("gta") || name.includes("call")) return "action";
-  return "other";
-}
-
 function autoDesc(name) {
   return `${name} Mod APK for Android`;
 }
 
-function smartAddGame() {
+window.smartAddGame = () => {
   if (!location.search.includes("admin=true")) return;
 
   const name = prompt("اسم اللعبة:");
   if (!name) return;
 
   const img = prompt("رابط الصورة (اختياري):") || autoImage(name);
-
-  const category = prompt(
-    "اكتب القسم:\naction / strategy / sports / other",
-    "action"
-  );
+  const category = prompt("القسم:", "action") || "other";
 
   adminGames.unshift({
     name,
     img,
     desc: autoDesc(name),
-    category: category || "other",
+    category,
     rating: 4.5,
     versions: [{ v: "Latest", size: "—", link: "#" }]
   });
 
-  save();
-}
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  location.reload();
+};
 
 /* =========================
-   تشغيل أولي
+   تعديل / حذف لعبة
+========================= */
+window.editGame = i => {
+  const n = prompt("اسم اللعبة", adminGames[i].name);
+  if (!n) return;
+  adminGames[i].name = n;
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  location.reload();
+};
+
+window.removeGame = i => {
+  if (!confirm("حذف اللعبة؟")) return;
+  adminGames.splice(i, 1);
+  localStorage.setItem("adminGames", JSON.stringify(adminGames));
+  location.reload();
+};
+
+/* =========================
+   تشغيل
 ========================= */
 renderGames();
 renderPagination();

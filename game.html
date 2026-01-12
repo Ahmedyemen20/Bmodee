@@ -11,24 +11,25 @@
 
 <a href="index.html" class="back-btn">⬅ رجوع</a>
 
-<div class="game-details">
-
-  <img id="gameImg" class="game-img" src="" alt="صورة اللعبة">
-
+<div class="game-details" id="gameDetails">
+  <img id="gameImg" class="game-img">
   <h1 id="gameName"></h1>
-
   <p id="gameDesc"></p>
 
   <h3>الإصدارات</h3>
   <div id="versions"></div>
-
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const gameName = params.get("name");
+
+  if (!gameName) {
+    document.body.innerHTML = "❌ اسم اللعبة غير موجود";
+    return;
+  }
 
   const adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
@@ -46,21 +47,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const allGames = [...baseGames, ...adminGames];
 
   const game = allGames.find(
-    g => g.name.toLowerCase() === gameName?.toLowerCase()
+    g => g.name.toLowerCase() === gameName.toLowerCase()
   );
 
   if (!game) {
     document.body.innerHTML = `
-      <div style="color:red;text-align:center;margin-top:50px;font-size:18px">
+      <div style="text-align:center;margin-top:50px;color:red">
         ❌ اللعبة غير موجودة
       </div>
       <div style="text-align:center;margin-top:20px">
-        <a href="index.html" style="color:gold">⬅ رجوع</a>
+        <a href="index.html">⬅ رجوع</a>
       </div>
     `;
     return;
   }
 
+  // عرض البيانات
   document.getElementById("gameImg").src = game.img;
   document.getElementById("gameName").textContent = game.name;
   document.getElementById("gameDesc").textContent = game.desc || "";
@@ -68,16 +70,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const versionsDiv = document.getElementById("versions");
   versionsDiv.innerHTML = "";
 
-  game.versions.forEach(v => {
+  game.versions.forEach((v, index) => {
     const div = document.createElement("div");
     div.className = "version";
+
     div.innerHTML = `
-      <span>${v.v}</span> 
+      <span>${v.v}</span>
       <span>${v.size || ""}</span>
-      <a href="${v.link}" target="_blank">تحميل</a>
+      <a class="download-btn" href="${v.link}" target="_blank">تحميل</a>
+
+      ${location.search.includes("admin=true") ? `
+        <button class="edit-version" onclick="editVersion(${index})">✏️</button>
+      ` : ``}
     `;
+
     versionsDiv.appendChild(div);
   });
+
+  // =========================
+  // تعديل الإصدار (أدمن)
+  // =========================
+  window.editVersion = index => {
+    const gameInAdmin = adminGames.find(
+      g => g.name.toLowerCase() === game.name.toLowerCase()
+    );
+
+    if (!gameInAdmin) {
+      alert("هذه اللعبة ليست من إضافات الأدمن");
+      return;
+    }
+
+    const version = gameInAdmin.versions[index];
+
+    const newV = prompt("رقم الإصدار", version.v);
+    if (!newV) return;
+
+    const newSize = prompt("الحجم", version.size || "");
+    if (newSize === null) return;
+
+    const newLink = prompt("رابط التحميل", version.link);
+    if (!newLink) return;
+
+    version.v = newV;
+    version.size = newSize;
+    version.link = newLink;
+
+    localStorage.setItem("adminGames", JSON.stringify(adminGames));
+    location.reload();
+  };
 
 });
 </script>
