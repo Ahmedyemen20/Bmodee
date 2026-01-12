@@ -945,3 +945,171 @@ body.light .ad-card {
   cursor: pointer;
   z-index: 9999;
 }
+
+/* ===== تحسين ترتيب صفحة تفاصيل اللعبة (أضِف هذا في أسفل style.css) ===== */
+
+/* حاوية التفاصيل: تقييد العرض، محاذاة، تباعد */
+.game-details {
+  width: 100%;
+  max-width: 920px; /* أقصى عرض للمحتوى */
+  margin: 86px auto 40px;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  text-align: center; /* العنوان في الوسط */
+  background: transparent;
+}
+
+/* صورة اللعبة: لا تتخطى العرض، تحافظ على نسبة العرض/الارتفاع */
+.game-details img,
+.game-details .game-thumb img,
+.game-details .game-cover {
+  width: 100%;
+  max-width: 640px; /* عرض مناسب على الشاشات الكبيرة */
+  height: auto;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+}
+
+/* عنوان اللعبة */
+.game-details h1, .game-details h2, .game-details h3 {
+  margin: 8px 0 6px;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+/* الوصف والرابط */
+.game-details .desc,
+.game-details p {
+  max-width: 880px;
+  color: var(--muted, #bfc9d9);
+  font-size: 15px;
+  margin: 0;
+  padding: 0 8px;
+  text-align: center;
+}
+
+/* رابط المصدر (Google Play) واضح وموجود بمكان مناسب */
+.game-details .source-link,
+.game-details a.source-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #4da3ff;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* حاوية ميتا (الإصدارات وأزرار التحميل) — تجعلها مرتبة ومرنة */
+.game-details .meta {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  text-align: right; /* عرض العناصر من اليمين لليسار داخل الحاوية */
+  padding: 0 8px;
+}
+
+/* ترويسة الإصدارات */
+.game-details .meta .versions-title {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+/* قائمة الإصدارات: صفوف واضحة قابلة للالتفاف */
+.versions, .version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* صف الإصدار الواحد: معلومات على اليمين، أزرار على اليسار (RTL) */
+.version-row, .version-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* معلومات الإصدار */
+.version-row .ver-info,
+.version-card .ver-info {
+  flex: 1;
+  color: var(--muted, #cbd5e1);
+  font-size: 15px;
+  text-align: right;
+  direction: rtl;
+}
+
+/* أزرار التحميل والتحرير */
+.download-btn, .btn.download, .version-row .download, .version-card .download {
+  background: linear-gradient(90deg,#facc15,#ffd54a);
+  color: #000;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+.edit-btn, .btn.edit {
+  background: #ffd166;
+  color: #000;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ترتيب الأزرار داخل صف واحد على الشاشات الصغيرة */
+.version-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* حالة عدم وجود إصدارات */
+.game-details .no-versions {
+  color: var(--muted, #9ca3af);
+  padding: 10px 8px;
+}
+
+/* تحسينات للعرض على الشاشة الصغيرة */
+@media (max-width: 720px) {
+  .game-details {
+    padding: 12px;
+    margin: 70px 10px 30px;
+  }
+  .game-details h1 {
+    font-size: 22px;
+  }
+  .game-details .desc { font-size: 14px; padding: 0 6px; }
+  .version-row, .version-card {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: right;
+  }
+  .version-actions { justify-content: flex-start; margin-top: 8px; }
+  .game-details img { max-width: 100%; height: auto; }
+}
+
+/* تأكيد إخفاء overflow في حال كان هناك قيود عرض سابقة */
+html, body { overflow-x: hidden; }
+
+/* نهاية تعديل صفحة التفاصيل */
