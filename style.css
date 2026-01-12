@@ -1,5 +1,5 @@
-/* style.css — كامل وجاهز للنسخ
-   مدمج: هيدر مع البحث، هامبرغر/ sidebar، شبكة الألعاب، لوحة الأدمن، footer
+/* style.css — كامل جاهز للنسخ
+   تحسينات إضافية على Footer وتنسيق sidebar/search
 */
 
 /* قواعد عامة */
@@ -16,7 +16,7 @@ body{
   font-family: "Segoe UI", Tahoma, Arial, sans-serif;
   background: linear-gradient(180deg,#05060a 0%, #071025 100%);
   color:#e6eef8;
-  padding-bottom:100px;
+  padding-bottom:120px;
 }
 
 /* Header */
@@ -72,7 +72,7 @@ header{
 }
 .sidebar.open{ left:0; }
 .sidebar h3{ color:#fff; margin-bottom:8px; }
-.cat-list{ list-style:none; margin-bottom:10px; }
+.cat-list{ list-style:none; margin-bottom:10px; padding:0; }
 .cat-list li{ margin-bottom:6px; }
 .cat-list button{ width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer; }
 .cat-list button:hover{ background:rgba(255,255,255,0.02); color:#fff; }
@@ -124,9 +124,11 @@ main{ max-width:1120px; margin:96px auto 40px; padding:0 16px; }
 
 /* About / Contact / Footer */
 section{ max-width:1120px; margin:20px auto; padding:0 16px }
-.footer{ background:#0f0f0f; color:#ccc; text-align:center; padding:20px 10px; margin-top:40px; position:relative; z-index:1 }
-.footer-links{ display:flex; gap:8px; align-items:center; justify-content:center; margin-bottom:8px }
+.footer{ background:#0f0f0f; color:#ccc; text-align:center; padding:18px 10px; margin-top:40px; position:relative; z-index:1 }
+.footer-inner{ max-width:1120px; margin:0 auto; display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:12px; padding:4px 8px; flex-wrap:wrap; }
+.footer-links{ display:flex; gap:8px; align-items:center; justify-content:center }
 .footer-links a{ color:#aaa; text-decoration:none } .footer-links a:hover{ color:#fff }
+.footer .copyright{ color:#888; font-size:13px; margin:0 }
 
 /* Game details */
 .game-details{ max-width:900px; margin:96px auto; padding:16px; display:flex; flex-direction:column; gap:12px } .game-details img{ width:100%; max-height:420px; object-fit:cover; border-radius:12px }
@@ -138,12 +140,13 @@ section{ max-width:1120px; margin:20px auto; padding:0 16px }
   .smart-inner{ top:-6px; left:-6px; width:32px; height:32px; font-size:16px }
   .header-center{ flex-direction:column; align-items:flex-start; gap:8px }
   .search-wrap{ width:100% }
+  .footer-inner{ flex-direction:column; align-items:flex-start; gap:8px }
 }
 
-/* focus */
+/* Focus */
 button:focus, a:focus, input:focus, textarea:focus{ outline:3px solid rgba(99,102,241,0.14); outline-offset:2px }
 
-/* Overlay / z-index fixes */
+/* z-index fixes */
 #overlay.open{ z-index:99990 } .admin-add{ z-index:100000 } .smart-inner, #smartBtn{ z-index:100005 }
 
 /* نهاية */

@@ -1,14 +1,10 @@
 /* main.js — جاهز للنسخ
-   يحتوي:
-   - هامبرغر + sidebar + overlay
-   - شريط البحث (filter by name)
-   - لوحة الأدمن + مساعد ذكي داخل الزر
-   - جلب صورة تلقائياً للمساعد الذكي
+   إصلاح: ربط أقسام الشريط الجانبي، دعم ?category=، تحسين التصفية والبحث، إبقاء وظائف الأدمن والمساعد الذكي.
 */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ======= هامبرغر / sidebar ======= */
+  /* ======= هامبرغر / sidebar / overlay ======= */
   const hamburger = document.getElementById("hamburger");
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
@@ -28,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ======= DOM elements & settings ======= */
+  /* ======= عناصر DOM وإعدادات ======= */
   const gamesGrid = document.getElementById("gamesGrid");
   const pagination = document.getElementById("pagination");
   const searchInput = document.getElementById("searchInput");
@@ -91,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return "/no-image.png";
   }
 
-  /* ======= تفعيل/admin button & smart helper ======= */
+  /* ======= تفعيل أدوات الأدمن والمساعد الذكي ======= */
   if (adminBtn) adminBtn.style.display = "none";
   if (smartBtn) smartBtn.style.display = "none";
 
@@ -101,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (adminBtn) {
       adminBtn.style.display = "flex";
       adminBtn.addEventListener('click', (e) => {
-        // تجاهل نقر المساعد الذكي الداخلي
         if (e.target && (e.target.id === 'smartBtn' || e.target.closest && e.target.closest('#smartBtn'))) return;
         if (adminPanel) {
           adminPanel.style.display = "flex";
@@ -143,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (searchClear) {
     searchClear.addEventListener('click', () => {
-      searchInput.value = "";
+      if (searchInput) searchInput.value = "";
       searchQuery = "";
       currentPage = 1;
       renderGames();
@@ -225,11 +220,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ======= الأقسام (sidebar) callable from HTML ======= */
+  /* ======= ربط أقسام sidebar (دعم data-category) ======= */
+  // يتعامل مع أزرار تحمل data-category="..." أو روابط داخل sidebar
+  function bindSidebarCategories() {
+    if (!sidebar) return;
+    // أزرار بعنصر data-category
+    const catButtons = sidebar.querySelectorAll('[data-category]');
+    catButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const cat = btn.dataset.category || "all";
+        window.renderByCategory(cat);
+      });
+    });
+    // روابط <a href="?category=..."> أيضاً: نمنع السلوك الافتراضي ونستخدم renderByCategory
+    const catLinks = sidebar.querySelectorAll('a[href*="category="]');
+    catLinks.forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const u = new URL(a.href, location.href);
+        const cat = u.searchParams.get('category') || "all";
+        window.renderByCategory(cat);
+      });
+    });
+  }
+
+  /* ======= وظائف قابلة للاستدعاء من HTML ======= */
   window.renderByCategory = cat => {
-    currentCategory = cat;
+    currentCategory = cat || "all";
     currentPage = 1;
-    // تفريغ البحث عند تغيير القسم (اختياري) — يمكن التعليق لو تريد الاحتفاظ بالبحث
+    // إفراغ البحث عند اختيار قسم (اختياري)
     searchQuery = "";
     if (searchInput) searchInput.value = "";
     renderGames();
@@ -237,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sidebar) sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
   };
-  window.renderAll = () => renderByCategory("all");
+  window.renderAll = () => window.renderByCategory("all");
 
   /* ======= لوحة الأدمن: إصدارات/حفظ/تحرير/حذف ======= */
   let editingIndex = null;
@@ -364,7 +383,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.smartAddGame = smartAddGame;
 
-  /* ======= init ======= */
+  /* ======= ربط الأقسام وقراءة باراميتر category من URL عند التحميل ======= */
+  bindSidebarCategories();
+
+  // قراءة category من الـ URL عند التحميل (مثال: index.html?category=action)
+  const urlParams = new URLSearchParams(location.search);
+  const initialCategory = urlParams.get('category');
+  if (initialCategory) {
+    // استخدم renderByCategory (المعلنة على window)
+    window.renderByCategory(initialCategory);
+  }
+
+  /* ======= تهيئة أولية ======= */
   (function init() {
     renderGames();
     renderPagination();
