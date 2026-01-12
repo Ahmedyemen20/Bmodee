@@ -8,17 +8,45 @@
 </head>
 <body>
 
-  <!-- Navbar / hamburger (مثال) -->
+  <!-- Header: hamburger + search -->
   <header>
-    <button id="hamburger" class="hamburger">☰</button>
-    <nav id="sidebar" class="sidebar">
-      <!-- قوائم -->
-      <a href="index.html" onclick="renderAll()">الرئيسية</a>
-      <a href="#about">عن الموقع</a>
-      <a href="#contact">تواصل</a>
-    </nav>
-    <div id="overlay" class="overlay"></div>
+    <button id="hamburger" class="hamburger" aria-label="قائمة">☰</button>
+
+    <div class="header-center">
+      <h1 class="site-title"><a href="index.html">Bmodee</a></h1>
+      <div class="search-wrap">
+        <input id="searchInput" type="search" placeholder="ابحث عن لعبة..." aria-label="بحث">
+        <button id="searchClear" title="مسح">✕</button>
+      </div>
+    </div>
+
+    <!-- يمكن إضافة عناصر رأسية أخرى هنا -->
   </header>
+
+  <!-- Sidebar (الهامبرغر) -->
+  <nav id="sidebar" class="sidebar" aria-hidden="true">
+    <h3>الأقسام</h3>
+    <ul class="cat-list">
+      <li><button onclick="renderAll()">الكل</button></li>
+      <li><button onclick="renderByCategory('action')">أكشن</button></li>
+      <li><button onclick="renderByCategory('sports')">رياضة</button></li>
+      <li><button onclick="renderByCategory('strategy')">استراتيجية</button></li>
+      <li><button onclick="renderByCategory('racing')">سباق</button></li>
+      <li><button onclick="renderByCategory('car')">سيارات</button></li>
+    </ul>
+
+    <hr>
+    <a href="#about">عن الموقع</a>
+    <a href="#contact">تواصل</a>
+
+    <hr>
+    <div class="sidebar-footer">
+      <a href="privacy.html">سياسة الخصوصية</a>
+      <a href="terms.html">الشروط والأحكام</a>
+    </div>
+  </nav>
+
+  <div id="overlay" class="overlay" aria-hidden="true"></div>
 
   <!-- محتوى الألعاب -->
   <main>
@@ -43,26 +71,29 @@
     </form>
   </section>
 
-  <!-- Footer -->
+  <!-- Footer منظم -->
   <footer class="footer">
-    <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
-    <nav class="footer-links">
-      <a href="privacy.html">سياسة الخصوصية</a> |
-      <a href="terms.html">الشروط والأحكام</a>
-    </nav>
+    <div class="footer-inner">
+      <nav class="footer-links">
+        <a href="privacy.html">سياسة الخصوصية</a>
+        <span> | </span>
+        <a href="terms.html">الشروط والأحكام</a>
+      </nav>
+      <p class="copyright">© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
+    </div>
   </footer>
 
-  <!-- زر الأدمن — الآن عنصر حاوية يحتوي زر المساعد الذكي داخله -->
-  <div id="adminBtn" class="admin-add" aria-label="لوحة الأدمن">
+  <!-- زر الأدمن (حاوية) يحتوي زر المساعد الذكي -->
+  <div id="adminBtn" class="admin-add" aria-label="لوحة الأدمن" title="لوحة الأدمن">
     <span class="admin-plus">+</span>
     <button id="smartBtn" class="smart-inner" title="المساعد الذكي">🤖</button>
   </div>
 
   <!-- لوحة التحكم -->
-  <div id="adminPanel" class="admin-panel">
+  <div id="adminPanel" class="admin-panel" role="dialog" aria-hidden="true">
     <div class="admin-header">
       <h2>لوحة التحكم</h2>
-      <button onclick="closeAdmin()">✕</button>
+      <button onclick="closeAdmin()" aria-label="إغلاق">✕</button>
     </div>
 
     <div class="admin-body">
@@ -70,7 +101,6 @@
       <input id="aImg" placeholder="رابط صورة اللعبة">
       <textarea id="aDesc" placeholder="وصف اللعبة"></textarea>
 
-      <!-- اختيار القسم -->
       <select id="aCategory">
         <option value="">اختر القسم</option>
         <option value="action">أكشن</option>
@@ -83,8 +113,10 @@
       <h3>الإصدارات</h3>
       <div id="versions"></div>
 
-      <button class="btn yellow" onclick="addVersionPrompt()">➕ إضافة إصدار</button>
-      <button class="btn green" onclick="saveGame()">💾 حفظ اللعبة</button>
+      <div class="admin-actions-row">
+        <button class="btn yellow" onclick="addVersionPrompt()">➕ إضافة إصدار</button>
+        <button class="btn green" onclick="saveGame()">💾 حفظ اللعبة</button>
+      </div>
     </div>
   </div>
 

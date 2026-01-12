@@ -1,294 +1,149 @@
-/* style.css — كامل جاهز للنسخ
-   يستعيد سلوك الهامبرغر وكان متوافق مع الهيكل الأصلي.
-   احتفظت بتعديلات الأدمن والمساعد الذكي، مع ضمان أن overlay لا يغطي الأزرار.
+/* style.css — كامل وجاهز للنسخ
+   مدمج: هيدر مع البحث، هامبرغر/ sidebar، شبكة الألعاب، لوحة الأدمن، footer
 */
 
-/* =========================
-   قواعد عامة
-========================= */
-:root {
-  --bg: #0b1020;
-  --card: #0f1724;
-  --muted: #9ca3af;
-  --accent: #ff6a00;
-  --accent-2: #ff3d00;
-  --panel-bg: #071226;
+/* قواعد عامة */
+:root{
+  --bg:#0b1020;
+  --muted:#9ca3af;
+  --accent:#ff6a00;
+  --accent-2:#ff3d00;
+  --panel-bg:#071226;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body {
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
   font-family: "Segoe UI", Tahoma, Arial, sans-serif;
   background: linear-gradient(180deg,#05060a 0%, #071025 100%);
-  color: #e6eef8;
-  line-height: 1.4;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding-bottom: 100px;
+  color:#e6eef8;
+  padding-bottom:100px;
 }
 
-/* =========================
-   رأس الموقع و هامبرغر / الشريط الجانبي
-   هذا الجزء مهم لعمل الهامبرغر كما السابق
-========================= */
-header {
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  z-index: 9999;
-  background: linear-gradient(90deg, rgba(0,0,0,0.3), rgba(0,0,0,0.2));
+/* Header */
+header{
+  position:fixed;
+  inset:0 0 auto 0;
+  height:64px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 16px;
+  z-index:9999;
+  background: linear-gradient(90deg, rgba(0,0,0,0.32), rgba(0,0,0,0.18));
+}
+.hamburger{ background:transparent; border:none; color:var(--muted); font-size:22px; cursor:pointer; }
+
+.header-center{ display:flex; gap:12px; align-items:center; width:100%; justify-content:space-between; }
+.site-title a{ color:#fff; text-decoration:none; font-size:18px; font-weight:700; }
+
+/* Search */
+.search-wrap{ position:relative; max-width:520px; width:60%; display:flex; align-items:center; }
+#searchInput{
+  width:100%;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+  color:#fff;
+}
+#searchClear{
+  position:absolute;
+  right:8px;
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:14px;
 }
 
-.hamburger {
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  font-size: 22px;
-  cursor: pointer;
+/* Sidebar */
+.sidebar{
+  position:fixed;
+  top:64px;
+  left:-300px;
+  width:260px;
+  height:calc(100% - 64px);
+  background:var(--panel-bg);
+  padding:14px;
+  transition:left .28s ease;
+  z-index:9997;
+  overflow:auto;
+  border-right:1px solid rgba(255,255,255,0.02);
 }
+.sidebar.open{ left:0; }
+.sidebar h3{ color:#fff; margin-bottom:8px; }
+.cat-list{ list-style:none; margin-bottom:10px; }
+.cat-list li{ margin-bottom:6px; }
+.cat-list button{ width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer; }
+.cat-list button:hover{ background:rgba(255,255,255,0.02); color:#fff; }
 
-.sidebar {
-  position: fixed;
-  top: 60px;
-  left: -300px; /* مخفي افتراضياً */
-  width: 260px;
-  height: calc(100% - 60px);
-  background: var(--panel-bg);
-  padding: 12px;
-  transition: left .28s ease;
-  z-index: 9997;
-  overflow: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  border-right: 1px solid rgba(255,255,255,0.02);
-}
+/* Overlay */
+.overlay{ position:fixed; inset:0; background:rgba(0,0,0,0); pointer-events:none; opacity:0; transition:background .2s ease, opacity .2s ease; z-index:99989; }
+.overlay.open{ background:rgba(0,0,0,0.45); pointer-events:auto; opacity:1; z-index:99990; }
 
-.sidebar.open {
-  left: 0; /* يظهر عند إضافة الصنف open */
-}
+/* Main / Grid */
+main{ max-width:1120px; margin:96px auto 40px; padding:0 16px; }
+.games-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:18px; margin-bottom:24px; }
+.game-card{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:12px; cursor:pointer; display:flex; flex-direction:column; gap:8px; min-height:220px; border:1px solid rgba(255,255,255,0.03); transition:transform .12s ease, box-shadow .12s ease; }
+.game-card:hover{ transform:translateY(-6px); box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+.game-card img{ width:100%; height:120px; object-fit:cover; border-radius:8px; background:#0b1220; }
+.game-card h3{ font-size:16px }
+.game-card p{ color:var(--muted); font-size:13px }
 
-.sidebar a {
-  display: block;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 8px 10px;
-  border-radius: 8px;
-  margin-bottom: 6px;
-}
-.sidebar a:hover { background: rgba(255,255,255,0.02); color: #fff; }
+/* Source link */
+.source-link{ color:#a5d8ff; text-decoration:none; font-size:13px }
+.source-link:hover{text-decoration:underline}
 
-/* Overlay خلف الشريط الجانبي */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0);
-  pointer-events: none;
-  opacity: 0;
-  transition: background .2s ease, opacity .2s ease;
-  z-index: 99989;
-}
-.overlay.open {
-  background: rgba(0,0,0,0.45);
-  pointer-events: auto;
-  opacity: 1;
-  z-index: 99990; /* تحت أزرار الأدمن */
-}
-
-/* =========================
-   المحتوى الرئيسي
-========================= */
-main {
-  max-width: 1120px;
-  margin: 86px auto 40px;
-  padding: 0 16px;
-}
-
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
-  gap: 18px;
-  margin-bottom: 24px;
-}
-
-.game-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius: 12px;
-  padding: 12px;
-  cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 220px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.03);
-}
-.game-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-}
-
-.game-card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #0b1220;
-}
-.game-card h3 {
-  font-size: 16px;
-  margin-top: 4px;
-}
-.game-card p { color: var(--muted); font-size: 13px; margin-top: 2px; }
-
-.source-link { color: #a5d8ff; font-size: 13px; text-decoration: none; }
-.source-link:hover { text-decoration: underline; }
+/* Admin actions in card */
+.admin-actions{ display:flex; gap:6px; margin-top:auto }
+.admin-actions button{ padding:6px 8px; border-radius:8px; border:none; cursor:pointer; font-size:14px }
+.admin-actions .edit{ background:#2196f3; color:#fff }
+.admin-actions .del{ background:#f44336; color:#fff }
 
 /* Pagination */
-.pagination { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
-.pagination button {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid rgba(255,255,255,0.03);
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.pagination button.active {
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  color: #000;
-  border: none;
-}
+.pagination{ display:flex; gap:8px; justify-content:center; margin-top:8px }
+.pagination button{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; cursor:pointer }
+.pagination button.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#000; border:none }
 
-/* =========================
-   زر الأدمن + مساعد ذكي داخلي
-========================= */
-.admin-add {
-  position: fixed;
-  bottom: 25px;
-  right: 25px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,#ff9800,#ff5722);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  border: none;
-  cursor: pointer;
-  z-index: 100000;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.6);
-}
-.admin-add .admin-plus { pointer-events: none; font-weight: 700; }
+/* Admin add button and smart helper */
+.admin-add{ position:fixed; bottom:25px; right:25px; width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#ff9800,#ff5722); color:#fff; display:flex; align-items:center; justify-content:center; font-size:32px; border:none; cursor:pointer; z-index:100000; box-shadow:0 8px 28px rgba(0,0,0,0.6); }
+.admin-add .admin-plus{ pointer-events:none; font-weight:700; }
+.smart-inner, #smartBtn{ position:absolute; top:-8px; left:-8px; width:36px; height:36px; border-radius:50%; background:#0ea5e9; color:#fff; border:none; display:inline-flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,0.45); z-index:100005; }
 
-.smart-inner, #smartBtn {
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #0ea5e9;
-  color: #fff;
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.45);
-  z-index: 100005;
-}
+/* Admin panel */
+.admin-panel{ position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; flex-direction:column; z-index:99999; align-items:center; justify-content:flex-start; padding-top:40px }
+.admin-header{ width:100%; max-width:460px; display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:#0b1220; color:#fff; border-radius:12px; margin-bottom:12px; box-shadow:0 8px 30px rgba(0,0,0,0.6) }
+.admin-body{ width:100%; max-width:460px; background:#071226; padding:16px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.6); overflow:auto; max-height:70vh }
+.admin-body input, .admin-body textarea, .admin-body select{ width:100%; padding:10px 12px; margin-bottom:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:rgba(255,255,255,0.02); color:#e6eef8 }
+.admin-version{ display:flex; gap:8px; margin-bottom:8px; align-items:center }
+.admin-version input{ flex:1; font-size:13px; padding:8px }
 
-/* =========================
-   لوحة الأدمن
-========================= */
-.admin-panel {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: none;
-  flex-direction: column;
-  z-index: 99999;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 40px;
-}
-.admin-header {
-  width: 100%;
-  max-width: 460px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 18px;
-  background: #0b1220;
-  color: #fff;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-}
-.admin-body {
-  width: 100%;
-  max-width: 460px;
-  background: #071226;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-  overflow: auto;
-  max-height: 70vh;
-}
+/* Buttons */
+.btn{ padding:10px 12px; border-radius:8px; cursor:pointer; border:none; font-weight:600 }
+.btn.green{ background:#22c55e; color:#000 } .btn.yellow{ background:#ffd166; color:#000 }
 
-.admin-body input, .admin-body textarea, .admin-body select {
-  width: 100%;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.03);
-  background: rgba(255,255,255,0.02);
-  color: #e6eef8;
-  font-size: 14px;
-}
-.admin-body textarea { min-height: 80px; resize: vertical; }
+/* About / Contact / Footer */
+section{ max-width:1120px; margin:20px auto; padding:0 16px }
+.footer{ background:#0f0f0f; color:#ccc; text-align:center; padding:20px 10px; margin-top:40px; position:relative; z-index:1 }
+.footer-links{ display:flex; gap:8px; align-items:center; justify-content:center; margin-bottom:8px }
+.footer-links a{ color:#aaa; text-decoration:none } .footer-links a:hover{ color:#fff }
 
-/* أزرار */
-.btn { padding: 10px 12px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; }
-.btn.green { background: #22c55e; color: #000; }
-.btn.yellow { background: #ffd166; color: #000; }
-
-/* =========================
-   عناصر صفحة تفاصيل اللعبة
-========================= */
-.game-details { max-width: 900px; margin: 86px auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.game-details img { width: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; }
-.version { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 10px; background: #071226; border-radius: 10px; margin-bottom: 8px; }
-.download-btn { background: linear-gradient(90deg,#06b6d4,#0ea5e9); color: #fff; padding: 8px 10px; border-radius: 8px; text-decoration: none; }
-
-/* Footer and links (تأكد أنها موجودة) */
-.footer { background: #0f0f0f; color: #ccc; text-align: center; padding: 20px 10px; margin-top: 40px; position: relative; z-index: 1; }
-.footer-links a { color: #aaa; text-decoration: none; margin: 0 5px; }
-.footer-links a:hover { color: #fff; }
+/* Game details */
+.game-details{ max-width:900px; margin:96px auto; padding:16px; display:flex; flex-direction:column; gap:12px } .game-details img{ width:100%; max-height:420px; object-fit:cover; border-radius:12px }
 
 /* Responsive */
-@media (max-width: 720px) {
-  .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .admin-add { width: 56px; height: 56px; right: 18px; bottom: 18px; }
-  .smart-inner { top: -6px; left: -6px; width: 32px; height: 32px; font-size: 16px; }
+@media (max-width:720px){
+  .games-grid{ grid-template-columns: repeat(2,1fr); gap:12px }
+  .admin-add{ width:56px; height:56px; right:18px; bottom:18px }
+  .smart-inner{ top:-6px; left:-6px; width:32px; height:32px; font-size:16px }
+  .header-center{ flex-direction:column; align-items:flex-start; gap:8px }
+  .search-wrap{ width:100% }
 }
 
-/* Accessibility focus */
-button:focus, a:focus, input:focus, select:focus, textarea:focus {
-  outline: 3px solid rgba(99,102,241,0.14);
-  outline-offset: 2px;
-}
+/* focus */
+button:focus, a:focus, input:focus, textarea:focus{ outline:3px solid rgba(99,102,241,0.14); outline-offset:2px }
 
-/* إصلاح ترتيب الطبقات */
-#overlay.open { z-index: 99990; }
-.admin-add { z-index: 100000; }
-.smart-inner, #smartBtn { z-index: 100005; }
+/* Overlay / z-index fixes */
+#overlay.open{ z-index:99990 } .admin-add{ z-index:100000 } .smart-inner, #smartBtn{ z-index:100005 }
 
-/* نهاية الملف */
+/* نهاية */

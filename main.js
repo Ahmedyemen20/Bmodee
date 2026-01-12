@@ -1,12 +1,14 @@
 /* main.js — جاهز للنسخ
-   سلوك الهامبرغر يعود للعمل كما سابقاً، مع بقاء لوحة الأدمن والمساعد الذكي.
+   يحتوي:
+   - هامبرغر + sidebar + overlay
+   - شريط البحث (filter by name)
+   - لوحة الأدمن + مساعد ذكي داخل الزر
+   - جلب صورة تلقائياً للمساعد الذكي
 */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =========================
-     الهامبرغر
-  ========================== */
+  /* ======= هامبرغر / sidebar ======= */
   const hamburger = document.getElementById("hamburger");
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
@@ -15,20 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
     hamburger.addEventListener('click', () => {
       sidebar.classList.toggle("open");
       overlay.classList.toggle("open");
+      sidebar.setAttribute('aria-hidden', !sidebar.classList.contains('open'));
+      overlay.setAttribute('aria-hidden', !overlay.classList.contains('open'));
     });
     overlay.addEventListener('click', () => {
       sidebar.classList.remove("open");
       overlay.classList.remove("open");
+      sidebar.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true');
     });
   }
 
-  /* =========================
-     DOM عناصر وإعدادات عامة
-  ========================== */
+  /* ======= DOM elements & settings ======= */
   const gamesGrid = document.getElementById("gamesGrid");
   const pagination = document.getElementById("pagination");
+  const searchInput = document.getElementById("searchInput");
+  const searchClear = document.getElementById("searchClear");
 
-  // adminBtn عنصر حاوية قد يحتوي smartBtn داخله
   const adminBtn = document.getElementById("adminBtn");
   const adminPanel = document.getElementById("adminPanel");
   const smartBtn = document.getElementById("smartBtn");
@@ -42,10 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let gamesPerPage = 10;
   let currentPage = 1;
   let currentCategory = "all";
+  let searchQuery = "";
 
-  /* =========================
-     البيانات
-  ========================== */
+  /* ======= بيانات الألعاب ======= */
   let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
   const baseGames = [
@@ -58,9 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
-  /* =========================
-     دوال مساعدة: روابط المصدر وجلب الصور
-  ========================== */
+  /* ======= دوال مساعدة ======= */
   function getPlayStoreSearchLink(name) {
     return `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
   }
@@ -89,10 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return "/no-image.png";
   }
 
-  /* =========================
-     تفعيل أزرار الأدمن والمساعد الذكي
-     شرط الظهور: ?admin=true أو localStorage.isAdmin === 'true'
-  ========================== */
+  /* ======= تفعيل/admin button & smart helper ======= */
   if (adminBtn) adminBtn.style.display = "none";
   if (smartBtn) smartBtn.style.display = "none";
 
@@ -101,11 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isAdmin) {
     if (adminBtn) {
       adminBtn.style.display = "flex";
-      // فتح اللوحة عند الضغط على الحاوية (باستثناء الضغط على زر المساعد الذكي الداخلي)
       adminBtn.addEventListener('click', (e) => {
-        if (e.target && (e.target.id === 'smartBtn' || e.target.closest && e.target.closest('#smartBtn'))) {
-          return; // الضغط على المساعد الذكي يجب ألا يفتح اللوحة
-        }
+        // تجاهل نقر المساعد الذكي الداخلي
+        if (e.target && (e.target.id === 'smartBtn' || e.target.closest && e.target.closest('#smartBtn'))) return;
         if (adminPanel) {
           adminPanel.style.display = "flex";
           renderAdminPanelForNew();
@@ -116,20 +113,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (smartBtn) {
       smartBtn.style.display = "inline-flex";
       smartBtn.style.zIndex = '100005';
-      smartBtn.style.pointerEvents = 'auto';
       smartBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        console.log('[DEBUG] smartBtn clicked');
         try {
-          if (typeof smartAddGame === 'function') {
-            await smartAddGame();
-          } else {
-            alert('المساعد الذكي غير متاح الآن.');
-            console.error('smartAddGame غير معرفة');
-          }
+          if (typeof smartAddGame === 'function') await smartAddGame();
+          else alert('المساعد الذكي غير متاح الآن.');
         } catch (err) {
-          console.error('خطأ في smartAddGame:', err);
-          alert('حدث خطأ أثناء المساعد الذكي، راجع Console.');
+          console.error('smartAddGame error:', err);
+          alert('حدث خطأ عند تشغيل المساعد الذكي.');
         }
       });
     }
@@ -141,18 +132,42 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   };
 
-  /* =========================
-     دوال الألعاب والصفحات
-  ========================== */
+  /* ======= البحث (search) ======= */
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = (e.target.value || "").trim().toLowerCase();
+      currentPage = 1;
+      renderGames();
+      renderPagination();
+    });
+  }
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      searchInput.value = "";
+      searchQuery = "";
+      currentPage = 1;
+      renderGames();
+      renderPagination();
+    });
+  }
+
+  /* ======= تصفية ودمج الألعاب ======= */
   function getAllGames() {
     return [...baseGames, ...adminGames];
   }
 
   function getFilteredGames() {
-    if (currentCategory === "all") return getAllGames();
-    return getAllGames().filter(g => g.category === currentCategory);
+    let list = getAllGames();
+    if (currentCategory && currentCategory !== "all") {
+      list = list.filter(g => g.category === currentCategory);
+    }
+    if (searchQuery) {
+      list = list.filter(g => (g.name || "").toLowerCase().includes(searchQuery));
+    }
+    return list;
   }
 
+  /* ======= عرض الألعاب ======= */
   function renderGames() {
     if (!gamesGrid) return;
     gamesGrid.innerHTML = "";
@@ -175,11 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <img src="${game.img}" onerror="this.src='/no-image.png'">
         <h3>${game.name}</h3>
         <p>${game.desc || ""}</p>
-        <p>
-          <a class="source-link" href="${getPlayStoreSearchLink(game.name)}" target="_blank" rel="noopener">
-            مصدر (Google Play)
-          </a>
-        </p>
+        <p><a class="source-link" href="${getPlayStoreSearchLink(game.name)}" target="_blank" rel="noopener">مصدر (Google Play)</a></p>
         ${isAdmin && isAdminGame ? `
           <div class="admin-actions" onclick="event.stopPropagation()">
             <button onclick="editGame(${index})" class="edit">✏️</button>
@@ -187,11 +198,15 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         ` : ``}
       `;
-
       gamesGrid.appendChild(card);
     });
+
+    if (games.length === 0) {
+      gamesGrid.innerHTML = `<div style="text-align:center;color:var(--muted);padding:40px">لا توجد ألعاب مطابقة</div>`;
+    }
   }
 
+  /* ======= Pagination ======= */
   function renderPagination() {
     if (!pagination) return;
     pagination.innerHTML = "";
@@ -210,20 +225,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  /* ======= الأقسام (sidebar) callable from HTML ======= */
   window.renderByCategory = cat => {
     currentCategory = cat;
     currentPage = 1;
+    // تفريغ البحث عند تغيير القسم (اختياري) — يمكن التعليق لو تريد الاحتفاظ بالبحث
+    searchQuery = "";
+    if (searchInput) searchInput.value = "";
     renderGames();
     renderPagination();
     if (sidebar) sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
   };
-
   window.renderAll = () => renderByCategory("all");
 
-  /* =========================
-     إدارة الإصدارات داخل لوحة الأدمن
-  ========================== */
+  /* ======= لوحة الأدمن: إصدارات/حفظ/تحرير/حذف ======= */
   let editingIndex = null;
   let tempVersions = [];
 
@@ -296,7 +312,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const category = aCategory ? aCategory.value : "";
 
     if (!name) { alert("الرجاء إدخال اسم اللعبة"); return; }
-
     if (tempVersions.length === 0) tempVersions.push({ v: "1.0", size: "", link: "#" });
 
     const gameObj = { name, img: img || "/no-image.png", desc, category, versions: tempVersions.map(v => ({ v: v.v, size: v.size, link: v.link })) };
@@ -332,9 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   };
 
-  /* =========================
-     المساعد الذكي — يجلب صورة ويملأ الحقول ثم يفتح اللوحة
-  ========================== */
+  /* ======= المساعد الذكي ======= */
   async function smartAddGame() {
     const name = prompt("اسم اللعبة (الإضافة الذكية) - اكتب اسم اللعبة:");
     if (!name) return;
@@ -351,9 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   window.smartAddGame = smartAddGame;
 
-  /* =========================
-     تهيئة أولية
-  ========================== */
+  /* ======= init ======= */
   (function init() {
     renderGames();
     renderPagination();
