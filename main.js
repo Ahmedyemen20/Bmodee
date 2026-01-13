@@ -455,4 +455,69 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPagination();
   })();
 
+// Export / Import adminGames (ضع داخل DOMContentLoaded)
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFile = document.getElementById('importFile');
+
+function exportAdminGames() {
+  const data = localStorage.getItem('adminGames') || '[]';
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'adminGames.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importAdminGamesFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!Array.isArray(parsed)) throw new Error('JSON must be an array');
+      localStorage.setItem('adminGames', JSON.stringify(parsed));
+      alert('تم استيراد الألعاب بنجاح. حدث الصفحة ليظهر المحتوى.');
+      // إعادة تحميل أو إعادة رسم الألعاب:
+      adminGames = parsed; // if adminGames variable is in scope
+      renderGames();
+      renderPagination();
+    } catch (err) {
+      alert('فشل استيراد الملف: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+if (exportBtn) exportBtn.addEventListener('click', exportAdminGames);
+if (importBtn) importBtn.addEventListener('click', () => importFile.click());
+if (importFile) importFile.addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (f) importAdminGamesFile(f);
+});
+
+// مثال: تحميل ملف JSON مركزي ودمجه مع adminGames
+const SHARED_JSON_URL = 'https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/shared-games.json';
+
+async function fetchSharedGames() {
+  try {
+    const res = await fetch(SHARED_JSON_URL);
+    if (!res.ok) return;
+    const shared = await res.json();
+    if (!Array.isArray(shared)) return;
+    // ادمج: ضع shared قبل adminGames حتى تظهر الألعاب المشتركة أولاً
+    adminGames = [...shared, ...JSON.parse(localStorage.getItem('adminGames') || '[]')];
+    renderGames();
+    renderPagination();
+  } catch (err) {
+    console.warn('fetchSharedGames error', err);
+  }
+}
+
+// استدعاء أثناء تهيئة التطبيق
+fetchSharedGames();
+
 });
