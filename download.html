@@ -6,8 +6,7 @@
   <title>تحميل اللعبة</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* تحسينات محلية لصفحة التحميل (لا تغيّر بقية المشروع) */
-    body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    /* تحسينات محلية لصفحة التحميل */
     .download-page {
       max-width:920px;
       margin:86px auto 40px;
@@ -23,11 +22,11 @@
     .download-title { font-size:26px; font-weight:700; color:#fff; margin:6px 0; }
     .download-desc { color:var(--muted,#bfc9d9); font-size:15px; max-width:820px; padding:0 8px; }
     .download-area { width:100%; max-width:760px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); padding:14px; border-radius:12px; display:flex; gap:12px; flex-direction:column; align-items:stretch; }
-    .version-list { display:flex; flex-direction:column; gap:10px; }
-    .version-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; background:transparent; }
+    .version-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; }
     .ver-info { text-align:right; direction:rtl; color:var(--muted,#cbd5e1); }
-    .download-btn { display:inline-block; background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; }
-    .alt-link { color:#4da3ff; text-decoration:underline; }
+    .download-btn { display:inline-block; background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:12px 18px; border-radius:12px; font-weight:800; text-decoration:none; }
+    .download-btn[aria-disabled="true"]{ opacity:0.6; pointer-events:none; }
+    .countdown { font-weight:700; color:#fff; background:rgba(0,0,0,0.25); padding:8px 12px; border-radius:8px; display:inline-block; }
     .notice { color:var(--muted,#9ca3af); font-size:14px; }
     .back-link { margin-top:8px; color:#a5d8ff; text-decoration:underline; display:inline-block; }
     .no-versions { color:var(--muted,#9ca3af); padding:8px 0; }
@@ -70,17 +69,15 @@
   </footer>
 
   <script>
-    // download.html — ربط بمعلومات اللعبة وعرض روابط التحميل
+    // download.html — يعرض تفاصيل التحميل ويطبق عد تنازلي قبل إظهار زر التحميل الفعلي
     (function () {
-      // قراءة Query params بأمان
-      function q(name) {
-        const u = new URL(location.href);
-        return u.searchParams.get(name);
-      }
-
-      const nameParam = q('name') || q('game') || '';
+      function q(name){ return new URL(location.href).searchParams.get(name); }
+      const nameParam = q('name') || '';
       const verParam = q('ver') || q('version') || '';
-      const linkParam = q('link') || ''; // لو أُرسل رابط مباشر في الرابط
+      const sizeParam = q('size') || '';
+      const linkParam = q('link') || ''; // رابط تحميل مباشر إن وُجد
+      const imgParam = q('img') || '';
+      const descParam = q('desc') || '';
 
       const dImg = document.getElementById('dImg');
       const dName = document.getElementById('dName');
@@ -91,100 +88,70 @@
       const messages = document.getElementById('messages');
       const backToGame = document.getElementById('backToGame');
 
-      function safeText(s) { return (s===null||s===undefined) ? '' : String(s); }
+      function safe(s){ return (s===null||s===undefined) ? '' : String(s); }
 
-      if (!nameParam) {
-        dName.textContent = 'لم يتم تحديد اللعبة';
-        dDesc.textContent = 'لا يمكن إكمال عملية التحميل لأن اسم اللعبة غير موجود في الرابط.';
-        messages.innerHTML = '<div class="notice">تحقق أنك فتحت الرابط عبر زر "تحميل" من صفحة التفاصيل أو أعد المحاولة من الصفحة الرئيسية.</div>';
-        playSearch.style.display = 'none';
-        noVersions.style.display = 'block';
-        backToGame.href = 'index.html';
-        return;
+      // وضع افتراضي للرجوع
+      backToGame.href = nameParam ? `game.html?name=${encodeURIComponent(nameParam)}` : 'index.html';
+
+      // اعداد رابط Google Play للبحث
+      playSearch.href = nameParam ? `https://play.google.com/store/search?q=${encodeURIComponent(nameParam)}&c=apps` : '#';
+
+      // محاولة جلب بيانات من params أولاً (الأفضل) ثم fallback إلى localStorage
+      let versions = [];
+      let game = null;
+
+      if (nameParam) {
+        // إذا وصلنا جميع الحقول من params (مثلاً img/desc/link/size/ver) نعرضها مباشرة
+        game = {
+          name: decodeURIComponent(nameParam),
+          img: decodeURIComponent(imgParam || ''),
+          desc: decodeURIComponent(descParam || ''),
+          versions: []
+        };
+        // لو وصل linkParam و verParam استخدمهما كإصدار واحد
+        if (linkParam || verParam || sizeParam) {
+          game.versions.push({
+            v: decodeURIComponent(verParam || ''),
+            size: decodeURIComponent(sizeParam || ''),
+            link: decodeURIComponent(linkParam || '')
+          });
+        } else {
+          // إذا لم يأتِ إصدار عبر params سنحاول البحث في localStorage
+          try {
+            const adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
+            const found = (adminGames||[]).find(g => (g.name||'').trim().toLowerCase() === (nameParam||'').trim().toLowerCase());
+            if (found) {
+              game = found;
+            }
+          } catch(e){}
+        }
       }
 
-      // الرابط البحثي على Google Play
-      playSearch.href = `https://play.google.com/store/search?q=${encodeURIComponent(nameParam)}&c=apps`;
-
-      // نحاول قراءة adminGames من localStorage
-      let adminGames = [];
-      try { adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]'); } catch(e) { adminGames = []; }
-
-      // اختصر البحث عن اسم اللعبة في adminGames (مطابقة case-insensitive)
-      function findGame(list, name) {
-        const n = (name||'').trim().toLowerCase();
-        return (list||[]).find(g => (g.name||'').trim().toLowerCase() === n) || null;
-      }
-
-      let game = findGame(adminGames, nameParam);
-
-      // إذا ما وجدناها في adminGames — نجرب أن نأخذ بيانات من window.history.state أو localStorage 'lastGames' أو غيرها
       if (!game) {
-        // محاولة: قد يكون الموقع خزّن ألعاب تحت مفتاح 'baseGames' أو 'allGames' — نتحقق بدون خطأ
-        try {
-          const maybe = JSON.parse(localStorage.getItem('allGames') || 'null');
-          if (maybe && Array.isArray(maybe)) {
-            game = findGame(maybe, nameParam);
-          }
-        } catch(e){}
-      }
-
-      // إذا لم توجد اللعبة نعرض رسالة ونوجه المستخدم لخيار البحث في Google Play
-      if (!game) {
-        dName.textContent = decodeURIComponent(nameParam);
-        dDesc.textContent = 'لم يتم العثور على تفاصيل هذه اللعبة محلياً.';
-        versionList.innerHTML = '';
+        dName.textContent = 'اللعبة غير موجودة';
+        dDesc.textContent = 'لم يتم تمرير بيانات كافية لعرض صفحة التحميل.';
+        messages.innerHTML = '<div class="notice">تأكد أنك ضغط زر "تحميل" من صفحة التفاصيل أو أعد المحاولة من الصفحة الرئيسية.</div>';
+        playSearch.style.display = 'inline-block';
         noVersions.style.display = 'block';
-        messages.innerHTML = '<div class="notice">إن لم يكن هناك رابط تحميل مباشر، استخدم زر البحث في Google Play أو تواصل مع مدير الموقع لإضافة إصدار التحميل.</div>';
-        backToGame.href = `game.html?name=${encodeURIComponent(nameParam)}`;
         return;
       }
 
-      // عثرنا على اللعبة — نعرض بياناتها
-      dName.textContent = safeText(game.name);
-      dDesc.textContent = safeText(game.desc || '');
-      dImg.src = safeText(game.img || '/no-image.png');
-      backToGame.href = `game.html?name=${encodeURIComponent(game.name)}`;
+      // عرض بيانات اللعبة
+      dName.textContent = safe(game.name || decodeURIComponent(nameParam));
+      dDesc.textContent = safe(game.desc || '');
+      dImg.src = safe(game.img || '/no-image.png');
 
-      const versions = (game.versions && game.versions.length) ? game.versions : [];
+      // حشد الإصدارات من game object
+      versions = (game.versions && game.versions.length) ? game.versions : [];
 
-      // إذا أُرسِل linkParam في رابط الصفحة فنجعلها نسخة وحيدة قابلة للتحميل
-      if (linkParam && linkParam.trim() !== '') {
-        versionList.innerHTML = '';
-        const row = document.createElement('div');
-        row.className = 'version-row';
-        const info = document.createElement('div');
-        info.className = 'ver-info';
-        info.textContent = verParam ? `${verParam}` : 'رابط تحميل مباشر';
-        const actions = document.createElement('div');
-        const a = document.createElement('a');
-        a.className = 'download-btn';
-        a.href = linkParam;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.textContent = 'تحميل الآن';
-        actions.appendChild(a);
-        row.appendChild(info);
-        row.appendChild(actions);
-        versionList.appendChild(row);
-        noVersions.style.display = 'none';
-        return;
-      }
-
-      // عرض الإصدارات إن وُجدت
       versionList.innerHTML = '';
+
       if (!versions.length) {
         noVersions.style.display = 'block';
-        messages.innerHTML = '<div class="notice">لا توجد إصدارات مُسجلة لهذه اللعبة. حاول البحث في Google Play أو تواصل مع المُشرف.</div>';
+        messages.innerHTML = '<div class="notice">لا توجد إصدارات مسجلة لهذه اللعبة.</div>';
         return;
       } else {
         noVersions.style.display = 'none';
-        // إذا كان هناك باراميتر verParam، حاول اختيار هذا الإصدار أولاً
-        let selectedIndex = -1;
-        if (verParam) {
-          selectedIndex = versions.findIndex(v => (v.v||'').toString() === verParam.toString());
-        }
-        // إذا لم يوجد باراميتر أو لم نجد المطابقة نعرض كل الإصدارات كقائمة
         versions.forEach((v, idx) => {
           const row = document.createElement('div');
           row.className = 'version-row';
@@ -197,32 +164,64 @@
 
           const actions = document.createElement('div');
 
-          const href = (v.link && v.link.trim() && v.link.trim() !== '#') ? v.link.trim() : null;
-
+          // زر ا��تحميل يظهر بعد عد تنازلي على كل إصدار (ننشئ زر واحد مع سلوك عد تنازلي)
           const a = document.createElement('a');
           a.className = 'download-btn';
-          a.textContent = 'تحميل';
+          a.textContent = 'انتظر...';
+          a.setAttribute('aria-disabled', 'true');
+          a.href = '#';
+
+          // إذا كان هناك رابط حقيقي نحتفظ به في dataset لاستخدامه عند انتهاء العد
+          const href = (v.link && v.link.trim() && v.link.trim() !== '#') ? v.link.trim() : null;
           if (href) {
-            a.href = href;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
+            a.dataset.href = href;
           } else {
-            // لو ما فيه رابط مباشر توجه إلى نفس الصفحة مع params واضحة (أبقينا سلوك آمن)
-            a.href = `download.html?name=${encodeURIComponent(game.name)}&ver=${encodeURIComponent(v.v || '')}`;
-            a.target = '_self';
+            // في حال لم يوجد رابط مباشر: لا نضع href مباشر. يمكن توجيهه لصفحة بديلة أو إبقاءه غير مفعل.
+            a.dataset.href = ''; // فارغ => لن يفعل أي شيء إلا نعرض رسالة
           }
 
+          // زر خاص بالعد (نضع عنصر العد داخل actions قبل تفعيل الزر)
+          const countEl = document.createElement('span');
+          countEl.className = 'countdown';
+          const countdownSeconds = 5; // مدة العد (يمكن تعديلها)
+          countEl.textContent = `التحميل خلال ${countdownSeconds}...`;
+
+          actions.appendChild(countEl);
           actions.appendChild(a);
 
           row.appendChild(info);
           row.appendChild(actions);
           versionList.appendChild(row);
 
-          // إذا كان هذا الإصدار المطلوب (verParam) نجعل الصفحة تبرزها
-          if (selectedIndex === idx) {
-            row.style.background = 'rgba(250,204,21,0.08)';
-            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+          // شغّل عد تنازلي منفصل لكل زر
+          (function(startEl, linkEl, secs){
+            let t = secs;
+            const interval = setInterval(() => {
+              t--;
+              if (t > 0) {
+                startEl.textContent = `التحميل خلال ${t}...`;
+              } else {
+                clearInterval(interval);
+                startEl.style.display = 'none';
+                // فعل الزر وأعد تسميته
+                linkEl.textContent = 'تحميل الآن';
+                linkEl.setAttribute('aria-disabled', 'false');
+                // لو لدينا رابط صالح نجعل href و target
+                if (linkEl.dataset.href) {
+                  linkEl.href = linkEl.dataset.href;
+                  linkEl.target = '_blank';
+                  linkEl.rel = 'noopener noreferrer';
+                } else {
+                  // لو لا يوجد رابط مباشر نغير النص ليوجه المستخدم لصفحة التواصل أو عرض رسالة
+                  linkEl.href = `#`;
+                  linkEl.addEventListener('click', (ev) => {
+                    ev.preventDefault();
+                    alert('لا يوجد رابط تحميل مباشر لهذا الإصدار. يرجى العودة أو التواصل مع المشرف.');
+                  });
+                }
+              }
+            }, 1000);
+          })(countEl, a, countdownSeconds);
         });
       }
 

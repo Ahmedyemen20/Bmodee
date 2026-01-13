@@ -6,7 +6,7 @@
   <title>تفاصيل اللعبة</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* تحسينات محلية لصفحة التفاصيل (لن تغير بقية المشروع) */
+    /* تحسينات محلية بسيطة لصفحة التفاصيل */
     .game-details{ max-width:920px; margin:96px auto 40px; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; }
     .game-thumb img{ width:100%; max-width:640px; height:auto; border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,0.45); }
     .game-title{ font-size:28px; font-weight:700; color:#fff; margin:6px 0; text-transform:capitalize; }
@@ -16,10 +16,9 @@
     .version-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; background:rgba(255,255,255,0.02); border-radius:10px; border:1px solid rgba(255,255,255,0.03); }
     .ver-info{ flex:1; color:var(--muted,#cbd5e1); font-size:15px; text-align:right; direction:rtl; }
     .version-actions{ display:flex; gap:8px; align-items:center; }
-    .download-btn{ background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; }
+    .download-btn{ background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; display:inline-block; }
+    .edit-btn{ background:#ffd166; color:#000; padding:8px 10px; border-radius:8px; border:none; cursor:pointer; }
     .back-link{ display:inline-block; margin-top:6px; color:#a5d8ff; text-decoration:underline; }
-    .no-versions{ color:var(--muted,#9ca3af); padding:10px 8px; }
-    footer.footer{ margin-top:40px; } /* لا نغيّر الفوتر الأصلي كثيرًا */
   </style>
 </head>
 <body>
@@ -50,15 +49,13 @@
   </footer>
 
   <script>
-    // game.html — يعرض تفاصيل اللعبة ويبني روابط تحميل آمنة
+    // game.html — يهيئ صفحة التفاصيل ويبني روابط تحميل تمرر كل المعلومات إلى download.html
     (function () {
-      // مساعدة: قراءة query param
       function getQueryParam(name) {
         const u = new URL(location.href);
         return u.searchParams.get(name);
       }
 
-      // احصل على اسم اللعبة من ?name=
       const gameName = getQueryParam('name') || getQueryParam('game') || '';
       const gImg = document.getElementById('gImg');
       const gNameEl = document.getElementById('gName');
@@ -75,56 +72,45 @@
         return;
       }
 
-      // حاول تحميل الألعاب المخزنة من localStorage (adminGames)
+      // قراءة الألعاب من localStorage (adminGames) أو مفتاح بديل
       let adminGames = [];
-      try {
-        adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
-      } catch(e) {
-        adminGames = [];
-      }
+      try { adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]'); } catch(e){ adminGames = []; }
 
-      // helper: إيجاد اللعبة في المصفوفة حسب الاسم (مراعاة حالة الأحرف)
       function findGameByName(name, list) {
         if (!list || !list.length) return null;
         const n = name.trim().toLowerCase();
         return list.find(g => (g.name || '').trim().toLowerCase() === n) || null;
       }
 
-      // حاول إيجاد اللعبة في adminGames
       let game = findGameByName(gameName, adminGames);
 
-      // إذا لم توجد في adminGames — جرّب البحث في الصفحة المفتوحة (opener) أو في window.history.state
+      // إذا لم تجده في adminGames حاول البحث في allGames أو baseGames المخزنة
       if (!game) {
         try {
-          // قد تكون الصفحة الرئيسية قد وضعت بيانات على window.opener (نادراً)
-          if (window.opener && window.opener.getAllGames) {
-            const all = window.opener.getAllGames();
-            game = findGameByName(gameName, all);
+          const maybe = JSON.parse(localStorage.getItem('allGames') || 'null');
+          if (maybe && Array.isArray(maybe)) {
+            game = findGameByName(gameName, maybe);
           }
-        } catch (e) { /* تجاهل */ }
+        } catch(e){}
       }
 
-      // كحل أخير: إذا لم نجد اللعبة، نعرض رسالة واضحة بدلاً من إظهار صفحة معطوبة
+      // لو لم نجد اللعبة، نظهر رسالة واضحة
       if (!game) {
         gNameEl.textContent = decodeURIComponent(gameName);
-        gDescEl.textContent = 'تفاصيل هذه اللعبة غير متاحة محلياً. إذا أتت هذه اللعبة من الصفحة الرئيسية ولم تظهر، أضف اللعبة عبر لوحة الأدمن أو تحقق من وجودها في المصدر.';
-        // اترك رابط Google Play مخفف أو مخفي إن لم يكن موجود
+        gDescEl.textContent = 'تفاصيل هذه اللعبة غير متاحة محلياً. أضف اللعبة أو تأكد من الاسم.';
         gSourceEl.style.display = 'none';
         noVersionsEl.style.display = 'block';
         return;
       }
 
-      // الآن لدينا كائن اللعبة، نعرضه
+      // عرض بيانات اللعبة
       gNameEl.textContent = game.name || decodeURIComponent(gameName);
       gDescEl.textContent = game.desc || '';
       gImg.src = game.img || '/no-image.png';
-
-      // إعداد رابط المصدر — سيبقى مرئياً في صفحة اللعبة
       const playHref = `https://play.google.com/store/search?q=${encodeURIComponent(game.name)}&c=apps`;
       gSourceEl.href = playHref;
       gSourceEl.style.display = 'inline-block';
 
-      // render versions
       const versions = (game.versions && game.versions.length) ? game.versions : [];
       versionsContainer.innerHTML = '';
 
@@ -132,7 +118,7 @@
         noVersionsEl.style.display = 'block';
       } else {
         noVersionsEl.style.display = 'none';
-        versions.forEach((v, i) => {
+        versions.forEach((v) => {
           const row = document.createElement('div');
           row.className = 'version-row';
 
@@ -145,34 +131,35 @@
           const actions = document.createElement('div');
           actions.className = 'version-actions';
 
-          // إذا كان هناك رابط تحميل مباشر صالح (وليس '#' و ليس فارغ)
-          const hasDirect = v.link && v.link.trim() && v.link.trim() !== '#';
-          const dl = document.createElement(hasDirect ? 'a' : 'a'); // نستخدم <a> دائماً
+          // بناء رابط إلى download.html و تمرير كل المعلومات كـ query params
+          const params = new URLSearchParams();
+          params.set('name', game.name || '');
+          params.set('ver', v.v || '');
+          params.set('size', v.size || '');
+          // تمرير رابط التحميل الفعلي (إن وُجد) كـ link param — نضعه مشفراً بواسطة encodeURIComponent آلياً عبر toString
+          params.set('link', v.link || '');
+          // تمرير صورة ووصف أيضاً حتى تظهر في صفحة التحميل دون حاجة لقراءة localStorage
+          params.set('img', game.img || '');
+          params.set('desc', game.desc || '');
+
+          const dlHref = `download.html?${params.toString()}`;
+
+          const dl = document.createElement('a');
           dl.className = 'download-btn';
           dl.textContent = 'تحميل';
-
-          if (hasDirect) {
-            dl.href = v.link;
-            dl.target = '_blank';
-            dl.rel = 'noopener noreferrer';
-          } else {
-            // في حالة لا رابط مباشر، وجه المستخدم إلى صفحة تحميل داخلية download.html
-            // (صفحة download.html يجب أن تتعامل مع params وتعرض رابط التحميل إذا توفر)
-            dl.href = `download.html?name=${encodeURIComponent(game.name)}&ver=${encodeURIComponent(v.v || '')}`;
-            dl.target = '_self';
-          }
+          dl.href = dlHref;
+          // نفتح داخل نفس الصفحة ليتحول المستخدم لصفحة التحميل
+          dl.target = '_self';
 
           actions.appendChild(dl);
 
-          // زر تحرير (يبقى ظاهر لكن لا يغيّر وظيفة) — يظهر فقط لو المستخدم في وضع أدمن
+          // زر تحرير يظهر للمشرفين فقط
           if (location.search.includes('admin=true') || localStorage.getItem('isAdmin') === 'true') {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'edit-btn';
             editBtn.textContent = '✏️';
             editBtn.onclick = () => {
-              // نعيد توجيه لفتح لوحة الأدمن (إن وُجدت في window.opener أو نفتح index مع admin)
-              // هنا نفتح index.html?admin=true ثم نبحث بالاسم لفتح المحرر إن لزم
               location.href = `index.html?admin=true`;
             };
             actions.appendChild(editBtn);
