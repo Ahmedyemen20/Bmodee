@@ -193,9 +193,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const card = document.createElement("div");
       card.className = "game-card";
-      card.onclick = () => {
-        location.href = `game.html?name=${encodeURIComponent(game.name)}${isAdmin ? "&admin=true" : ""}`;
-      };
+  card.onclick = () => {
+  try {
+    sessionStorage.setItem('selectedGame', JSON.stringify(game));
+  } catch (e) {
+  }
+  location.href = `game.html?name=${encodeURIComponent(game.name)}${isAdmin ? "&admin=true" : ""}`;
+};
 
       card.innerHTML = `
         <img src="${game.img}" onerror="this.src='/no-image.png'">
