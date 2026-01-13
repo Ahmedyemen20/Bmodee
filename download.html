@@ -24,15 +24,20 @@
     .download-area { width:100%; max-width:760px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); padding:14px; border-radius:12px; display:flex; gap:12px; flex-direction:column; align-items:stretch; }
     .version-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; }
     .ver-info { text-align:right; direction:rtl; color:var(--muted,#cbd5e1); }
-    .download-btn { display:inline-block; background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:12px 18px; border-radius:12px; font-weight:800; text-decoration:none; }
+    .download-btn { display:inline-block; background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:12px 18px; border-radius:12px; font-weight:800; text-decoration:none; border:0; cursor:pointer; }
     .download-btn[aria-disabled="true"]{ opacity:0.6; pointer-events:none; }
     .countdown { font-weight:700; color:#fff; background:rgba(0,0,0,0.25); padding:8px 12px; border-radius:8px; display:inline-block; }
     .notice { color:var(--muted,#9ca3af); font-size:14px; }
     .back-link { margin-top:8px; color:#a5d8ff; text-decoration:underline; display:inline-block; }
     .no-versions { color:var(--muted,#9ca3af); padding:8px 0; }
+    .btn-group { display:flex; gap:8px; align-items:center; }
+    .direct-download-loading { display:inline-block; width:18px; height:18px; border:3px solid rgba(0,0,0,0.12); border-top-color:#000; border-radius:50%; animation:spin 1s linear infinite; vertical-align:middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     @media (max-width:720px){
       .download-page { margin:70px 10px 30px; }
       .download-title { font-size:20px; }
+      .version-row { flex-direction:column; align-items:stretch; }
+      .btn-group { justify-content:flex-start; }
     }
   </style>
 </head>
@@ -65,15 +70,12 @@
   </main>
 
   <footer class="footer">
-  <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
-  <nav class="footer-links">
-    <a href="privacy.html">سياسة الخصوصية</a> |
-    <a href="terms.html">الشروط والأحكام</a>
-  </nav>
-</footer>
+    <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
+  </footer>
 
   <script>
-    // download.html — يعرض تفاصيل التحميل ويطبق عد تنازلي قبل إظهار زر التحميل الفعلي
+    // download.html — يعرض تفاص��ل التحميل ويطبق عد تنازلي قبل إظهار زر التحميل الفعلي
+    // ويضيف زر "تحميل مباشر" يحاول تحميل الملف عبر fetch ثم تنزيلة كـ Blob (إذا سمحت CORS).
     (function () {
       function q(name){ return new URL(location.href).searchParams.get(name); }
       const nameParam = q('name') || '';
@@ -94,25 +96,19 @@
 
       function safe(s){ return (s===null||s===undefined) ? '' : String(s); }
 
-      // وضع افتراضي للرجوع
       backToGame.href = nameParam ? `game.html?name=${encodeURIComponent(nameParam)}` : 'index.html';
-
-      // اعداد رابط Google Play للبحث
       playSearch.href = nameParam ? `https://play.google.com/store/search?q=${encodeURIComponent(nameParam)}&c=apps` : '#';
 
-      // محاولة جلب بيانات من params أولاً (الأفضل) ثم fallback إلى localStorage
       let versions = [];
       let game = null;
 
       if (nameParam) {
-        // إذا وصلنا جميع الحقول من params (مثلاً img/desc/link/size/ver) نعرضها مباشرة
         game = {
           name: decodeURIComponent(nameParam),
           img: decodeURIComponent(imgParam || ''),
           desc: decodeURIComponent(descParam || ''),
           versions: []
         };
-        // لو وصل linkParam و verParam استخدمهما كإصدار واحد
         if (linkParam || verParam || sizeParam) {
           game.versions.push({
             v: decodeURIComponent(verParam || ''),
@@ -120,7 +116,6 @@
             link: decodeURIComponent(linkParam || '')
           });
         } else {
-          // إذا لم يأتِ إصدار عبر params سنحاول البحث في localStorage
           try {
             const adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
             const found = (adminGames||[]).find(g => (g.name||'').trim().toLowerCase() === (nameParam||'').trim().toLowerCase());
@@ -140,14 +135,11 @@
         return;
       }
 
-      // عرض بيانات اللعبة
       dName.textContent = safe(game.name || decodeURIComponent(nameParam));
       dDesc.textContent = safe(game.desc || '');
       dImg.src = safe(game.img || '/no-image.png');
 
-      // حشد الإصدارات من game object
       versions = (game.versions && game.versions.length) ? game.versions : [];
-
       versionList.innerHTML = '';
 
       if (!versions.length) {
@@ -168,38 +160,45 @@
 
           const actions = document.createElement('div');
 
-          // زر ا��تحميل يظهر بعد عد تنازلي على كل إصدار (ننشئ زر واحد مع سلوك عد تنازلي)
-          const a = document.createElement('a');
-          a.className = 'download-btn';
-          a.textContent = 'انتظر...';
-          a.setAttribute('aria-disabled', 'true');
-          a.href = '#';
-
-          // إذا كان هناك رابط حقيقي نحتفظ به في dataset لاستخدامه عند انتهاء العد
-          const href = (v.link && v.link.trim() && v.link.trim() !== '#') ? v.link.trim() : null;
-          if (href) {
-            a.dataset.href = href;
-          } else {
-            // في حال لم يوجد رابط مباشر: لا نضع href مباشر. يمكن توجيهه لصفحة بديلة أو إبقاءه غير مفعل.
-            a.dataset.href = ''; // فارغ => لن يفعل أي شيء إلا نعرض رسالة
-          }
-
-          // زر خاص بالعد (نضع عنصر العد داخل actions قبل تفعيل الزر)
+          // عنصر countdown وازرار التحميل (فتح + تحميل مباشر) — يظهران بعد العدّ
           const countEl = document.createElement('span');
           countEl.className = 'countdown';
-          const countdownSeconds = 5; // مدة العد (يمكن تعديلها)
+          const countdownSeconds = 5; // مدة العدّ (يمكن تعديلها)
           countEl.textContent = `التحميل خلال ${countdownSeconds}...`;
 
-          actions.appendChild(countEl);
-          actions.appendChild(a);
+          // زر الفتح التقليدي (يفتح الرابط في تبويب جديد) - سيكون <a>
+          const openA = document.createElement('a');
+          openA.className = 'download-btn';
+          openA.textContent = 'تحميل الآن';
+          openA.setAttribute('aria-disabled', 'true');
+          openA.href = '#';
+
+          // زر التحميل المباشر (يحاول fetch + download) - سيكون <button>
+          const directBtn = document.createElement('button');
+          directBtn.className = 'download-btn';
+          directBtn.textContent = 'تحميل مباشر';
+          directBtn.setAttribute('aria-disabled', 'true');
+          directBtn.type = 'button';
+
+          // مجموعة الأزرار
+          const btnGroup = document.createElement('div');
+          btnGroup.className = 'btn-group';
+          btnGroup.appendChild(countEl);
+          btnGroup.appendChild(openA);
+          btnGroup.appendChild(directBtn);
+
+          actions.appendChild(btnGroup);
 
           row.appendChild(info);
           row.appendChild(actions);
           versionList.appendChild(row);
 
-          // شغّل عد تنازلي منفصل لكل زر
-          (function(startEl, linkEl, secs){
-            let t = secs;
+          // href صالح أم لا؟
+          const href = (v.link && v.link.trim() && v.link.trim() !== '#') ? v.link.trim() : null;
+
+          // شغل العد لكل زر
+          (function(startEl, openEl, directEl, hrefVal, verObj){
+            let t = countdownSeconds;
             const interval = setInterval(() => {
               t--;
               if (t > 0) {
@@ -207,25 +206,82 @@
               } else {
                 clearInterval(interval);
                 startEl.style.display = 'none';
-                // فعل الزر وأعد تسميته
-                linkEl.textContent = 'تحميل الآن';
-                linkEl.setAttribute('aria-disabled', 'false');
-                // لو لدينا رابط صالح نجعل href و target
-                if (linkEl.dataset.href) {
-                  linkEl.href = linkEl.dataset.href;
-                  linkEl.target = '_blank';
-                  linkEl.rel = 'noopener noreferrer';
+
+                // فعل زر الفتح
+                openEl.setAttribute('aria-disabled', 'false');
+                if (hrefVal) {
+                  openEl.href = hrefVal;
+                  openEl.target = '_blank';
+                  openEl.rel = 'noopener noreferrer';
                 } else {
-                  // لو لا يوجد رابط مباشر نغير النص ليوجه المستخدم لصفحة التواصل أو عرض رسالة
-                  linkEl.href = `#`;
-                  linkEl.addEventListener('click', (ev) => {
-                    ev.preventDefault();
-                    alert('لا يوجد رابط تحميل مباشر لهذا الإصدار. يرجى العودة أو التواصل مع المشرف.');
-                  });
+                  // لو لا يوجد رابط مباشر، نوجّه إلى صفحة داخلية (أبقى سلوك قد يناسب)
+                  openEl.href = `download.html?name=${encodeURIComponent(game.name)}&ver=${encodeURIComponent(verObj.v || '')}`;
+                  openEl.target = '_self';
                 }
+
+                // فعل زر التحميل المباشر
+                directEl.setAttribute('aria-disabled', 'false');
+                // handler: attempt fetch and download; if fails (CORS/خطأ) fallback to opening link
+                directEl.addEventListener('click', async (ev) => {
+                  ev.preventDefault();
+                  // اذا ليس هناك رابط حقيقي، نعلم المستخدم
+                  if (!hrefVal) {
+                    alert('لا يوجد رابط تحميل مباشر لهذا الإصدار.');
+                    return;
+                  }
+                  // واجهة مستخدم: ضع مؤشر تحميل
+                  const spinner = document.createElement('span');
+                  spinner.className = 'direct-download-loading';
+                  directEl.disabled = true;
+                  const prevText = directEl.textContent;
+                  directEl.textContent = ' ';
+                  directEl.appendChild(spinner);
+
+                  try {
+                    // نحاول جلب الملف (CORS ممكن يمنع), نستخدم response.blob()
+                    const resp = await fetch(hrefVal, { mode: 'cors' });
+                    if (!resp.ok) throw new Error('فشل جلب الملف: ' + resp.status);
+                    const blob = await resp.blob();
+                    // نحاول استخراج اسم ملف من header أو من الرابط
+                    let filename = 'download';
+                    const cd = resp.headers.get('content-disposition');
+                    if (cd && /filename="?([^"]+)"?/.test(cd)) {
+                      filename = RegExp.$1;
+                    } else {
+                      try {
+                        const urlPath = new URL(hrefVal).pathname;
+                        const parts = urlPath.split('/');
+                        if (parts.length) {
+                          const last = parts.pop() || parts.pop();
+                          if (last) filename = last;
+                        }
+                      } catch(e){}
+                    }
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    // انتهاء — يمكن إظهار رسالة نجاح بسيطة
+                    messages.innerHTML = `<div class="notice">بدأ التنزيل المباشر (${filename}). إذا لم يبدأ تلقائياً، افتح الرابط يدوياً.</div>`;
+                  } catch (err) {
+                    // فشل (غالباً بسبب CORS) — fallback: افتح الرابط في تبويب جديد
+                    console.warn('Direct download failed, fallback to opening link:', err);
+                    alert('لم أتمكن من تنزيل الملف مباشرةً بسبب قيود الخادم (CORS أو غيرها). سيتم فتح الرابط في تبويب جديد.');
+                    window.open(hrefVal, '_blank', 'noopener');
+                  } finally {
+                    // إعادة الحالة للزر
+                    directEl.disabled = false;
+                    directEl.removeChild(spinner);
+                    directEl.textContent = prevText;
+                  }
+                }, { once: true });
               }
             }, 1000);
-          })(countEl, a, countdownSeconds);
+          })(countEl, openA, directBtn, href, v);
         });
       }
 
