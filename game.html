@@ -6,9 +6,26 @@
   <title>تفاصيل اللعبة</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* تحسينات محلية بسيطة لصفحة التفاصيل */
-    .game-details{ max-width:920px; margin:96px auto 40px; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; }
-    .game-thumb img{ width:100%; max-width:640px; height:auto; border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,0.45); }
+    /* تحسينات محلية لصفحة التفاصيل (آمنة، لا تغير بقية المشروع) */
+    .game-details{
+      max-width:920px;
+      margin:86px auto 40px;
+      padding:16px;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      align-items:center;
+      text-align:center;
+    }
+    .game-thumb img{
+      width:100%;
+      max-width:640px;
+      height:auto;
+      border-radius:12px;
+      box-shadow:0 8px 28px rgba(0,0,0,0.45);
+      background:#0b1220;
+    }
     .game-title{ font-size:28px; font-weight:700; color:#fff; margin:6px 0; text-transform:capitalize; }
     .game-desc{ color:var(--muted,#bfc9d9); max-width:880px; font-size:15px; padding:0 8px; }
     .meta{ width:100%; max-width:760px; display:flex; flex-direction:column; gap:12px; align-items:stretch; text-align:right; padding:0 8px; }
@@ -19,6 +36,11 @@
     .download-btn{ background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; display:inline-block; }
     .edit-btn{ background:#ffd166; color:#000; padding:8px 10px; border-radius:8px; border:none; cursor:pointer; }
     .back-link{ display:inline-block; margin-top:6px; color:#a5d8ff; text-decoration:underline; }
+    .no-versions{ color:var(--muted,#9ca3af); padding:10px 8px; }
+    @media (max-width:720px){
+      .game-details { margin:70px 10px 30px; padding:12px; }
+      .game-title{ font-size:22px; }
+    }
   </style>
 </head>
 <body>
@@ -32,94 +54,108 @@
 
     <p id="gDesc" class="game-desc">وصف اللعبة...</p>
 
-    <!-- رابط المصدر (يُترك مرئياً في صفحة اللعبة) -->
-    <a id="gSource" class="source-link" href="#" target="_blank" rel="noopener noreferrer">مصدر (Google Play)</a>
+    <!-- رابط المصدر يبقى مرئياً في صفحة التفاصيل -->
+    <a id="gSource" class="source-link" href="#" target="_blank" rel="noopener noreferrer" style="display:none">مصدر (Google Play)</a>
 
     <div class="meta">
-      <div class="versions-title">الإصدارات</div>
+      <div class="versions-title" style="font-weight:700;color:#fff">الإصدارات</div>
       <div id="versions" class="versions"></div>
       <div id="noVersions" class="no-versions" style="display:none">لا توجد إصدارات متاحة</div>
     </div>
 
-    <a href="index.html" class="back-link">« عودة للقائمة</a>
+    <a id="backToIndex" href="index.html" class="back-link">« عودة للقائمة</a>
   </main>
 
   <footer class="footer">
-  <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
-  <nav class="footer-links">
-    <a href="privacy.html">سياسة الخصوصية</a> |
-    <a href="terms.html">الشروط والأحكام</a>
-  </nav>
-</footer>
+    <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
+  </footer>
 
   <script>
-    // game.html — يهيئ صفحة التفاصيل ويبني روابط تحميل تمرر كل المعلومات إلى download.html
     (function () {
+      // Helper: قراءة query param
       function getQueryParam(name) {
-        const u = new URL(location.href);
-        return u.searchParams.get(name);
+        try {
+          return new URL(location.href).searchParams.get(name);
+        } catch (e) {
+          return null;
+        }
       }
 
-      const gameName = getQueryParam('name') || getQueryParam('game') || '';
       const gImg = document.getElementById('gImg');
       const gNameEl = document.getElementById('gName');
       const gDescEl = document.getElementById('gDesc');
       const gSourceEl = document.getElementById('gSource');
       const versionsContainer = document.getElementById('versions');
       const noVersionsEl = document.getElementById('noVersions');
+      const backToIndex = document.getElementById('backToIndex');
 
-      if (!gameName) {
-        gNameEl.textContent = 'اللعبة غير محددة';
-        gDescEl.textContent = 'لم يتم تمرير اسم اللعبة في رابط الصفحة.';
-        gSourceEl.style.display = 'none';
-        noVersionsEl.style.display = 'block';
-        return;
+      const nameParam = getQueryParam('name') || getQueryParam('game') || '';
+
+      // 1) حاول جلب كائن اللعبة من sessionStorage (عند النقر من الصفحة الرئيسية حفظنا selectedGame)
+      let game = null;
+      try {
+        const sel = sessionStorage.getItem('selectedGame');
+        if (sel) {
+          game = JSON.parse(sel);
+          // نزيله لتجنّب بقاء بيانات قديمة
+          sessionStorage.removeItem('selectedGame');
+        }
+      } catch (e) {
+        game = null;
       }
 
-      // قراءة الألعاب من localStorage (adminGames) أو مفتاح بديل
-      let adminGames = [];
-      try { adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]'); } catch(e){ adminGames = []; }
-
-      function findGameByName(name, list) {
-        if (!list || !list.length) return null;
-        const n = name.trim().toLowerCase();
-        return list.find(g => (g.name || '').trim().toLowerCase() === n) || null;
-      }
-
-      let game = findGameByName(gameName, adminGames);
-
-      // إذا لم تجده في adminGames حاول البحث في allGames أو baseGames المخزنة
-      if (!game) {
+      // 2) إن لم نجده في sessionStorage، نبحث في localStorage (adminGames أو allGames)
+      if (!game && nameParam) {
         try {
-          const maybe = JSON.parse(localStorage.getItem('allGames') || 'null');
-          if (maybe && Array.isArray(maybe)) {
-            game = findGameByName(gameName, maybe);
+          const adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
+          const lower = (nameParam || '').trim().toLowerCase();
+          game = (adminGames || []).find(g => (g.name || '').trim().toLowerCase() === lower) || null;
+
+          if (!game) {
+            const maybe = JSON.parse(localStorage.getItem('allGames') || '[]');
+            game = (maybe || []).find(g => (g.name || '').trim().toLowerCase() === lower) || null;
           }
-        } catch(e){}
+        } catch (e) {
+          game = null;
+        }
       }
 
-      // لو لم نجد اللعبة، نظهر رسالة واضحة
+      // 3) إن لم نجد اللعبة، نعرض رسالة مفيدة ونوقف العملية
       if (!game) {
-        gNameEl.textContent = decodeURIComponent(gameName);
-        gDescEl.textContent = 'تفاصيل هذه اللعبة غير متاحة محلياً. أضف اللعبة أو تأكد من الاسم.';
-        gSourceEl.style.display = 'none';
-        noVersionsEl.style.display = 'block';
+        const displayName = nameParam ? decodeURIComponent(nameParam) : 'اللعبة غير محددة';
+        gNameEl.textContent = displayName;
+        gDescEl.textContent = 'تفاصيل هذه اللعبة غير متاحة محلياً. إذا أتيت من الصفحة الرئيسية فحاول النقر مباشرة من البطاقة، أو أضف اللعبة في لوحة الأدمن.';
+        if (gSourceEl) gSourceEl.style.display = 'none';
+        if (noVersionsEl) noVersionsEl.style.display = 'block';
+        // رابط العودة يقود إلى index مع محاولة إبقائه بسيطاً
+        backToIndex.href = 'index.html';
         return;
       }
 
-      // عرض بيانات اللعبة
-      gNameEl.textContent = game.name || decodeURIComponent(gameName);
+      // 4) لدينا الكائن — اعرضه
+      gNameEl.textContent = game.name || (nameParam ? decodeURIComponent(nameParam) : 'اللعبة');
       gDescEl.textContent = game.desc || '';
       gImg.src = game.img || '/no-image.png';
-      const playHref = `https://play.google.com/store/search?q=${encodeURIComponent(game.name)}&c=apps`;
-      gSourceEl.href = playHref;
-      gSourceEl.style.display = 'inline-block';
 
+      // رابط البحث في Google Play
+      try {
+        const playHref = `https://play.google.com/store/search?q=${encodeURIComponent(game.name)}&c=apps`;
+        gSourceEl.href = playHref;
+        gSourceEl.style.display = 'inline-block';
+      } catch (e) {
+        // ignore
+      }
+
+      // التأكد من رابط العودة يعود لصفحة اللعبة مع الاسم
+      backToIndex.href = `index.html`;
+
+      // 5) عرض الإصدارات وبناء روابط إلى download.html مع تمرير كل المعلومات
       const versions = (game.versions && game.versions.length) ? game.versions : [];
       versionsContainer.innerHTML = '';
 
       if (!versions.length) {
         noVersionsEl.style.display = 'block';
+        return;
       } else {
         noVersionsEl.style.display = 'none';
         versions.forEach((v) => {
@@ -135,14 +171,12 @@
           const actions = document.createElement('div');
           actions.className = 'version-actions';
 
-          // بناء رابط إلى download.html و تمرير كل المعلومات كـ query params
+          // params: نمرر name, ver, size, link, img, desc إلى download.html
           const params = new URLSearchParams();
           params.set('name', game.name || '');
           params.set('ver', v.v || '');
           params.set('size', v.size || '');
-          // تمرير رابط التحميل الفعلي (إن وُجد) كـ link param — نضعه مشفراً بواسطة encodeURIComponent آلياً عبر toString
-          params.set('link', v.link || '');
-          // تمرير صورة ووصف أيضاً حتى تظهر في صفحة التحميل دون حاجة لقراءة localStorage
+          params.set('link', v.link || ''); // قد يكون # أو رابط فعلي
           params.set('img', game.img || '');
           params.set('desc', game.desc || '');
 
@@ -152,20 +186,17 @@
           dl.className = 'download-btn';
           dl.textContent = 'تحميل';
           dl.href = dlHref;
-          // نفتح داخل نفس الصفحة ليتحول المستخدم لصفحة التحميل
           dl.target = '_self';
 
           actions.appendChild(dl);
 
-          // زر تحرير يظهر للمشرفين فقط
+          // زر تحرير يظهر فقط لو المستخدم أدمن (آمن، لا يغيّر سلوك التحميل)
           if (location.search.includes('admin=true') || localStorage.getItem('isAdmin') === 'true') {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'edit-btn';
             editBtn.textContent = '✏️';
-            editBtn.onclick = () => {
-              location.href = `index.html?admin=true`;
-            };
+            editBtn.onclick = () => { location.href = `index.html?admin=true`; };
             actions.appendChild(editBtn);
           }
 
