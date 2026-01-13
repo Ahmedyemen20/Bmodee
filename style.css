@@ -1113,3 +1113,8 @@ body.light .ad-card {
 html, body { overflow-x: hidden; }
 
 /* نهاية تعديل صفحة التفاصيل */
+
+/* اخفاء رابط المصدر داخل البطاقات في الصفحة الرئيسية فقط */
+.games-grid .source-link {
+  display: none !important;
+}
