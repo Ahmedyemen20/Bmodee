@@ -500,7 +500,7 @@ if (importFile) importFile.addEventListener('change', (e) => {
 });
 
 // مثال: تحميل ملف JSON مركزي ودمجه مع adminGames
-const SHARED_JSON_URL = 'https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/shared-games.json';
+const SHARED_JSON_URL = 'https://raw.githubusercontent.com/Ahmedyemen20/Bmodee/main/shared-games.json';
 
 async function fetchSharedGames() {
   try {
