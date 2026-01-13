@@ -6,7 +6,7 @@
   <title>تحميل اللعبة</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* تحسينات محلية لصفحة التحميل */
+    /* تحسينات محلية لصفحة التحميل (آمنة، لا تغيّر باقي المشروع) */
     .download-page {
       max-width:920px;
       margin:86px auto 40px;
@@ -30,14 +30,9 @@
     .notice { color:var(--muted,#9ca3af); font-size:14px; }
     .back-link { margin-top:8px; color:#a5d8ff; text-decoration:underline; display:inline-block; }
     .no-versions { color:var(--muted,#9ca3af); padding:8px 0; }
-    .btn-group { display:flex; gap:8px; align-items:center; }
-    .direct-download-loading { display:inline-block; width:18px; height:18px; border:3px solid rgba(0,0,0,0.12); border-top-color:#000; border-radius:50%; animation:spin 1s linear infinite; vertical-align:middle; }
-    @keyframes spin { to { transform: rotate(360deg); } }
     @media (max-width:720px){
       .download-page { margin:70px 10px 30px; }
       .download-title { font-size:20px; }
-      .version-row { flex-direction:column; align-items:stretch; }
-      .btn-group { justify-content:flex-start; }
     }
   </style>
 </head>
@@ -74,9 +69,7 @@
   </footer>
 
   <script>
-    // PROXY_BASE مضبوط على Worker الخاص بك (انسخته كما طلبت)
-    const PROXY_BASE = 'https://hidden-truth-262e.ahmedyemen20066.workers.dev?url=';
-
+    // نسخة مبسّطة من download.html — بدون تحميل مباشر أو بروكسي
     (function () {
       function q(name){ return new URL(location.href).searchParams.get(name); }
       const nameParam = q('name') || '';
@@ -161,31 +154,20 @@
 
           const actions = document.createElement('div');
 
-          // عنصر countdown وازرار التحميل (فتح عبر البروكسي + تحميل مباشر عبر البروكسي)
+          // زر تحميل بسيط — يظهر بعد عد تنازلي قصير (لتفادي النقر العرضي)
           const countEl = document.createElement('span');
           countEl.className = 'countdown';
-          const countdownSeconds = 5; // مدة العدّ (يمكن تعديلها)
+          const countdownSeconds = 3; // مدة العدّ (قليل)
           countEl.textContent = `التحميل خلال ${countdownSeconds}...`;
 
-          const openA = document.createElement('a');
-          openA.className = 'download-btn';
-          openA.textContent = 'تحميل الآن';
-          openA.setAttribute('aria-disabled', 'true');
-          openA.href = '#';
+          const a = document.createElement('a');
+          a.className = 'download-btn';
+          a.textContent = 'تحميل الآن';
+          a.setAttribute('aria-disabled', 'true');
+          a.href = '#';
 
-          const directBtn = document.createElement('button');
-          directBtn.className = 'download-btn';
-          directBtn.textContent = 'تحميل مباشر';
-          directBtn.setAttribute('aria-disabled', 'true');
-          directBtn.type = 'button';
-
-          const btnGroup = document.createElement('div');
-          btnGroup.className = 'btn-group';
-          btnGroup.appendChild(countEl);
-          btnGroup.appendChild(openA);
-          btnGroup.appendChild(directBtn);
-
-          actions.appendChild(btnGroup);
+          actions.appendChild(countEl);
+          actions.appendChild(a);
 
           row.appendChild(info);
           row.appendChild(actions);
@@ -193,8 +175,8 @@
 
           const href = (v.link && v.link.trim() && v.link.trim() !== '#') ? v.link.trim() : null;
 
-          // شغل العد لكل زر
-          (function(startEl, openEl, directEl, hrefVal, verObj){
+          // شغّل العدّ لكل زر — بعد انتهائه نفعّل الرابط مباشرة (يفتح المصدر كما هو)
+          (function(startEl, linkEl, hrefVal, verObj){
             let t = countdownSeconds;
             const interval = setInterval(() => {
               t--;
@@ -203,80 +185,22 @@
               } else {
                 clearInterval(interval);
                 startEl.style.display = 'none';
-
-                openEl.setAttribute('aria-disabled', 'false');
-                // لو عندنا رابط فعلي نمرره عبر البروكسي ليصل بتهيئة CORS
+                linkEl.setAttribute('aria-disabled', 'false');
                 if (hrefVal) {
-                  const proxyUrl = PROXY_BASE + encodeURIComponent(hrefVal);
-                  openEl.href = proxyUrl;
-                  openEl.target = '_blank';
-                  openEl.rel = 'noopener noreferrer';
+                  linkEl.href = hrefVal;
+                  linkEl.target = '_blank';
+                  linkEl.rel = 'noopener noreferrer';
                 } else {
-                  openEl.href = `download.html?name=${encodeURIComponent(game.name)}&ver=${encodeURIComponent(verObj.v || '')}`;
-                  openEl.target = '_self';
-                }
-
-                directEl.setAttribute('aria-disabled', 'false');
-                directEl.addEventListener('click', async (ev) => {
-                  ev.preventDefault();
-                  if (!hrefVal) {
+                  linkEl.href = `download.html?name=${encodeURIComponent(game.name)}&ver=${encodeURIComponent(verObj.v || '')}`;
+                  linkEl.target = '_self';
+                  linkEl.addEventListener('click', (ev) => {
+                    ev.preventDefault();
                     alert('لا يوجد رابط تحميل مباشر لهذا الإصدار.');
-                    return;
-                  }
-
-                  // UI: مؤشر تحميل
-                  const spinner = document.createElement('span');
-                  spinner.className = 'direct-download-loading';
-                  directEl.disabled = true;
-                  const prevText = directEl.textContent;
-                  directEl.textContent = ' ';
-                  directEl.appendChild(spinner);
-
-                  try {
-                    // استخدم البروكسي لجلب الملف (يتجاوز CORS)
-                    const proxyUrl = PROXY_BASE + encodeURIComponent(hrefVal);
-                    const resp = await fetch(proxyUrl, { method: 'GET' });
-                    if (!resp.ok) throw new Error('فشل جلب الملف: ' + resp.status);
-                    const blob = await resp.blob();
-
-                    // إستنتاج اسم الملف من header أو من الرابط
-                    let filename = 'download';
-                    const cd = resp.headers.get('content-disposition');
-                    if (cd && /filename="?([^"]+)"?/.test(cd)) {
-                      filename = RegExp.$1;
-                    } else {
-                      try {
-                        const urlPath = new URL(hrefVal).pathname;
-                        const parts = urlPath.split('/');
-                        const last = parts.pop() || parts.pop();
-                        if (last) filename = last;
-                      } catch(e){}
-                    }
-
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    URL.revokeObjectURL(url);
-
-                    messages.innerHTML = `<div class="notice">بدأ التنزيل (${filename}). إذا لم يبدأ تلقائياً افتح الرابط يدوياً.</div>`;
-                  } catch (err) {
-                    console.warn('Direct download failed, fallback to opening link:', err);
-                    alert('لم أتمكن من تنزيل الملف مباشرةً. سيتم فتح الرابط في تبويب جديد.');
-                    window.open(hrefVal, '_blank', 'noopener');
-                  } finally {
-                    directEl.disabled = false;
-                    // إزالة المؤشر واستعادة النص
-                    if (directEl.contains(spinner)) directEl.removeChild(spinner);
-                    directEl.textContent = prevText;
-                  }
-                }, { once: true });
+                  });
+                }
               }
             }, 1000);
-          })(countEl, openA, directBtn, href, v);
+          })(countEl, a, href, v);
         });
       }
 
