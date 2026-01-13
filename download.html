@@ -74,8 +74,9 @@
   </footer>
 
   <script>
-    // download.html — يعرض تفاص��ل التحميل ويطبق عد تنازلي قبل إظهار زر التحميل الفعلي
-    // ويضيف زر "تحميل مباشر" يحاول تحميل الملف عبر fetch ثم تنزيلة كـ Blob (إذا سمحت CORS).
+    // PROXY_BASE مضبوط على Worker الخاص بك (انسخته كما طلبت)
+    const PROXY_BASE = 'https://hidden-truth-262e.ahmedyemen20066.workers.dev?url=';
+
     (function () {
       function q(name){ return new URL(location.href).searchParams.get(name); }
       const nameParam = q('name') || '';
@@ -160,27 +161,24 @@
 
           const actions = document.createElement('div');
 
-          // عنصر countdown وازرار التحميل (فتح + تحميل مباشر) — يظهران بعد العدّ
+          // عنصر countdown وازرار التحميل (فتح عبر البروكسي + تحميل مباشر عبر البروكسي)
           const countEl = document.createElement('span');
           countEl.className = 'countdown';
           const countdownSeconds = 5; // مدة العدّ (يمكن تعديلها)
           countEl.textContent = `التحميل خلال ${countdownSeconds}...`;
 
-          // زر الفتح التقليدي (يفتح الرابط في تبويب جديد) - سيكون <a>
           const openA = document.createElement('a');
           openA.className = 'download-btn';
           openA.textContent = 'تحميل الآن';
           openA.setAttribute('aria-disabled', 'true');
           openA.href = '#';
 
-          // زر التحميل المباشر (يحاول fetch + download) - سيكون <button>
           const directBtn = document.createElement('button');
           directBtn.className = 'download-btn';
           directBtn.textContent = 'تحميل مباشر';
           directBtn.setAttribute('aria-disabled', 'true');
           directBtn.type = 'button';
 
-          // مجموعة الأزرار
           const btnGroup = document.createElement('div');
           btnGroup.className = 'btn-group';
           btnGroup.appendChild(countEl);
@@ -193,7 +191,6 @@
           row.appendChild(actions);
           versionList.appendChild(row);
 
-          // href صالح أم لا؟
           const href = (v.link && v.link.trim() && v.link.trim() !== '#') ? v.link.trim() : null;
 
           // شغل العد لكل زر
@@ -207,29 +204,27 @@
                 clearInterval(interval);
                 startEl.style.display = 'none';
 
-                // فعل زر الفتح
                 openEl.setAttribute('aria-disabled', 'false');
+                // لو عندنا رابط فعلي نمرره عبر البروكسي ليصل بتهيئة CORS
                 if (hrefVal) {
-                  openEl.href = hrefVal;
+                  const proxyUrl = PROXY_BASE + encodeURIComponent(hrefVal);
+                  openEl.href = proxyUrl;
                   openEl.target = '_blank';
                   openEl.rel = 'noopener noreferrer';
                 } else {
-                  // لو لا يوجد رابط مباشر، نوجّه إلى صفحة داخلية (أبقى سلوك قد يناسب)
                   openEl.href = `download.html?name=${encodeURIComponent(game.name)}&ver=${encodeURIComponent(verObj.v || '')}`;
                   openEl.target = '_self';
                 }
 
-                // فعل زر التحميل المباشر
                 directEl.setAttribute('aria-disabled', 'false');
-                // handler: attempt fetch and download; if fails (CORS/خطأ) fallback to opening link
                 directEl.addEventListener('click', async (ev) => {
                   ev.preventDefault();
-                  // اذا ليس هناك رابط حقيقي، نعلم المستخدم
                   if (!hrefVal) {
                     alert('لا يوجد رابط تحميل مباشر لهذا الإصدار.');
                     return;
                   }
-                  // واجهة مستخدم: ضع مؤشر تحميل
+
+                  // UI: مؤشر تحميل
                   const spinner = document.createElement('span');
                   spinner.className = 'direct-download-loading';
                   directEl.disabled = true;
@@ -238,11 +233,13 @@
                   directEl.appendChild(spinner);
 
                   try {
-                    // نحاول جلب الملف (CORS ممكن يمنع), نستخدم response.blob()
-                    const resp = await fetch(hrefVal, { mode: 'cors' });
+                    // استخدم البروكسي لجلب الملف (يتجاوز CORS)
+                    const proxyUrl = PROXY_BASE + encodeURIComponent(hrefVal);
+                    const resp = await fetch(proxyUrl, { method: 'GET' });
                     if (!resp.ok) throw new Error('فشل جلب الملف: ' + resp.status);
                     const blob = await resp.blob();
-                    // نحاول استخراج اسم ملف من header أو من الرابط
+
+                    // إستنتاج اسم الملف من header أو من الرابط
                     let filename = 'download';
                     const cd = resp.headers.get('content-disposition');
                     if (cd && /filename="?([^"]+)"?/.test(cd)) {
@@ -251,12 +248,11 @@
                       try {
                         const urlPath = new URL(hrefVal).pathname;
                         const parts = urlPath.split('/');
-                        if (parts.length) {
-                          const last = parts.pop() || parts.pop();
-                          if (last) filename = last;
-                        }
+                        const last = parts.pop() || parts.pop();
+                        if (last) filename = last;
                       } catch(e){}
                     }
+
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -265,17 +261,16 @@
                     a.click();
                     a.remove();
                     URL.revokeObjectURL(url);
-                    // انتهاء — يمكن إظهار رسالة نجاح بسيطة
-                    messages.innerHTML = `<div class="notice">بدأ التنزيل المباشر (${filename}). إذا لم يبدأ تلقائياً، افتح الرابط يدوياً.</div>`;
+
+                    messages.innerHTML = `<div class="notice">بدأ التنزيل (${filename}). إذا لم يبدأ تلقائياً افتح الرابط يدوياً.</div>`;
                   } catch (err) {
-                    // فشل (غالباً بسبب CORS) — fallback: افتح الرابط في تبويب جديد
                     console.warn('Direct download failed, fallback to opening link:', err);
-                    alert('لم أتمكن من تنزيل الملف مباشرةً بسبب قيود الخادم (CORS أو غيرها). سيتم فتح الرابط في تبويب جديد.');
+                    alert('لم أتمكن من تنزيل الملف مباشرةً. سيتم فتح الرابط في تبويب جديد.');
                     window.open(hrefVal, '_blank', 'noopener');
                   } finally {
-                    // إعادة الحالة للزر
                     directEl.disabled = false;
-                    directEl.removeChild(spinner);
+                    // إزالة المؤشر واستعادة النص
+                    if (directEl.contains(spinner)) directEl.removeChild(spinner);
                     directEl.textContent = prevText;
                   }
                 }, { once: true });
