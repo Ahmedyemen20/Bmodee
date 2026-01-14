@@ -505,6 +505,7 @@ if (importFile) importFile.addEventListener('change', (e) => {
 
 // مثال: تحميل ملف JSON مركزي ودمجه مع adminGames
 const SHARED_JSON_URL = 'https://raw.githubusercontent.com/Ahmedyemen20/Bmodee/main/shared-games.json';
+// ===== استبدل الدالة الحالية fetchSharedGames() في main.js بهذه النسخة الآمنة =====
 
 async function fetchSharedGames() {
   try {
@@ -512,14 +513,36 @@ async function fetchSharedGames() {
     if (!res.ok) return;
     const shared = await res.json();
     if (!Array.isArray(shared)) return;
-    // ادمج: ضع shared قبل adminGames حتى تظهر الألعاب المشتركة أولاً
-    adminGames = [...shared, ...JSON.parse(localStorage.getItem('adminGames') || '[]')];
-    renderGames();
-    renderPagination();
+
+    // حفظ sharedGames بشكل منفصل — لا نغيّر adminGames (حتى لا تظهر في الأدمن)
+    try {
+      localStorage.setItem('sharedGames', JSON.stringify(shared));
+    } catch (e) {
+      console.warn('Failed to save sharedGames to localStorage', e);
+    }
+
+    // أعد رسم الواجهة العامة إذا كانت دالة مخصصة متوفرة (GameManager أو renderPublic محلية)
+    // إذا قمت بإضافة admin-games-filter.js فستستفيد من GameManager.refreshPublic
+    try {
+      if (window.GameManager && typeof GameManager.refreshPublic === 'function') {
+        GameManager.refreshPublic('gamesContainer');
+      } else {
+        // fallback آمن: حاول إعادة رسم باستخدام الدوال الموجودة (إن كانت تقرأ من localStorage.sharedGames)
+        if (typeof renderGames === 'function') {
+          renderGames();
+          if (typeof renderPagination === 'function') renderPagination();
+        }
+      }
+    } catch (e) {
+      console.warn('Error while attempting to refresh public UI after loading sharedGames', e);
+    }
+
   } catch (err) {
     console.warn('fetchSharedGames error', err);
   }
 }
+
+// تأكد أن الاستدعاء fetchSharedGames() يبقى كما هو (أو أعد تفعيله هنا) — الدالة الآن لن تعدل adminGames.
 
 // استدعاء أثناء تهيئة التطبيق
 fetchSharedGames();
