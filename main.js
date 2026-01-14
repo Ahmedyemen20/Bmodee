@@ -50,17 +50,138 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================== */
   let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
-  const baseGames = [
-    {
-      name: "Hay Day",
-      img: "/unnamed (2).jpg",
-      desc: "Hay Day Mod APK Unlimited Money",
-      category: "strategy",
-      versions: [{ v: "1.0", size: "150 MB", link: "#" }]
-    }
-    
-    
-  ];
+   // Auto-generated file
+// Generated from Admin Panel
+const baseGames = [
+  {
+    "name": "clash of clans ",
+    "img": "assets/images/Clash of Clans Logo.jpeg",
+    "desc": "clash of clans  Mod Ultimate money ًں’°",
+    "category": "strategy",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "Latest",
+        "size": "â€”",
+        "link": "#"
+      }
+    ]
+  },
+  {
+    "name": "Coach bus simulator",
+    "img": "https://i.postimg.cc/zX6H3Ct8/coach-bus-simulator-150x150.png\",     desc: \"Mod Unlimited",
+    "desc": "Ultimate money ًں’°",
+    "category": "car",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "2.6.0 v",
+        "size": "140 MB",
+        "link": "https://www.mediafire.com/file/umcbnbpo3m3rkmw/cbussim260modt-androidoyunclub.apk/file"
+      }
+    ]
+  },
+  {
+    "name": "Car parking multiplayer ",
+    "img": "https://i.postimg.cc/8PPmLmmT/car-parking-multiplayer-150x150.webp",
+    "desc": "Ultimate money ",
+    "category": "car",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "4.8.21.3 v",
+        "size": "996 MB",
+        "link": "https://www.mediafire.com/file/q1feka0dg6827h4/cpm48213modt-androidoyunclub.apk/file"
+      }
+    ]
+  },
+  {
+    "name": "Brawl Stars",
+    "img": "https://i.postimg.cc/cCJttXGv/brawl-stars-150x150.webp",
+    "desc": "Ultimate money ًں’°",
+    "category": "strategy",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "56.250 v",
+        "size": "449 MB",
+        "link": "https://www.mediafire.com/file/bllpzau1t7zabkh/Brawl_Stars_SV1_nul-mundoperfecto.net.apk/file"
+      }
+    ]
+  },
+  {
+    "name": "angry birds",
+    "img": "assets/images/Angry Birds icon.jpeg",
+    "desc": "Angry birds  Mod APK for Android",
+    "category": "car",
+    "versions": [
+      {
+        "v": "2.0v",
+        "size": "333 MB",
+        "link": "N"
+      }
+    ]
+  },
+  {
+    "name": "clash of clans ",
+    "img": "assets/images/Clash of Clans Logo.jpeg",
+    "desc": "clash of clans  Mod Ultimate money ًں’°",
+    "category": "strategy",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "Latest",
+        "size": "â€”",
+        "link": "#"
+      }
+    ]
+  },
+  {
+    "name": "Grand theft auto Vice city ",
+    "img": "assets/images/grand-theft-auto-vice-city-150x150.webp",
+    "desc": "Ultimate money & Unlimited life (No deas)",
+    "category": "action",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "1.0",
+        "size": "2.0 GB",
+        "link": "Dhh"
+      }
+    ]
+  },
+  {
+    "name": "Sniper 3D assassin",
+    "img": "https://i.postimg.cc/KYPz1Zt6/IMG-20260106-183906-009.jpg",
+    "desc": "(No dead)Mode menu & Unlimited life",
+    "category": "action",
+    "versions": [
+      {
+        "v": "4.33.6 v",
+        "size": "175 MB",
+        "link": "https://www.mediafire.com/file/z5g33yqv8t5csgb/sniper-3d-assassin-v4.33.6-mod1.apk/file"
+      },
+      {
+        "v": "2.5.0v",
+        "size": "180 MB",
+        "link": ""
+      }
+    ]
+  },
+  {
+    "name": "Subway Surfers",
+    "img": "assets/images/Subway Surfers_icon.png",
+    "desc": "Subway Surfers  Mod Ultimate money ًں’°",
+    "category": "sports",
+    "versions": [
+      {
+        "v": "v 3.43.5",
+        "size": "189 MB",
+        "link": "https://github.com/Ahmedyemen20/Bmodee/releases/download/v1.0.0/subway-surfers-3-48-5.apk"
+      }
+    ]
+  }
+];
 
   /* =========================
      دوال مساعدة: رابط جوجل بلاي + جلب الصور
