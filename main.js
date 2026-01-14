@@ -183,6 +183,14 @@ const baseGames = [
   }
 ];
 
+function cleanText(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/â€”|â€“|â€|�/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
   /* =========================
      دوال مساعدة: رابط جوجل بلاي + جلب الصور
   ========================== */
