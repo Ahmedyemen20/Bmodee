@@ -102,20 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (adminBtn) adminBtn.style.display = "none";
   if (smartBtn) smartBtn.style.display = "none";
 
-  const isAdmin = location.search.includes("admin=true") || localStorage.getItem("isAdmin") === "true";
-
-  if (isAdmin) {
-    if (adminBtn) {
-      adminBtn.style.display = "flex";
-      adminBtn.addEventListener('click', (e) => {
-        // تجاهل النقر على زر المساعد الذكي الداخلي
-        if (e.target && (e.target.id === 'smartBtn' || e.target.closest && e.target.closest('#smartBtn'))) return;
-        if (adminPanel) {
-          adminPanel.style.display = "flex";
-          renderAdminPanelForNew();
-        }
-      });
-    }
+const adminList = JSON.parse(localStorage.getItem('adminGames') || '[]');
+const index = adminList.findIndex(g => g.name === game.name && g.versions && JSON.stringify(g.versions) === JSON.stringify(game.versions));
+const isAdminGame = index !== -1;
 
     if (smartBtn) {
       smartBtn.style.display = "inline-flex";
@@ -161,10 +150,12 @@ document.addEventListener("DOMContentLoaded", () => {
   /* =========================
      دمج وتصفيه الألعاب
   ========================== */
-  function getAllGames() {
-    return [...baseGames, ...adminGames];
-  }
-
+function getAllGames() {
+  const base = Array.isArray(window.baseGames) ? baseGames : [];
+  const shared = JSON.parse(localStorage.getItem('sharedGames') || '[]');
+  const admin = JSON.parse(localStorage.getItem('adminGames') || '[]');
+  return [...base, ...shared, ...admin];
+}
   function getFilteredGames() {
     let list = getAllGames();
     if (currentCategory && currentCategory !== "all") {
@@ -454,10 +445,16 @@ document.addEventListener("DOMContentLoaded", () => {
   /* =========================
      تهيئة أولية
   ========================== */
-  (function init() {
+
+(async function init() {
+  await fetchSharedGames().catch(() => {});
+  try {
     renderGames();
     renderPagination();
-  })();
+  } catch (e) {
+    console.warn('Init render failed', e);
+  }
+})();
 
 // Export / Import adminGames (ضع داخل DOMContentLoaded)
 const exportBtn = document.getElementById('exportBtn');
@@ -504,37 +501,39 @@ if (importFile) importFile.addEventListener('change', (e) => {
 });
 
 // مثال: تحميل ملف JSON مركزي ودمجه مع adminGames
-const SHARED_JSON_URL = 'https://raw.githubusercontent.com/Ahmedyemen20/Bmodee/main/shared-games.json';
+const SHARED_JSON_URL = 'https://github.com/Ahmedyemen20/Bmodee/blob/main/shared-games.json';
 // ===== استبدل الدالة الحالية fetchSharedGames() في main.js بهذه النسخة الآمنة =====
 
 async function fetchSharedGames() {
   try {
-    const res = await fetch(SHARED_JSON_URL);
-    if (!res.ok) return;
+    if (!SHARED_JSON_URL) return;
+    const res = await fetch(SHARED_JSON_URL, { cache: 'no-store' });
+    if (!res.ok) {
+      console.warn('fetchSharedGames: non-ok status', res.status);
+      return;
+    }
     const shared = await res.json();
-    if (!Array.isArray(shared)) return;
-
-    // حفظ sharedGames بشكل منفصل — لا نغيّر adminGames (حتى لا تظهر في الأدمن)
+    if (!Array.isArray(shared)) {
+      console.warn('fetchSharedGames: expected array in JSON');
+      return;
+    }
     try {
       localStorage.setItem('sharedGames', JSON.stringify(shared));
     } catch (e) {
-      console.warn('Failed to save sharedGames to localStorage', e);
+      console.warn('fetchSharedGames: cannot save to localStorage', e);
     }
 
-    // أعد رسم الواجهة العامة إذا كانت دالة مخصصة متوفرة (GameManager أو renderPublic محلية)
-    // إذا قمت بإضافة admin-games-filter.js فستستفيد من GameManager.refreshPublic
     try {
       if (window.GameManager && typeof GameManager.refreshPublic === 'function') {
         GameManager.refreshPublic('gamesContainer');
       } else {
-        // fallback آمن: حاول إعادة رسم باستخدام الدوال الموجودة (إن كانت تقرأ من localStorage.sharedGames)
         if (typeof renderGames === 'function') {
           renderGames();
           if (typeof renderPagination === 'function') renderPagination();
         }
       }
     } catch (e) {
-      console.warn('Error while attempting to refresh public UI after loading sharedGames', e);
+      console.warn('fetchSharedGames: UI refresh failed', e);
     }
 
   } catch (err) {
