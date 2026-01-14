@@ -462,15 +462,24 @@ const importBtn = document.getElementById('importBtn');
 const importFile = document.getElementById('importFile');
 
 function exportAdminGames() {
-  const data = localStorage.getItem('adminGames') || '[]';
-  const blob = new Blob([data], { type: 'application/json' });
+  const data = JSON.parse(localStorage.getItem('adminGames') || '[]');
+
+  const jsContent =
+`// Auto-generated file
+// Generated from Admin Panel
+const baseGames = ${JSON.stringify(data, null, 2)};
+`;
+
+  const blob = new Blob([jsContent], { type: 'application/javascript' });
   const url = URL.createObjectURL(blob);
+
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'adminGames.json';
+  a.download = 'baseGames.js';
   document.body.appendChild(a);
   a.click();
   a.remove();
+
   URL.revokeObjectURL(url);
 }
 
