@@ -50,19 +50,19 @@ document.addEventListener("DOMContentLoaded", () => {
   ========================== */
   let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
 
-   // Auto-generated file
+// Auto-generated file
 // Generated from Admin Panel
 const baseGames = [
   {
     "name": "clash of clans ",
     "img": "assets/images/Clash of Clans Logo.jpeg",
-    "desc": "clash of clans  Mod Ultimate money ًں’°",
+    "desc": "clash of clans  Mod Ultimate money 💰",
     "category": "strategy",
     "rating": 4.5,
     "versions": [
       {
         "v": "Latest",
-        "size": "â€”",
+        "size": "—",
         "link": "#"
       }
     ]
@@ -70,7 +70,7 @@ const baseGames = [
   {
     "name": "Coach bus simulator",
     "img": "https://i.postimg.cc/zX6H3Ct8/coach-bus-simulator-150x150.png\",     desc: \"Mod Unlimited",
-    "desc": "Ultimate money ًں’°",
+    "desc": "Ultimate money 💰",
     "category": "car",
     "rating": 4.5,
     "versions": [
@@ -98,7 +98,7 @@ const baseGames = [
   {
     "name": "Brawl Stars",
     "img": "https://i.postimg.cc/cCJttXGv/brawl-stars-150x150.webp",
-    "desc": "Ultimate money ًں’°",
+    "desc": "Ultimate money 💰",
     "category": "strategy",
     "rating": 4.5,
     "versions": [
@@ -125,13 +125,13 @@ const baseGames = [
   {
     "name": "clash of clans ",
     "img": "assets/images/Clash of Clans Logo.jpeg",
-    "desc": "clash of clans  Mod Ultimate money ًں’°",
+    "desc": "clash of clans  Mod Ultimate money 💰",
     "category": "strategy",
     "rating": 4.5,
     "versions": [
       {
         "v": "Latest",
-        "size": "â€”",
+        "size": "—",
         "link": "#"
       }
     ]
@@ -171,7 +171,7 @@ const baseGames = [
   {
     "name": "Subway Surfers",
     "img": "assets/images/Subway Surfers_icon.png",
-    "desc": "Subway Surfers  Mod Ultimate money ًں’°",
+    "desc": "Subway Surfers  Mod Ultimate money 💰",
     "category": "sports",
     "versions": [
       {
@@ -183,13 +183,7 @@ const baseGames = [
   }
 ];
 
-function cleanText(str) {
-  if (!str) return "";
-  return String(str)
-    .replace(/â€”|â€“|â€|�/g, "-")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+
 
   /* =========================
      دوال مساعدة: رابط جوجل بلاي + جلب الصور
