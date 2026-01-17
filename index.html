@@ -12,6 +12,71 @@
   <!-- AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488"
  crossorigin="anonymous"></script>
+
+<style>
+/* إضافة أنماط للقائمة الفرعية */
+.sidebar {
+  overflow-y: auto;
+}
+
+.menu-item {
+  display: block;
+  position: relative;
+}
+
+.menu-item > a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  color: var(--text-color, #fff);
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.menu-item > a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item .arrow {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+.menu-item.active .arrow {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.menu-item.active .submenu {
+  max-height: 200px;
+}
+
+.submenu a {
+  display: block;
+  padding: 10px 20px 10px 40px;
+  color: var(--text-color, #cbd5e1);
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.submenu a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #facc15;
+}
+
+.submenu a i {
+  margin-left: 8px;
+  font-size: 12px;
+}
+</style>
 </head>
 
 <body>
@@ -44,14 +109,88 @@
 <div class="overlay" id="overlay"></div>
 
 <!-- Sidebar -->
-
 <aside class="sidebar" id="sidebar">
   <a href="#" onclick="renderAll()">كل الألعاب</a>
-  <a href="#" onclick="renderByCategory('action')">أكشن</a>
-  <a href="#" onclick="renderByCategory('sports')">رياضة</a>
-  <a href="#" onclick="renderByCategory('strategy')">استراتيجية</a>
-  <a href="#" onclick="renderByCategory('racing')">سباق</a>
-  <a href="#" onclick="renderByCategory('car')">سيارات</a>
+  
+  <!-- قسم الأكشن -->
+  <div class="menu-item">
+    <a href="#" onclick="toggleSubmenu(event, this)">
+      أكشن
+      <span class="arrow">▼</span>
+    </a>
+    <div class="submenu">
+      <a href="#" onclick="renderTop10('action')">
+        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+      </a>
+      <a href="#" onclick="renderByCategory('action')">
+        <i class="fas fa-gamepad"></i>كل الألعاب
+      </a>
+    </div>
+  </div>
+
+  <!-- قسم الرياضة -->
+  <div class="menu-item">
+    <a href="#" onclick="toggleSubmenu(event, this)">
+      رياضة
+      <span class="arrow">▼</span>
+    </a>
+    <div class="submenu">
+      <a href="#" onclick="renderTop10('sports')">
+        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+      </a>
+      <a href="#" onclick="renderByCategory('sports')">
+        <i class="fas fa-gamepad"></i>كل الألعاب
+      </a>
+    </div>
+  </div>
+
+  <!-- قسم الاستراتيجية -->
+  <div class="menu-item">
+    <a href="#" onclick="toggleSubmenu(event, this)">
+      استراتيجية
+      <span class="arrow">▼</span>
+    </a>
+    <div class="submenu">
+      <a href="#" onclick="renderTop10('strategy')">
+        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+      </a>
+      <a href="#" onclick="renderByCategory('strategy')">
+        <i class="fas fa-gamepad"></i>كل الألعاب
+      </a>
+    </div>
+  </div>
+
+  <!-- قسم السباق -->
+  <div class="menu-item">
+    <a href="#" onclick="toggleSubmenu(event, this)">
+      سباق
+      <span class="arrow">▼</span>
+    </a>
+    <div class="submenu">
+      <a href="#" onclick="renderTop10('racing')">
+        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+      </a>
+      <a href="#" onclick="renderByCategory('racing')">
+        <i class="fas fa-gamepad"></i>كل الألعاب
+      </a>
+    </div>
+  </div>
+
+  <!-- قسم السيارات -->
+  <div class="menu-item">
+    <a href="#" onclick="toggleSubmenu(event, this)">
+      سيارات
+      <span class="arrow">▼</span>
+    </a>
+    <div class="submenu">
+      <a href="#" onclick="renderTop10('car')">
+        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+      </a>
+      <a href="#" onclick="renderByCategory('car')">
+        <i class="fas fa-gamepad"></i>كل الألعاب
+      </a>
+    </div>
+  </div>
 </aside>
 
 <h1>Games section</h1>
@@ -103,12 +242,11 @@
     <input id="aImg" placeholder="رابط صورة اللعبة">
     <textarea id="aDesc" placeholder="وصف اللعبة"></textarea>
 
-    
-<div class="admin-sync">
-  <button id="exportBtn" class="btn">تصدير الألعاب</button>
-  <input id="importFile" type="file" accept=".json" style="display:none">
-  <button id="importBtn" class="btn">استيراد ألعاب</button>
-</div>
+    <div class="admin-sync">
+      <button id="exportBtn" class="btn">تصدير الألعاب</button>
+      <input id="importFile" type="file" accept=".json" style="display:none">
+      <button id="importBtn" class="btn">استيراد ألعاب</button>
+    </div>
 
     <!-- اختيار القسم -->
     <select id="aCategory">
@@ -116,8 +254,20 @@
       <option value="action">أكشن</option>
       <option value="sports">رياضة</option>
       <option value="strategy">استراتيجية</option>
-      <option value="racing">سباق</option><option value="car">سيارات</option>
+      <option value="racing">سباق</option>
+      <option value="car">سيارات</option>
     </select>
+
+    <!-- أفضل 10 ألعاب -->
+    <div style="margin: 16px 0; padding: 12px; background: rgba(250,204,21,0.1); border-radius: 8px; border: 1px solid rgba(250,204,21,0.3);">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-color);">
+        <input type="checkbox" id="aIsTop10" style="width: 20px; height: 20px; cursor: pointer;">
+        <span style="font-weight: 600;">🏆 إضافة إلى أفضل 10 ألعاب</span>
+      </label>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 8px; margin-right: 30px;">
+        عند تفعيل هذا الخيار، ستظهر اللعبة في قائمة "أفضل 10 ألعاب" للقسم المحدد
+      </p>
+    </div>
 
     <h3>الإصدارات</h3>
     <div id="versions"></div>
@@ -126,8 +276,112 @@
     <button class="btn green" onclick="saveGame()">💾 حفظ اللعبة</button>
   </div>
 </div>
+
 <script src="main.js"></script>
 <script src="admin-games-filter.js"></script>
+
+<!-- وظيفة فتح/إغلاق القائمة الفرعية -->
+<script>
+function toggleSubmenu(event, element) {
+  event.preventDefault();
+  const menuItem = element.parentElement;
+  const wasActive = menuItem.classList.contains('active');
+  
+  // إغلاق جميع القوائم الفرعية
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // فتح القائمة المحددة إذا لم تكن مفتوحة
+  if (!wasActive) {
+    menuItem.classList.add('active');
+  }
+}
+
+// وظيفة عرض أفضل 10 ألعاب
+function renderTop10(category) {
+  // إغلاق القائمة الجانبية على الموبايل
+  closeSidebar();
+  
+  // الحصول على جميع الألعاب من التخزين المحلي
+  const games = JSON.parse(localStorage.getItem('games') || '[]');
+  const adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
+  
+  // دمج الألعاب من baseGames و adminGames
+  const allGames = [...games, ...adminGames];
+  
+  // فلترة الألعاب حسب القسم والتي تم تحديدها كـ "أفضل 10"
+  const top10Games = allGames
+    .filter(game => game.category === category && game.isTop10 === true)
+    .slice(0, 10);
+  
+  // إذا لم يكن هناك ألعاب محددة كأفضل 10، اعرض أول 10 ألعاب من القسم
+  if (top10Games.length === 0) {
+    const fallbackGames = allGames
+      .filter(game => game.category === category)
+      .slice(0, 10);
+    
+    displayGames(fallbackGames);
+  } else {
+    displayGames(top10Games);
+  }
+  
+  // تحديث العنوان
+  const categoryNames = {
+    action: 'أكشن',
+    sports: 'رياضة',
+    strategy: 'استراتيجية',
+    racing: 'سباق',
+    car: 'سيارات'
+  };
+  
+  const titleElement = document.querySelector('h1');
+  if (titleElement) {
+    titleElement.textContent = `أفضل 10 ألعاب ${categoryNames[category]}`;
+  }
+}
+
+// دالة مساعدة لعرض الألعاب (يجب أن تكون موجودة في main.js الأصلي)
+function displayGames(games) {
+  const gamesGrid = document.getElementById('gamesGrid');
+  if (!gamesGrid) return;
+  
+  gamesGrid.innerHTML = '';
+  
+  if (games.length === 0) {
+    gamesGrid.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted);">لا توجد ألعاب في هذا القسم</div>';
+    return;
+  }
+  
+  games.forEach(game => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.onclick = () => {
+      location.href = `game.html?name=${encodeURIComponent(game.name)}`;
+    };
+    
+    card.innerHTML = `
+      <img src="${game.img || '/no-image.png'}" onerror="this.src='/no-image.png'" alt="${game.name}">
+      <h3>${game.name}</h3>
+      <p>${game.desc || ''}</p>
+      ${game.isTop10 ? '<span style="color: #facc15; font-size: 12px;">🏆 أفضل 10</span>' : ''}
+    `;
+    
+    gamesGrid.appendChild(card);
+  });
+}
+
+// وظيفة إغلاق القائمة الجانبية
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const hamburger = document.getElementById('hamburger');
+  
+  if (sidebar) sidebar.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+  if (hamburger) hamburger.classList.remove('active');
+}
+</script>
 
 <!-- Dark / Light -->
 <script>

@@ -1295,21 +1295,33 @@ const baseGames = [
     renderVersionsInPanel();
   };
   
-  function renderAdminPanelForNew() {
-    editingIndex = null;
-    window.tempVersions = [];
-    if (aName) aName.value = "";
-    if (aImg) aImg.value = "";
-    if (aDesc) aDesc.value = "";
-    if (aCategory) aCategory.value = "";
-    renderVersionsInPanel();
-  }
+
+// في دالة renderAdminPanelForNew - أضف هذا السطر
+function renderAdminPanelForNew() {
+  editingIndex = null;
+  window.tempVersions = [];
+  if (aName) aName.value = "";
+  if (aImg) aImg.value = "";
+  if (aDesc) aDesc.value = "";
+  if (aCategory) aCategory.value = "";
   
-  window.saveGame = () => {
+  // إضافة: إعادة تعيين checkbox أفضل 10
+  const aIsTop10 = document.getElementById('aIsTop10');
+  if (aIsTop10) aIsTop10.checked = false;
+  
+  renderVersionsInPanel();
+}
+
+// في دالة saveGame - عدّل لحفظ isTop10
+window.saveGame = () => {
   const name = aName ? aName.value.trim() : "";
   const img = aImg ? aImg.value.trim() : "";
   const desc = aDesc ? aDesc.value.trim() : "";
   const category = aCategory ? aCategory.value : "";
+  
+  // إضافة: قراءة قيمة checkbox
+  const aIsTop10 = document.getElementById('aIsTop10');
+  const isTop10 = aIsTop10 ? aIsTop10.checked : false;
   
   if (!name) {
     alert("الرجاء إدخال اسم اللعبة");
@@ -1320,7 +1332,15 @@ const baseGames = [
     window.tempVersions.push({ v: "1.0", size: "", link: "#" });
   }
   
-  const gameObj = { name, img: img || "/no-image.png", desc, category, versions: window.tempVersions.map(v => ({ v: v.v, size: v.size, link: v.link })) };
+  // إضافة isTop10 إلى الكائن
+  const gameObj = { 
+    name, 
+    img: img || "/no-image.png", 
+    desc, 
+    category, 
+    isTop10: isTop10,  // ← هنا
+    versions: window.tempVersions.map(v => ({ v: v.v, size: v.size, link: v.link })) 
+  };
   
   if (editingIndex === null) {
     adminGames.push(gameObj);
@@ -1335,6 +1355,7 @@ const baseGames = [
   renderPagination();
 };
 
+// في دالة editGame - أضف استرجاع قيمة isTop10
 window.editGame = (index) => {
   const g = adminGames[index];
   if (!g) {
@@ -1346,6 +1367,11 @@ window.editGame = (index) => {
   if (aImg) aImg.value = g.img || "";
   if (aDesc) aDesc.value = g.desc || "";
   if (aCategory) aCategory.value = g.category || "";
+  
+  // إضافة: استرجاع قيمة isTop10
+  const aIsTop10 = document.getElementById('aIsTop10');
+  if (aIsTop10) aIsTop10.checked = g.isTop10 || false;
+  
   window.tempVersions = g.versions ? g.versions.map(v => ({ v: v.v, size: v.size, link: v.link })) : [];
   renderVersionsInPanel();
   if (adminPanel) adminPanel.style.display = "flex";
