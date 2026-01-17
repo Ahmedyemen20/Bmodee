@@ -186,13 +186,14 @@
 
           const dlHref = `download.html?${params.toString()}`;
 
-          const dl = document.createElement('a');
-          dl.className = 'download-btn';
-          dl.textContent = 'تحميل';
-          dl.href = dlHref;
-          dl.target = '_self';
+          const sourceBtn = document.createElement('a');
+          sourceBtn.className = 'download-btn';
+          sourceBtn.textContent = 'احدث اصدار';
+          sourceBtn.href = 'download.html';
+          sourceBtn.target = '_blank';
+          sourceBtn.rel = 'noopener noreferrer';
 
-          actions.appendChild(dl);
+          actions.appendChild(sourceBtn);
 
           // زر تحرير يظهر فقط لو المستخدم أدمن (آمن، لا يغيّر سلوك التحميل)
           if (location.search.includes('admin=true') || localStorage.getItem('isAdmin') === 'true') {
