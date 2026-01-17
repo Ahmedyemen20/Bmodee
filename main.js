@@ -147,7 +147,7 @@ const baseGames = [
   {
     "name": "Candy Cursh Saga",
     "img": "assets/images/unnamed (10).png",
-    "desc": "Candy Cursh Sega Mod Ultimate money 💰",
+    "desc": "Candy Cursh Sega......",
     "category": "action",
     "versions": [
       {
