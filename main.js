@@ -524,7 +524,7 @@ const baseGames = [
   {
     "name": "UNO!",
     "img": "assets/images/icon (12).webp",
-    "desc": "UNO! Mod Ultimate money 💰",
+    "desc": "UNO!......",
     "category": "action",
     "versions": [
       {
@@ -895,6 +895,120 @@ const baseGames = [
         "v": "v 4.2.0",
         "size": "1.8 GB",
         "link": "#"
+      }
+    ]
+  },
+ {
+    "name": "clash of clans ",
+    "img": "assets/images/Clash of Clans Logo.jpeg",
+    "desc": "clash of clans.....",
+    "category": "strategy",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "Latest",
+        "size": "—",
+        "link": "#"
+      }
+    ]
+  },
+  {
+    "name": "Coach bus simulator",
+    "img": "https://i.postimg.cc/zX6H3Ct8/coach-bus-simulator-150x150.png\",     desc: \"Mod Unlimited",
+    "desc": "Coach bus simulator.....",
+    "category": "car",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "2.6.0 v",
+        "size": "140 MB",
+        "link": "https://www.mediafire.com/file/umcbnbpo3m3rkmw/cbussim260modt-androidoyunclub.apk/file"
+      }
+    ]
+  },
+  {
+    "name": "Car parking multiplayer ",
+    "img": "https://i.postimg.cc/8PPmLmmT/car-parking-multiplayer-150x150.webp",
+    "desc": "Ultimate money ",
+    "category": "car",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "4.8.21.3 v",
+        "size": "996 MB",
+        "link": "https://www.mediafire.com/file/q1feka0dg6827h4/cpm48213modt-androidoyunclub.apk/file"
+      }
+    ]
+  },
+  {
+    "name": "Brawl Stars",
+    "img": "https://i.postimg.cc/cCJttXGv/brawl-stars-150x150.webp",
+    "desc": "Ultimate money 💰",
+    "category": "strategy",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "56.250 v",
+        "size": "449 MB",
+        "link": "https://www.mediafire.com/file/bllpzau1t7zabkh/Brawl_Stars_SV1_nul-mundoperfecto.net.apk/file"
+      }
+    ]
+  },
+  {
+    "name": "angry birds",
+    "img": "assets/images/Angry Birds icon.jpeg",
+    "desc": "Angry birds....",
+    "category": "strategy",
+    "versions": [
+      {
+        "v": "2.0v",
+        "size": "333 MB",
+        "link": "N"
+      }
+    ]
+  },
+  {
+    "name": "Grand theft auto Vice city ",
+    "img": "assets/images/grand-theft-auto-vice-city-150x150.webp",
+    "desc": "Grand theft auto Vice city.....",
+    "category": "action",
+    "rating": 4.5,
+    "versions": [
+      {
+        "v": "1.0",
+        "size": "2.0 GB",
+        "link": "Dhh"
+      }
+    ]
+  },
+  {
+    "name": "Sniper 3D assassin",
+    "img": "https://i.postimg.cc/KYPz1Zt6/IMG-20260106-183906-009.jpg",
+    "desc": "Sniper 3D assassin.....",
+    "category": "action",
+    "versions": [
+      {
+        "v": "4.33.6 v",
+        "size": "175 MB",
+        "link": "https://www.mediafire.com/file/z5g33yqv8t5csgb/sniper-3d-assassin-v4.33.6-mod1.apk/file"
+      },
+      {
+        "v": "2.5.0v",
+        "size": "180 MB",
+        "link": ""
+      }
+    ]
+  },
+  {
+    "name": "Subway Surfers",
+    "img": "assets/images/Subway Surfers_icon.png",
+    "desc": "Subway Surfers.....",
+    "category": "sports",
+    "versions": [
+      {
+        "v": "v 3.43.5",
+        "size": "189 MB",
+        "link": "https://github.com/Ahmedyemen20/Bmodee/releases/download/v1.0.0/subway-surfers-3-48-5.apk"
       }
     ]
   }
