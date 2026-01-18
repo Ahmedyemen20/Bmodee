@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>تفاصيل اللعبة</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* تحسينات محلية لصفحة التفاصيل (آمنة، لا تغير بقية المشروع) */
     .game-details{
       max-width:920px;
       margin:86px auto 40px;
@@ -14,65 +14,473 @@
       box-sizing:border-box;
       display:flex;
       flex-direction:column;
-      gap:16px;
+      gap:24px;
       align-items:center;
-      text-align:center;
     }
+    
+    .game-header {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .game-thumb {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+    }
+    
     .game-thumb img{
-      width:100%;
-      max-width:640px;
-      height:auto;
-      border-radius:12px;
-      box-shadow:0 8px 28px rgba(0,0,0,0.45);
-      background:#0b1220;
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      background: #0b1220;
     }
-    .game-title{ font-size:28px; font-weight:700; color:#fff; margin:6px 0; text-transform:capitalize; }
-    .game-desc{ color:var(--muted,#bfc9d9); max-width:880px; font-size:15px; padding:0 8px; }
-    .meta{ width:100%; max-width:760px; display:flex; flex-direction:column; gap:12px; align-items:stretch; text-align:right; padding:0 8px; }
-    .versions { display:flex; flex-direction:column; gap:10px; }
-    .version-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; background:rgba(255,255,255,0.02); border-radius:10px; border:1px solid rgba(255,255,255,0.03); }
-    .ver-info{ flex:1; color:var(--muted,#cbd5e1); font-size:15px; text-align:right; direction:rtl; }
-    .version-actions{ display:flex; gap:8px; align-items:center; }
-    .download-btn{ background:linear-gradient(90deg,#facc15,#ffd54a); color:#000; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; display:inline-block; }
-    .edit-btn{ background:#ffd166; color:#000; padding:8px 10px; border-radius:8px; border:none; cursor:pointer; }
-    .back-link{ display:inline-block; margin-top:6px; color:#a5d8ff; text-decoration:underline; }
-    .no-versions{ color:var(--muted,#9ca3af); padding:10px 8px; }
+    
+    .top10-badge-large {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: linear-gradient(135deg, #facc15 0%, #fbbf24 100%);
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(250,204,21,0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .game-title{ 
+      font-size: 32px; 
+      font-weight: 700; 
+      color: #fff; 
+      margin: 0;
+      text-align: center;
+    }
+    
+    .game-info-badges {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      color: #cbd5e1;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .info-badge i {
+      color: #facc15;
+    }
+    
+    .category-badge {
+      background: linear-gradient(135deg, rgba(96,165,250,0.2) 0%, rgba(59,130,246,0.2) 100%);
+      border-color: rgba(96,165,250,0.3);
+      color: #60a5fa;
+    }
+    
+    .rating-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px;
+      background: rgba(250,204,21,0.05);
+      border: 2px solid rgba(250,204,21,0.2);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 300px;
+    }
+    
+    .rating-stars {
+      display: flex;
+      gap: 4px;
+      font-size: 24px;
+    }
+    
+    .rating-stars i {
+      color: #facc15;
+    }
+    
+    .rating-stars i.empty {
+      color: rgba(250,204,21,0.2);
+    }
+    
+    .rating-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #facc15;
+    }
+    
+    .rating-count {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    
+    .game-desc{ 
+      color: #cbd5e1;
+      max-width: 760px;
+      font-size: 16px;
+      line-height: 1.8;
+      padding: 20px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      text-align: right;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 760px;
+      margin: 16px 0;
+    }
+    
+    .stat-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(250,204,21,0.3);
+      transform: translateY(-2px);
+    }
+    
+    .stat-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    
+    .meta{ 
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title i {
+      color: #facc15;
+    }
+    
+    .versions { 
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .version-row{ 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s ease;
+    }
+    
+    .version-row:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(250,204,21,0.3);
+    }
+    
+    .ver-info{ 
+      flex: 1;
+      color: #cbd5e1;
+      font-size: 15px;
+      text-align: right;
+      direction: rtl;
+    }
+    
+    .ver-info strong {
+      color: #fff;
+      font-weight: 600;
+    }
+    
+    .version-actions{ 
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .download-btn{ 
+      background: linear-gradient(135deg, #facc15 0%, #fbbf24 100%);
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(250,204,21,0.3);
+    }
+    
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(250,204,21,0.4);
+    }
+    
+    .edit-btn{ 
+      background: #60a5fa;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .edit-btn:hover {
+      background: #3b82f6;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      color: #fff;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(96,165,250,0.4);
+    }
+    
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: #cbd5e1;
+      border-color: rgba(255,255,255,0.1);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+    }
+    
+    .back-link{ 
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .back-link:hover {
+      color: #3b82f6;
+    }
+    
+    .no-versions{ 
+      color: #94a3b8;
+      padding: 20px;
+      text-align: center;
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+    }
+    
     @media (max-width:720px){
-      .game-details { margin:70px 10px 30px; padding:12px; }
-      .game-title{ font-size:22px; }
+      .game-details { 
+        margin: 70px 10px 30px;
+        padding: 12px;
+      }
+      .game-title{ 
+        font-size: 24px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .version-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .ver-info {
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
 
   <main class="game-details" id="gameDetails">
-    <div class="game-thumb">
-      <img id="gImg" src="/no-image.png" alt="صورة اللعبة">
+    
+    <div class="game-header">
+      <div class="game-thumb">
+        <img id="gImg" src="/no-image.png" alt="صورة اللعبة">
+        <div id="top10Badge" class="top10-badge-large" style="display:none">
+          <i class="fas fa-trophy"></i>
+          أفضل 10
+        </div>
+      </div>
+
+      <h1 id="gName" class="game-title">اسم اللعبة</h1>
+      
+      <!-- شارات المعلومات -->
+      <div class="game-info-badges">
+        <div id="categoryBadge" class="info-badge category-badge" style="display:none">
+          <i class="fas fa-folder"></i>
+          <span id="categoryName"></span>
+        </div>
+        <div class="info-badge">
+          <i class="fas fa-download"></i>
+          <span id="downloadsCount">0</span> تحميل
+        </div>
+        <div class="info-badge">
+          <i class="fas fa-mobile-alt"></i>
+          أندرويد
+        </div>
+      </div>
+
+      <!-- التقييم -->
+      <div class="rating-container">
+        <div class="rating-stars" id="ratingStars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+        <div class="rating-text" id="ratingText">4.5</div>
+        <div class="rating-count" id="ratingCount">من أصل 5.0</div>
+      </div>
     </div>
 
-    <h1 id="gName" class="game-title">اسم اللعبة</h1>
-
+    <!-- الوصف -->
     <p id="gDesc" class="game-desc">وصف اللعبة...</p>
 
-    <!-- رابط المصدر يبقى مرئياً في صفحة التفاصيل -->
-    <a id="gSource" class="source-link" href="#" target="_blank" rel="noopener noreferrer" style="display:none">مصدر (Google Play)</a>
-
-    <div class="meta">
-      <div class="versions-title" style="font-weight:700;color:#fff">الإصدارات</div>
-      <div id="versions" class="versions"></div>
-      <div id="noVersions" class="no-versions" style="display:none">لا توجد إصدارات متاحة</div>
+    <!-- إحصائيات إضافية -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value" id="sizeValue">—</div>
+        <div class="stat-label">الحجم</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔄</div>
+        <div class="stat-value" id="versionValue">—</div>
+        <div class="stat-label">الإصدار</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">جديد</div>
+        <div class="stat-label">آخر تحديث</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎮</div>
+        <div class="stat-value" id="categoryValue">—</div>
+        <div class="stat-label">الفئة</div>
+      </div>
     </div>
 
-    <a id="backToIndex" href="index.html" class="back-link">« عودة للقائمة</a>
+    <!-- أزرار الإجراءات -->
+    <div class="action-buttons">
+      <a id="gSource" class="action-btn btn-primary" href="#" target="_blank" rel="noopener noreferrer" style="display:none">
+        <i class="fab fa-google-play"></i>
+        Google Play
+      </a>
+      <a class="action-btn btn-secondary" href="#" onclick="shareGame(); return false;">
+        <i class="fas fa-share-alt"></i>
+        مشاركة
+      </a>
+    </div>
+
+    <!-- الإصدارات -->
+    <div class="meta">
+      <div class="section-title">
+        <i class="fas fa-download"></i>
+        الإصدارات المتاحة
+      </div>
+      <div id="versions" class="versions"></div>
+      <div id="noVersions" class="no-versions" style="display:none">
+        <i class="fas fa-exclamation-circle" style="font-size:32px; margin-bottom:8px; color:#94a3b8"></i>
+        <div>لا توجد إصدارات متاحة للتحميل</div>
+      </div>
+    </div>
+
+    <a id="backToIndex" href="index.html" class="back-link">
+      <i class="fas fa-arrow-right"></i>
+      عودة للقائمة
+    </a>
   </main>
 
-<footer class="footer">
-  <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
-  <nav class="footer-links">
-    <a href="privacy.html">سياسة الخصوصية</a> |
-    <a href="terms.html">الشروط والأحكام</a>
-  </nav>
-</footer>
+  <footer class="footer">
+    <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
+    <nav class="footer-links">
+      <a href="privacy.html">سياسة الخصوصية</a> |
+      <a href="terms.html">الشروط والأحكام</a>
+    </nav>
+  </footer>
 
   <script>
     (function () {
@@ -85,6 +493,7 @@
         }
       }
 
+      // عناصر DOM
       const gImg = document.getElementById('gImg');
       const gNameEl = document.getElementById('gName');
       const gDescEl = document.getElementById('gDesc');
@@ -92,23 +501,32 @@
       const versionsContainer = document.getElementById('versions');
       const noVersionsEl = document.getElementById('noVersions');
       const backToIndex = document.getElementById('backToIndex');
+      const top10Badge = document.getElementById('top10Badge');
+      const categoryBadge = document.getElementById('categoryBadge');
+      const categoryName = document.getElementById('categoryName');
+      const ratingStars = document.getElementById('ratingStars');
+      const ratingText = document.getElementById('ratingText');
+      const ratingCount = document.getElementById('ratingCount');
+      const downloadsCount = document.getElementById('downloadsCount');
+      const sizeValue = document.getElementById('sizeValue');
+      const versionValue = document.getElementById('versionValue');
+      const categoryValue = document.getElementById('categoryValue');
 
       const nameParam = getQueryParam('name') || getQueryParam('game') || '';
 
-      // 1) حاول جلب كائن اللعبة من sessionStorage (عند النقر من الصفحة الرئيسية حفظنا selectedGame)
+      // 1) حاول جلب كائن اللعبة من sessionStorage
       let game = null;
       try {
         const sel = sessionStorage.getItem('selectedGame');
         if (sel) {
           game = JSON.parse(sel);
-          // نزيله لتجنّب بقاء بيانات قديمة
           sessionStorage.removeItem('selectedGame');
         }
       } catch (e) {
         game = null;
       }
 
-      // 2) إن لم نجده في sessionStorage، نبحث في localStorage (adminGames أو allGames)
+      // 2) إن لم نجده، نبحث في localStorage
       if (!game && nameParam) {
         try {
           const adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
@@ -124,36 +542,79 @@
         }
       }
 
-      // 3) إن لم نجد اللعبة، نعرض رسالة مفيدة ونوقف العملية
+      // 3) إن لم نجد اللعبة
       if (!game) {
         const displayName = nameParam ? decodeURIComponent(nameParam) : 'اللعبة غير محددة';
         gNameEl.textContent = displayName;
-        gDescEl.textContent = 'تفاصيل هذه اللعبة غير متاحة محلياً. إذا أتيت من الصفحة الرئيسية فحاول النقر مباشرة من البطاقة، أو أضف اللعبة في لوحة الأدمن.';
+        gDescEl.textContent = 'تفاصيل هذه اللعبة غير متاحة محلياً. حاول العودة والنقر مباشرة من البطاقة.';
         if (gSourceEl) gSourceEl.style.display = 'none';
         if (noVersionsEl) noVersionsEl.style.display = 'block';
-        // رابط العودة يقود إلى index مع محاولة إبقائه بسيطاً
-        backToIndex.href = 'index.html';
+        document.getElementById('statsGrid').style.display = 'none';
         return;
       }
 
-      // 4) لدينا الكائن — اعرضه
-      gNameEl.textContent = game.name || (nameParam ? decodeURIComponent(nameParam) : 'اللعبة');
-      gDescEl.textContent = game.desc || '';
+      // 4) عرض البيانات
+      gNameEl.textContent = game.name || 'اللعبة';
+      document.title = (game.name || 'تفاصيل اللعبة') + ' - تحميل';
+      gDescEl.textContent = game.desc || 'لا يوجد وصف متاح لهذه اللعبة.';
       gImg.src = game.img || '/no-image.png';
 
-      // رابط البحث في Google Play
+      // Badge أفضل 10
+      if (game.isTop10) {
+        top10Badge.style.display = 'flex';
+      }
+
+      // القسم
+      const categoryNames = {
+        action: 'أكشن',
+        sports: 'رياضة',
+        strategy: 'استراتيجية',
+        racing: 'سباق',
+        car: 'سيارات'
+      };
+      
+      if (game.category && categoryNames[game.category]) {
+        categoryBadge.style.display = 'flex';
+        categoryName.textContent = categoryNames[game.category];
+        categoryValue.textContent = categoryNames[game.category];
+      }
+
+      // التقييم
+      const rating = game.rating || 4.5;
+      ratingText.textContent = rating.toFixed(1);
+      ratingCount.textContent = `من أصل 5.0`;
+      
+      // رسم النجوم
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 >= 0.5;
+      let starsHTML = '';
+      
+      for (let i = 0; i < fullStars; i++) {
+        starsHTML += '<i class="fas fa-star"></i>';
+      }
+      if (hasHalfStar) {
+        starsHTML += '<i class="fas fa-star-half-alt"></i>';
+      }
+      const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+      for (let i = 0; i < emptyStars; i++) {
+        starsHTML += '<i class="fas fa-star empty"></i>';
+      }
+      ratingStars.innerHTML = starsHTML;
+
+      // عدد التحميلات (عشوائي للعرض)
+      const downloads = Math.floor(Math.random() * 90000) + 10000;
+      downloadsCount.textContent = downloads.toLocaleString('ar-EG');
+
+      // رابط Google Play
       try {
         const playHref = `https://play.google.com/store/search?q=${encodeURIComponent(game.name)}&c=apps`;
         gSourceEl.href = playHref;
-        gSourceEl.style.display = 'inline-block';
-      } catch (e) {
-        // ignore
-      }
+        gSourceEl.style.display = 'inline-flex';
+      } catch (e) {}
 
-      // التأكد من رابط العودة يعود لصفحة اللعبة مع الاسم
       backToIndex.href = `index.html`;
 
-      // 5) عرض الإصدارات وبناء روابط إلى download.html مع تمرير كل المعلومات
+      // 5) عرض الإصدارات
       const versions = (game.versions && game.versions.length) ? game.versions : [];
       versionsContainer.innerHTML = '';
 
@@ -162,25 +623,31 @@
         return;
       } else {
         noVersionsEl.style.display = 'none';
+        
+        // عرض معلومات الإصدار الأول في الإحصائيات
+        if (versions[0]) {
+          if (versions[0].size) sizeValue.textContent = versions[0].size;
+          if (versions[0].v) versionValue.textContent = versions[0].v;
+        }
+        
         versions.forEach((v) => {
           const row = document.createElement('div');
           row.className = 'version-row';
 
           const info = document.createElement('div');
           info.className = 'ver-info';
-          const verText = v.v ? `${v.v}` : 'الإصدار';
-          const sizeText = v.size ? ` • ${v.size}` : '';
-          info.textContent = verText + sizeText;
+          const verText = v.v ? `<strong>الإصدار:</strong> ${v.v}` : 'الإصدار';
+          const sizeText = v.size ? ` • <strong>الحجم:</strong> ${v.size}` : '';
+          info.innerHTML = verText + sizeText;
 
           const actions = document.createElement('div');
           actions.className = 'version-actions';
 
-          // params: نمرر name, ver, size, link, img, desc إلى download.html
           const params = new URLSearchParams();
           params.set('name', game.name || '');
           params.set('ver', v.v || '');
           params.set('size', v.size || '');
-          params.set('link', v.link || ''); // قد يكون # أو رابط فعلي
+          params.set('link', v.link || '');
           params.set('img', game.img || '');
           params.set('desc', game.desc || '');
 
@@ -188,18 +655,18 @@
 
           const dl = document.createElement('a');
           dl.className = 'download-btn';
-          dl.textContent = 'احدث اصدار';
+          dl.innerHTML = '<i class="fas fa-download"></i> تحميل';
           dl.href = dlHref;
-          dl.target = '_blank';
+          dl.target = '_self';
 
           actions.appendChild(dl);
 
-          // زر تحرير يظهر فقط لو المستخدم أدمن (آمن، لا يغيّر سلوك التحميل)
+          // زر تحرير للأدمن
           if (location.search.includes('admin=true') || localStorage.getItem('isAdmin') === 'true') {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
             editBtn.className = 'edit-btn';
-            editBtn.textContent = '✏️';
+            editBtn.innerHTML = '<i class="fas fa-edit"></i>';
             editBtn.onclick = () => { location.href = `index.html?admin=true`; };
             actions.appendChild(editBtn);
           }
@@ -211,6 +678,27 @@
       }
 
     })();
+
+    // وظيفة المشاركة
+    function shareGame() {
+      const title = document.getElementById('gName').textContent;
+      const url = window.location.href;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: `شاهد ${title} - لعبة رائعة!`,
+          url: url
+        }).catch(() => {});
+      } else {
+        // نسخ الرابط
+        navigator.clipboard.writeText(url).then(() => {
+          alert('تم نسخ الرابط!');
+        }).catch(() => {
+          alert('الرابط: ' + url);
+        });
+      }
+    }
   </script>
 </body>
 </html>

@@ -3,143 +3,364 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bmode</title>
+  <title>Bmode - العب، ابني، كن الأفضل</title>
+  
+  <meta name="description" content="موقع Bmode لتحميل أفضل ألعاب الأندرويد المعدلة مجاناً. اكتشف ألعاب الأكشن، الرياضة، السباق والمزيد!">
+  <meta name="keywords" content="ألعاب أندرويد, ألعاب معدلة, تحميل ألعاب, Bmode">
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488"
- crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
 
-<style>
-/* إضافة أنماط للقائمة الفرعية */
-.sidebar {
-  overflow-y: auto;
-}
+  <style>
+    /* تحسينات إضافية */
+    .menu-item {
+      display: block;
+      position: relative;
+    }
 
-.menu-item {
-  display: block;
-  position: relative;
-}
+    .menu-item > a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      color: var(--text-color, #fff);
+      text-decoration: none;
+      transition: background 0.3s ease;
+      border-radius: 8px;
+    }
 
-.menu-item > a {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  color: var(--text-color, #fff);
-  text-decoration: none;
-  transition: background 0.3s ease;
-}
+    .menu-item > a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-.menu-item > a:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
+    .menu-item .arrow {
+      transition: transform 0.3s ease;
+      font-size: 12px;
+    }
 
-.menu-item .arrow {
-  transition: transform 0.3s ease;
-  font-size: 12px;
-}
+    .menu-item.active .arrow {
+      transform: rotate(180deg);
+    }
 
-.menu-item.active .arrow {
-  transform: rotate(180deg);
-}
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-top: 4px;
+    }
 
-.submenu {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-  background: rgba(0, 0, 0, 0.2);
-}
+    .menu-item.active .submenu {
+      max-height: 200px;
+    }
 
-.menu-item.active .submenu {
-  max-height: 200px;
-}
+    .submenu a {
+      display: block;
+      padding: 10px 20px 10px 40px;
+      color: var(--text-color, #cbd5e1);
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
 
-.submenu a {
-  display: block;
-  padding: 10px 20px 10px 40px;
-  color: var(--text-color, #cbd5e1);
-  text-decoration: none;
-  font-size: 14px;
-  transition: background 0.3s ease, color 0.3s ease;
-}
+    .submenu a:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #facc15;
+    }
 
-.submenu a:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #facc15;
-}
+    .submenu a i {
+      margin-left: 8px;
+      font-size: 12px;
+    }
+    
+    .top10-checkbox {
+      margin: 16px 0;
+      padding: 12px;
+      background: rgba(250,204,21,0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(250,204,21,0.3);
+    }
 
-.submenu a i {
-  margin-left: 8px;
-  font-size: 12px;
-}
+    .top10-checkbox label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--text-color);
+    }
 
-/* تنسيق checkbox أفضل 10 */
-.top10-checkbox {
-  margin: 16px 0;
-  padding: 12px;
-  background: rgba(250,204,21,0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(250,204,21,0.3);
-}
+    .top10-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
 
-.top10-checkbox label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  color: var(--text-color);
-}
+    .top10-checkbox span {
+      font-weight: 600;
+    }
 
-.top10-checkbox input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-
-.top10-checkbox span {
-  font-weight: 600;
-}
-
-.top10-checkbox p {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 8px;
-  margin-right: 30px;
-}
-
-/* badge أفضل 10 في البطاقات */
-.top10-badge {
-  display: inline-block;
-  background: #facc15;
-  color: #000;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  margin-top: 8px;
-}
-</style>
+    .top10-checkbox p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      margin-right: 30px;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 60px 20px 40px;
+      text-align: center;
+      margin-bottom: 32px;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    
+    .hero-title {
+      font-size: 42px;
+      font-weight: 700;
+      color: #facc15;
+      margin: 0 0 12px;
+      text-shadow: 0 4px 12px rgba(250,204,21,0.3);
+    }
+    
+    .hero-subtitle {
+      font-size: 18px;
+      color: #cbd5e1;
+      margin: 0 0 24px;
+    }
+    
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 32px;
+      padding: 0 16px;
+      position: relative;
+    }
+    
+    #searchInput {
+      width: 100%;
+      padding: 16px 50px 16px 20px;
+      border-radius: 50px;
+      border: 2px solid rgba(250,204,21,0.2);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    #searchInput:focus {
+      border-color: #facc15;
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 0 20px rgba(250,204,21,0.3);
+      outline: none;
+    }
+    
+    #searchInput::placeholder {
+      color: #94a3b8;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #facc15;
+      font-size: 20px;
+      pointer-events: none;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px 16px;
+      margin-top: 32px;
+    }
+    
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-title i {
+      font-size: 24px;
+    }
+    
+    .view-all-link {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s ease;
+    }
+    
+    .view-all-link:hover {
+      color: #3b82f6;
+    }
+    
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      padding: 24px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      margin: 24px 16px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .stat-item {
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+    
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #facc15;
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    
+    .games-grid {
+      padding: 0 10px 32px;
+    }
+    
+    .game-card {
+      cursor: pointer;
+      position: relative;
+      overflow: visible;
+    }
+    
+    .game-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, #facc15, #ff6b35);
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    
+    .game-card:hover::before {
+      opacity: 0.3;
+    }
+    
+    .new-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 2;
+      box-shadow: 0 4px 12px rgba(34,197,94,0.4);
+    }
+    
+    .featured-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: linear-gradient(135deg, #facc15, #fbbf24);
+      color: #000;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 2;
+      box-shadow: 0 4px 12px rgba(250,204,21,0.4);
+    }
+    
+    .pagination {
+      margin: 32px 0;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #94a3b8;
+    }
+    
+    .empty-state i {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+    
+    .empty-state h3 {
+      font-size: 24px;
+      margin: 16px 0 8px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+    }
+    
+    .loading i {
+      font-size: 48px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 32px;
+      }
+      
+      .hero-subtitle {
+        font-size: 16px;
+      }
+      
+      .section-title {
+        font-size: 22px;
+      }
+      
+      .stats-bar {
+        padding: 16px;
+      }
+      
+      .stat-number {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- Search -->
-<div class="search-container">
-  <input type="text" id="searchInput" placeholder="ابحث عن لعبة...">
-</div>
-
 <!-- Navbar -->
 <nav class="navbar">
   <div class="topbar">
-    <button class="hamburger" id="hamburger">
+    <button class="hamburger" id="hamburger" aria-label="القائمة" aria-expanded="false">
       <span class="bar"></span>
     </button>
 
-    <img class="logo" src="/تنزيل.svg" alt="logo">
+    <img class="logo" src="/تنزيل.svg" alt="Bmode Logo">
 
     <div class="theme-switch">
       <input type="checkbox" id="themeToggle">
@@ -156,12 +377,14 @@
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-  <a href="#" onclick="renderAll()">كل الألعاب</a>
+  <a href="#" onclick="renderAll()">
+    <i class="fas fa-home"></i> كل الألعاب
+  </a>
   
   <!-- قسم الأكشن -->
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)">
-      أكشن
+      <span><i class="fas fa-fist-raised"></i> أكشن</span>
       <span class="arrow">▼</span>
     </a>
     <div class="submenu">
@@ -177,7 +400,7 @@
   <!-- قسم الرياضة -->
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)">
-      رياضة
+      <span><i class="fas fa-futbol"></i> رياضة</span>
       <span class="arrow">▼</span>
     </a>
     <div class="submenu">
@@ -193,7 +416,7 @@
   <!-- قسم الاستراتيجية -->
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)">
-      استراتيجية
+      <span><i class="fas fa-chess"></i> استراتيجية</span>
       <span class="arrow">▼</span>
     </a>
     <div class="submenu">
@@ -209,7 +432,7 @@
   <!-- قسم السباق -->
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)">
-      سباق
+      <span><i class="fas fa-flag-checkered"></i> سباق</span>
       <span class="arrow">▼</span>
     </a>
     <div class="submenu">
@@ -225,7 +448,7 @@
   <!-- قسم السيارات -->
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)">
-      سيارات
+      <span><i class="fas fa-car"></i> سيارات</span>
       <span class="arrow">▼</span>
     </a>
     <div class="submenu">
@@ -239,47 +462,94 @@
   </div>
 </aside>
 
-<h1>Games section</h1>
-
-<div class="games-grid" id="gamesGrid"></div>
-<div class="pagination" id="pagination"></div>
-
-<!-- About -->
-<section id="about">
-  <h2>عن الموقع</h2>
-  <p>موقع لعرض الألعاب بشكل منظم وسهل.</p>
+<!-- Hero Section -->
+<section class="hero-section">
+  <h1 class="hero-title">🎮 Bmode</h1>
+  <p class="hero-subtitle">Play. Build. Go Beast Mode.</p>
+  
+  <!-- Search -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="ابحث عن لعبتك المفضلة...">
+    <i class="fas fa-search search-icon"></i>
+  </div>
 </section>
 
-<!-- Contact -->
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-number" id="totalGames">0</span>
+    <span class="stat-label">لعبة متاحة</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">50K+</span>
+    <span class="stat-label">تحميل</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">4.8</span>
+    <span class="stat-label">التقييم</span>
+  </div>
+</div>
+
+<!-- Section Header -->
+<div class="section-header">
+  <h2 class="section-title">
+    <i class="fas fa-fire"></i>
+    <span id="mainSectionTitle">أحدث الألعاب</span>
+  </h2>
+</div>
+
+<!-- Games Grid -->
+<div class="games-grid" id="gamesGrid">
+  <div class="loading">
+    <i class="fas fa-spinner"></i>
+    <p>جارٍ التحميل...</p>
+  </div>
+</div>
+
+<!-- Pagination -->
+<div class="pagination" id="pagination"></div>
+
+<!-- About Section -->
+<section id="about">
+  <h2><i class="fas fa-info-circle"></i> عن الموقع</h2>
+  <p>Bmode هو منصتك المفضلة لاكتشاف وتحميل أفضل ألعاب الأندرويد المعدلة. نوفر لك مكتبة ضخمة من الألعاب في مختلف الفئات مع روابط آمنة ومباشرة.</p>
+  <p>جميع الألعاب متوفرة مجاناً مع ميزات إضافية مثل الأموال غير المحدودة، إزالة الإعلانات، والكثير من المميزات الأخرى!</p>
+</section>
+
+<!-- Contact Section -->
 <section id="contact">
-  <h2>تواصل معنا</h2>
+  <h2><i class="fas fa-envelope"></i> تواصل معنا</h2>
+  <p>هل لديك استفسار أو اقتراح؟ نحن نسعد بسماع رأيك!</p>
   <form action="https://formspree.io/f/xwpreyna" method="POST">
     <input type="text" name="name" placeholder="اسمك" required>
     <input type="email" name="email" placeholder="بريدك الإلكتروني" required>
     <textarea name="message" placeholder="رسالتك" required></textarea>
-    <button type="submit">إرسال</button>
+    <button type="submit"><i class="fas fa-paper-plane"></i> إرسال</button>
   </form>
 </section>
 
 <!-- Footer -->
 <footer class="footer">
-  <p>© 2026 موقع الألعاب. جميع الحقوق محفوظة.</p>
+  <p>© 2026 Bmode. جميع الحقوق محفوظة.</p>
   <nav class="footer-links">
-    <a href="privacy.html">سياسة الخصوصية</a> |
-    <a href="terms.html">الشروط والأحكام</a>
+    <a href="privacy.html"><i class="fas fa-shield-alt"></i> سياسة الخصوصية</a> |
+    <a href="terms.html"><i class="fas fa-file-contract"></i> الشروط والأحكام</a>
   </nav>
+  <p style="margin-top: 12px; font-size: 12px; color: #64748b;">
+    Made with <i class="fas fa-heart" style="color: #ef4444; font-size: 14px;"></i> by Bmode Team
+  </p>
 </footer>
 
-<!-- زر الأدمن -->
-<div id="adminBtn" class="admin-add" aria-label="لوحة الأدمن" title="لوحة الأدمن">
+<!-- Admin Button -->
+<div id="adminBtn" class="admin-add" aria-label="لوحة الأدمن" title="لوحة الأدمن" style="display:none">
   <span class="admin-plus">+</span>
-  <button id="smartBtn" class="smart-inner" title="المساعد الذكي">🤖</button>
+  <button id="smartBtn" class="smart-inner" title="المساعد الذكي" style="display:none">🤖</button>
 </div>
 
-<!-- لوحة التحكم -->
+<!-- Admin Panel -->
 <div id="adminPanel" class="admin-panel">
   <div class="admin-header">
-    <h2>لوحة التحكم</h2>
+    <h2><i class="fas fa-cog"></i> لوحة التحكم</h2>
     <button onclick="closeAdmin()">✕</button>
   </div>
 
@@ -294,7 +564,6 @@
       <button id="importBtn" class="btn">استيراد ألعاب</button>
     </div>
 
-    <!-- اختيار القسم -->
     <select id="aCategory">
       <option value="">اختر القسم</option>
       <option value="action">أكشن</option>
@@ -304,7 +573,6 @@
       <option value="car">سيارات</option>
     </select>
 
-    <!-- أفضل 10 ألعاب -->
     <div class="top10-checkbox">
       <label>
         <input type="checkbox" id="aIsTop10">
@@ -324,112 +592,9 @@
 <script src="main.js"></script>
 <script src="admin-games-filter.js"></script>
 
-<!-- وظيفة فتح/إغلاق القائمة الفرعية -->
+<!-- Enhanced Scripts -->
 <script>
-function toggleSubmenu(event, element) {
-  event.preventDefault();
-  const menuItem = element.parentElement;
-  const wasActive = menuItem.classList.contains('active');
-  
-  // إغلاق جميع القوائم الفرعية
-  document.querySelectorAll('.menu-item').forEach(item => {
-    item.classList.remove('active');
-  });
-  
-  // فتح القائمة المحددة إذا لم تكن مفتوحة
-  if (!wasActive) {
-    menuItem.classList.add('active');
-  }
-}
-
-// دالة مساعدة للحصول على رابط Google Play
-function getPlayStoreSearchLink(name) {
-  return `https://play.google.com/store/search?q=${encodeURIComponent(name)}&c=apps`;
-}
-
-// وظيفة عرض أفضل 10 ألعاب - مع إخفاء pagination
-function renderTop10(category) {
-  // إغلاق القائمة الجانبية على الموبايل
-  closeSidebar();
-  
-  // الحصول على جميع الألعاب
-  const adminGames = JSON.parse(localStorage.getItem('adminGames') || '[]');
-  
-  // دمج baseGames مع adminGames (تأكد من وجود baseGames في main.js)
-  const baseGames = window.baseGames || [];
-  const allGames = [...baseGames, ...adminGames];
-  
-  // فلترة الألعاب حسب القسم والتي تم تحديدها كـ "أفضل 10"
-  const top10Games = allGames
-    .filter(game => game.category === category && game.isTop10 === true)
-    .slice(0, 10);
-  
-  // إذا لم يكن هناك ألعاب محددة كأفضل 10، اعرض أول 10 ألعاب من القسم
-  const gamesToShow = top10Games.length > 0 
-    ? top10Games 
-    : allGames.filter(game => game.category === category).slice(0, 10);
-  
-  // عرض الألعاب مباشرة بدون pagination
-  const gamesGrid = document.getElementById('gamesGrid');
-  if (!gamesGrid) return;
-  
-  gamesGrid.innerHTML = '';
-  
-  if (gamesToShow.length === 0) {
-    gamesGrid.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted);">لا توجد ألعاب في هذا القسم</div>';
-  } else {
-    const isAdmin = location.search.includes("admin=true") || localStorage.getItem("isAdmin") === "true";
-    
-    gamesToShow.forEach(game => {
-      const index = adminGames.findIndex(g => g.name === game.name && g.versions && JSON.stringify(g.versions) === JSON.stringify(game.versions));
-      const isAdminGame = index !== -1;
-      
-      const card = document.createElement("div");
-      card.className = "game-card";
-      card.onclick = () => {
-        try {
-          sessionStorage.setItem('selectedGame', JSON.stringify(game));
-        } catch (e) {}
-        location.href = `game.html?name=${encodeURIComponent(game.name)}${isAdmin ? "&admin=true" : ""}`;
-      };
-      
-      card.innerHTML = `
-        <img src="${game.img}" onerror="this.src='/no-image.png'">
-        <h3>${game.name}</h3>
-        <p>${game.desc || ""}</p>
-        ${game.isTop10 ? '<span class="top10-badge">🏆 أفضل 10</span>' : ''}
-        <p><a class="source-link" href="${getPlayStoreSearchLink(game.name)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">مصدر (Google Play)</a></p>
-        ${isAdmin && isAdminGame ? `
-          <div class="admin-actions" onclick="event.stopPropagation()">
-            <button onclick="editGame(${index})" class="edit">✏️</button>
-            <button onclick="removeGame(${index})" class="del">🗑</button>
-          </div>
-        ` : ''}
-      `;
-      gamesGrid.appendChild(card);
-    });
-  }
-  
-  // ✅ إخفاء الـ pagination في قسم أفضل 10
-  const pagination = document.getElementById('pagination');
-  if (pagination) pagination.style.display = 'none';
-  
-  // تحديث العنوان
-  const categoryNames = {
-    action: 'أكشن',
-    sports: 'رياضة',
-    strategy: 'استراتيجية',
-    racing: 'سباق',
-    car: 'سيارات'
-  };
-  
-  const titleElement = document.querySelector('h1');
-  if (titleElement) {
-    titleElement.textContent = `أفضل 10 ألعاب ${categoryNames[category]}`;
-  }
-}
-
-// وظيفة إغلاق القائمة الجانبية
+// ✅ وظيفة إغلاق القائمة الجانبية
 function closeSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
@@ -437,11 +602,65 @@ function closeSidebar() {
   
   if (sidebar) sidebar.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
-  if (hamburger) hamburger.classList.remove('active');
+  if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
 }
+
+// ✅ Toggle Submenu
+function toggleSubmenu(event, element) {
+  event.preventDefault();
+  const menuItem = element.parentElement;
+  const wasActive = menuItem.classList.contains('active');
+  
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  if (!wasActive) {
+    menuItem.classList.add('active');
+  }
+}
+
+// ✅ Update total games count
+function updateStats() {
+  const totalGamesEl = document.getElementById('totalGames');
+  if (totalGamesEl) {
+    const allGames = [...(window.baseGames || []), ...(JSON.parse(localStorage.getItem('adminGames') || '[]'))];
+    totalGamesEl.textContent = allGames.length;
+  }
+}
+
+// ✅ Initialize after page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Hamburger toggle
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  
+  if (hamburger && sidebar && overlay) {
+    hamburger.addEventListener('click', function() {
+      const isOpen = sidebar.classList.contains('open');
+      
+      if (isOpen) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      } else {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+        hamburger.setAttribute('aria-expanded', 'true');
+      }
+    });
+    
+    // Close sidebar on overlay click
+    overlay.addEventListener('click', closeSidebar);
+  }
+  
+  // Update stats after games load
+  setTimeout(updateStats, 1000);
+});
 </script>
 
-<!-- Dark / Light -->
+<!-- Dark / Light Theme -->
 <script>
 const toggle = document.getElementById("themeToggle");
 if (localStorage.getItem("theme") === "light") {
