@@ -400,6 +400,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ إظهار الـ pagination مرة أخرى
     if (pagination) pagination.style.display = 'flex';
     
+    // ✅ تحديث العنوان
+    const titleElement = document.querySelector('h1');
+    if (titleElement) {
+      const categoryNames = {
+        action: 'أكشن',
+        sports: 'رياضة',
+        strategy: 'استراتيجية',
+        racing: 'سباق',
+        car: 'سيارات',
+        all: 'كل الألعاب'
+      };
+      titleElement.textContent = cat === 'all' ? 'Games section' : `ألعاب ${categoryNames[cat] || ''}`;
+    }
+    
     if (sidebar) sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
   };
@@ -415,6 +429,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // ✅ إظهار الـ pagination
     if (pagination) pagination.style.display = 'flex';
+    
+    // ✅ تحديث العنوان إلى "Games section"
+    const titleElement = document.querySelector('h1');
+    if (titleElement) {
+      titleElement.textContent = 'Games section';
+    }
     
     if (sidebar) sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
