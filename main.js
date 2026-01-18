@@ -379,17 +379,30 @@ document.addEventListener("DOMContentLoaded", () => {
     if (pagination) pagination.style.display = 'flex';
     
     // ✅ تحديث العنوان
-    const titleElement = document.querySelector('h1');
-    if (titleElement) {
+    const titleElement = document.getElementById('mainSectionTitle');
+    if (!titleElement) {
+      const h1 = document.querySelector('h1');
+      if (h1) {
+        const categoryNames = {
+          action: 'أكشن',
+          sports: 'رياضة',
+          strategy: 'استراتيجية',
+          racing: 'سباق',
+          car: 'سيارات',
+          all: 'جميع الألعاب'
+        };
+        h1.textContent = cat === 'all' ? 'Games section' : `ألعاب ${categoryNames[cat] || ''}`;
+      }
+    } else {
       const categoryNames = {
         action: 'أكشن',
         sports: 'رياضة',
         strategy: 'استراتيجية',
         racing: 'سباق',
         car: 'سيارات',
-        all: 'كل الألعاب'
+        all: 'جميع الألعاب'
       };
-      titleElement.textContent = cat === 'all' ? 'Games section' : `ألعاب ${categoryNames[cat] || ''}`;
+      titleElement.textContent = cat === 'all' ? 'أحدث الألعاب' : `ألعاب ${categoryNames[cat] || ''}`;
     }
     
     if (sidebar) sidebar.classList.remove("open");
@@ -408,14 +421,99 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ إظهار الـ pagination
     if (pagination) pagination.style.display = 'flex';
     
-    // ✅ تحديث العنوان إلى "Games section"
-    const titleElement = document.querySelector('h1');
+    // ✅ تحديث العنوان إلى "أحدث الألعاب"
+    const titleElement = document.getElementById('mainSectionTitle');
     if (titleElement) {
-      titleElement.textContent = 'Games section';
+      titleElement.textContent = 'أحدث الألعاب';
+    } else {
+      const h1 = document.querySelector('h1');
+      if (h1) h1.textContent = 'Games section';
     }
     
     if (sidebar) sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
+  };
+
+  /* =========================
+     دالة عرض أفضل 10 ألعاب
+  ========================== */
+  window.renderTop10 = function(category) {
+    // إغلاق القائمة الجانبية
+    if (sidebar) sidebar.classList.remove("open");
+    if (overlay) overlay.classList.remove("open");
+    
+    // الحصول على جميع الألعاب
+    const allGames = [...baseGames, ...adminGames];
+    
+    // فلترة الألعاب حسب القسم والتي تم تحديدها كـ "أفضل 10"
+    const top10Games = allGames
+      .filter(game => game.category === category && game.isTop10 === true)
+      .slice(0, 10);
+    
+    // إذا لم يكن هناك ألعاب محددة كأفضل 10، اعرض أول 10 ألعاب من القسم
+    const gamesToShow = top10Games.length > 0 
+      ? top10Games 
+      : allGames.filter(game => game.category === category).slice(0, 10);
+    
+    // عرض الألعاب مباشرة
+    if (!gamesGrid) return;
+    gamesGrid.innerHTML = '';
+    
+    if (gamesToShow.length === 0) {
+      gamesGrid.innerHTML = '<div style="text-align:center; padding:60px 20px; color:var(--muted);"><i class="fas fa-gamepad" style="font-size:64px; opacity:0.3; margin-bottom:16px;"></i><h3 style="font-size:24px; margin:16px 0 8px;">لا توجد ألعاب</h3><p>لا توجد ألعاب في هذا القسم حالياً</p></div>';
+    } else {
+      gamesToShow.forEach(game => {
+        const index = adminGames.findIndex(g => g.name === game.name && g.versions && JSON.stringify(g.versions) === JSON.stringify(game.versions));
+        const isAdminGame = index !== -1;
+        
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.onclick = () => {
+          try {
+            sessionStorage.setItem('selectedGame', JSON.stringify(game));
+          } catch (e) {}
+          location.href = `game.html?name=${encodeURIComponent(game.name)}${isAdmin ? "&admin=true" : ""}`;
+        };
+        
+        card.innerHTML = `
+          ${game.isTop10 ? '<div class="featured-badge"><i class="fas fa-trophy"></i> مميزة</div>' : ''}
+          <img src="${game.img}" onerror="this.src='/no-image.png'">
+          <h3>${game.name}</h3>
+          <p>${game.desc || ""}</p>
+          <p><a class="source-link" href="${getPlayStoreSearchLink(game.name)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">مصدر (Google Play)</a></p>
+          ${isAdmin && isAdminGame ? `
+            <div class="admin-actions" onclick="event.stopPropagation()">
+              <button onclick="editGame(${index})" class="edit">✏️</button>
+              <button onclick="removeGame(${index})" class="del">🗑</button>
+            </div>
+          ` : ''}
+        `;
+        gamesGrid.appendChild(card);
+      });
+    }
+    
+    // ✅ إخفاء الـ pagination
+    if (pagination) pagination.style.display = 'none';
+    
+    // ✅ تحديث العنوان
+    const categoryNames = {
+      action: 'أكشن',
+      sports: 'رياضة',
+      strategy: 'استراتيجية',
+      racing: 'سباق',
+      car: 'سيارات'
+    };
+    
+    const titleElement = document.getElementById('mainSectionTitle');
+    if (titleElement) {
+      titleElement.textContent = `أفضل 10 ألعاب ${categoryNames[category] || ''}`;
+    } else {
+      const h1 = document.querySelector('h1');
+      if (h1) h1.textContent = `أفضل 10 ألعاب ${categoryNames[category] || ''}`;
+    }
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   /* =========================
