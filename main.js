@@ -1,28 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
-     الهامبرغر / sidebar / overlay
-  ========================== */
-  const hamburger = document.getElementById("hamburger");
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-
-  if (hamburger && sidebar && overlay) {
-    hamburger.addEventListener('click', () => {
-      sidebar.classList.toggle("open");
-      overlay.classList.toggle("open");
-      sidebar.setAttribute('aria-hidden', !sidebar.classList.contains('open'));
-      overlay.setAttribute('aria-hidden', !overlay.classList.contains('open'));
-    });
-    overlay.addEventListener('click', () => {
-      sidebar.classList.remove("open");
-      overlay.classList.remove("open");
-      sidebar.setAttribute('aria-hidden', 'true');
-      overlay.setAttribute('aria-hidden', 'true');
-    });
-  }
-
-  /* =========================
      عناصر DOM و إعدادات عامة
   ========================== */
   const gamesGrid = document.getElementById("gamesGrid");

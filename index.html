@@ -15,34 +15,103 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307274526207488" crossorigin="anonymous"></script>
 
   <style>
-    /* تحسينات إضافية */
+    /* ===== تحسينات القائمة الجانبية ===== */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 24px 0;
+    }
+    
+    .sidebar-main-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      color: #facc15;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      background: rgba(250,204,21,0.1);
+      margin: 0 12px 8px;
+      border-radius: 12px;
+    }
+    
+    .sidebar-main-link:hover {
+      background: rgba(250,204,21,0.2);
+      transform: translateX(-4px);
+    }
+    
+    .sidebar-main-link i {
+      font-size: 20px;
+    }
+    
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 12px 20px;
+    }
+    
     .menu-item {
       display: block;
       position: relative;
+      margin: 4px 12px;
     }
 
-    .menu-item > a {
+    .menu-link {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 20px;
-      color: var(--text-color, #fff);
+      padding: 14px 16px;
+      color: #e2e8f0;
       text-decoration: none;
-      transition: background 0.3s ease;
-      border-radius: 8px;
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .menu-link-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .menu-link-content i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+      color: #94a3b8;
     }
 
-    .menu-item > a:hover {
-      background: rgba(255, 255, 255, 0.1);
+    .menu-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    
+    .menu-link:hover .menu-link-content i {
+      color: #facc15;
     }
 
-    .menu-item .arrow {
+    .menu-link .arrow {
       transition: transform 0.3s ease;
       font-size: 12px;
+      color: #64748b;
     }
 
     .menu-item.active .arrow {
       transform: rotate(180deg);
+      color: #facc15;
+    }
+    
+    .menu-item.active .menu-link {
+      background: rgba(250,204,21,0.1);
+      color: #facc15;
+    }
+    
+    .menu-item.active .menu-link .menu-link-content i {
+      color: #facc15;
     }
 
     .submenu {
@@ -55,26 +124,57 @@
     }
 
     .menu-item.active .submenu {
-      max-height: 200px;
+      max-height: 150px;
     }
 
     .submenu a {
-      display: block;
-      padding: 10px 20px 10px 40px;
-      color: var(--text-color, #cbd5e1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px 12px 48px;
+      color: #cbd5e1;
       text-decoration: none;
       font-size: 14px;
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: all 0.3s ease;
+      border-radius: 6px;
+      margin: 4px 8px;
     }
 
     .submenu a:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: #facc15;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      transform: translateX(-4px);
     }
 
     .submenu a i {
-      margin-left: 8px;
-      font-size: 12px;
+      font-size: 14px;
+      width: 16px;
+      text-align: center;
+      color: #facc15;
+    }
+    
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .sidebar-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    
+    .sidebar-info i {
+      color: #facc15;
+      font-size: 16px;
     }
     
     .top10-checkbox {
@@ -377,87 +477,130 @@
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-  <a href="#" onclick="renderAll()">
-    <i class="fas fa-home"></i> كل الألعاب
+  <!-- رابط الرئيسية -->
+  <a href="#" onclick="renderAll()" class="sidebar-main-link">
+    <i class="fas fa-home"></i>
+    <span>الرئيسية</span>
   </a>
+  
+  <div class="sidebar-divider"></div>
   
   <!-- قسم الأكشن -->
   <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)">
-      <span><i class="fas fa-fist-raised"></i> أكشن</span>
-      <span class="arrow">▼</span>
+    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+      <div class="menu-link-content">
+        <i class="fas fa-fist-raised"></i>
+        <span>أكشن</span>
+      </div>
+      <i class="fas fa-chevron-down arrow"></i>
     </a>
     <div class="submenu">
       <a href="#" onclick="renderTop10('action')">
-        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+        <i class="fas fa-trophy"></i>
+        <span>أفضل 10 ألعاب</span>
       </a>
       <a href="#" onclick="renderByCategory('action')">
-        <i class="fas fa-gamepad"></i>كل الألعاب
+        <i class="fas fa-th"></i>
+        <span>كل الألعاب</span>
       </a>
     </div>
   </div>
 
   <!-- قسم الرياضة -->
   <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)">
-      <span><i class="fas fa-futbol"></i> رياضة</span>
-      <span class="arrow">▼</span>
+    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+      <div class="menu-link-content">
+        <i class="fas fa-futbol"></i>
+        <span>رياضة</span>
+      </div>
+      <i class="fas fa-chevron-down arrow"></i>
     </a>
     <div class="submenu">
       <a href="#" onclick="renderTop10('sports')">
-        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+        <i class="fas fa-trophy"></i>
+        <span>أفضل 10 ألعاب</span>
       </a>
       <a href="#" onclick="renderByCategory('sports')">
-        <i class="fas fa-gamepad"></i>كل الألعاب
+        <i class="fas fa-th"></i>
+        <span>كل الألعاب</span>
       </a>
     </div>
   </div>
 
   <!-- قسم الاستراتيجية -->
   <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)">
-      <span><i class="fas fa-chess"></i> استراتيجية</span>
-      <span class="arrow">▼</span>
+    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+      <div class="menu-link-content">
+        <i class="fas fa-chess"></i>
+        <span>استراتيجية</span>
+      </div>
+      <i class="fas fa-chevron-down arrow"></i>
     </a>
     <div class="submenu">
       <a href="#" onclick="renderTop10('strategy')">
-        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+        <i class="fas fa-trophy"></i>
+        <span>أفضل 10 ألعاب</span>
       </a>
       <a href="#" onclick="renderByCategory('strategy')">
-        <i class="fas fa-gamepad"></i>كل الألعاب
+        <i class="fas fa-th"></i>
+        <span>كل الألعاب</span>
       </a>
     </div>
   </div>
 
   <!-- قسم السباق -->
   <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)">
-      <span><i class="fas fa-flag-checkered"></i> سباق</span>
-      <span class="arrow">▼</span>
+    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+      <div class="menu-link-content">
+        <i class="fas fa-flag-checkered"></i>
+        <span>سباق</span>
+      </div>
+      <i class="fas fa-chevron-down arrow"></i>
     </a>
     <div class="submenu">
       <a href="#" onclick="renderTop10('racing')">
-        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+        <i class="fas fa-trophy"></i>
+        <span>أفضل 10 ألعاب</span>
       </a>
       <a href="#" onclick="renderByCategory('racing')">
-        <i class="fas fa-gamepad"></i>كل الألعاب
+        <i class="fas fa-th"></i>
+        <span>كل الألعاب</span>
       </a>
     </div>
   </div>
 
   <!-- قسم السيارات -->
   <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)">
-      <span><i class="fas fa-car"></i> سيارات</span>
-      <span class="arrow">▼</span>
+    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+      <div class="menu-link-content">
+        <i class="fas fa-car"></i>
+        <span>سيارات</span>
+      </div>
+      <i class="fas fa-chevron-down arrow"></i>
     </a>
     <div class="submenu">
       <a href="#" onclick="renderTop10('car')">
-        <i class="fas fa-trophy"></i>أفضل 10 ألعاب
+        <i class="fas fa-trophy"></i>
+        <span>أفضل 10 ألعاب</span>
       </a>
       <a href="#" onclick="renderByCategory('car')">
-        <i class="fas fa-gamepad"></i>كل الألعاب
+        <i class="fas fa-th"></i>
+        <span>كل الألعاب</span>
       </a>
+    </div>
+  </div>
+  
+  <div class="sidebar-divider"></div>
+  
+  <!-- معلومات إضافية -->
+  <div class="sidebar-footer">
+    <div class="sidebar-info">
+      <i class="fas fa-gamepad"></i>
+      <span>أكثر من 100+ لعبة</span>
+    </div>
+    <div class="sidebar-info">
+      <i class="fas fa-star"></i>
+      <span>تقييم 4.8/5</span>
     </div>
   </div>
 </aside>
