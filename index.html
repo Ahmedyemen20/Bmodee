@@ -509,8 +509,8 @@
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
       <div class="menu-link-content">
-        <i class="fas fa-fist-raised"></i>
-        <span>أكشن</span>
+        <i class="fa-solid fa-crosshairs"></i>
+        <span>باتل رويال</span>
       </div>
       <i class="fas fa-chevron-down arrow"></i>
     </a>
@@ -609,6 +609,52 @@
       </a>
     </div>
   </div>
+  
+  
+  <!--حياه واقعيه-->
+  
+  <div class="menu-item">
+  <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+    <div class="menu-link-content">
+      <i class="fas fa-city"></i>
+      <span>حياه واقعيه</span>
+    </div>
+    <i class="fas fa-chevron-down arrow"></i>
+  </a>
+  <div class="submenu">
+    <a href="#" onclick="renderTop10('RL')">
+      <i class="fas fa-trophy"></i>
+      <span>أفضل 10 ألعاب</span>
+    </a>
+    <a href="#" onclick="renderByCategory('RL')">
+      <i class="fas fa-th"></i>
+      <span>كل الألعاب</span>
+    </a>
+  </div>
+</div>
+  
+  <!--الغاز-->
+  
+<div class="menu-item">
+  <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
+    <div class="menu-link-content">
+      <i class="fas fa-puzzle-piece"></i>
+      <span>ألغاز</span>
+    </div>
+    <i class="fas fa-chevron-down arrow"></i>
+  </a>
+  <div class="submenu">
+    <a href="#" onclick="renderTop10('puzzle')">
+      <i class="fas fa-trophy"></i>
+      <span>أفضل 10 ألعاب</span>
+    </a>
+    <a href="#" onclick="renderByCategory('puzzle')">
+      <i class="fas fa-th"></i>
+      <span>كل الألعاب</span>
+    </a>
+  </div>
+</div>
+
   
   <div class="sidebar-divider"></div>
   
@@ -730,10 +776,12 @@
     <select id="aCategory">
       <option value="">اختر القسم</option>
       <option value="action">أكشن</option>
-      <option value="sports">رياضة</option>
-      <option value="strategy">استراتيجية</option>
-      <option value="racing">سباق</option>
-      <option value="car">سيارات</option>
+ <option value="sports">رياضة</option>
+ <option value="strategy">استراتيجيه</option>
+ <option value="racing">سباق</option>
+  <option value="car">سيارات</option>
+ <option value="puzzle">الغاز</option>
+ <option value="RL">حياه واقعيه</option>
     </select>
 
     <div class="top10-checkbox">
@@ -866,7 +914,9 @@ window.renderTop10 = function(category) {
     sports: 'رياضة',
     strategy: 'استراتيجية',
     racing: 'سباق',
-    car: 'سيارات'
+    car: 'سيارات',
+    puzzle: 'الغاز',
+    RL: 'حياه واقعيه',
   };
   
   const titleElement = document.getElementById('mainSectionTitle');
