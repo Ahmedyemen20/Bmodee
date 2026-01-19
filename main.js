@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
+     الهامبرغر / sidebar / overlay
+  ========================== */
+  
+
+  /* =========================
      عناصر DOM و إعدادات عامة
   ========================== */
   const gamesGrid = document.getElementById("gamesGrid");
@@ -372,6 +377,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // افراغ البحث عند تغيير القسم (اختياري)
     searchQuery = "";
     if (searchInput) searchInput.value = "";
+    
+    // ✅ حفظ الحالة في sessionStorage
+    try {
+      sessionStorage.setItem('currentView', JSON.stringify({
+        type: 'category',
+        category: cat
+      }));
+    } catch (e) {}
+    
     renderGames();
     renderPagination();
     
@@ -400,6 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
         strategy: 'استراتيجية',
         racing: 'سباق',
         car: 'سيارات',
+        RL: 'حياه واقعيه',
         all: 'جميع الألعاب'
       };
       titleElement.textContent = cat === 'all' ? 'أحدث الألعاب' : `ألعاب ${categoryNames[cat] || ''}`;
@@ -414,6 +429,14 @@ document.addEventListener("DOMContentLoaded", () => {
     currentPage = 1;
     searchQuery = "";
     if (searchInput) searchInput.value = "";
+    
+    // ✅ حفظ الحالة في sessionStorage
+    try {
+      sessionStorage.setItem('currentView', JSON.stringify({
+        type: 'all',
+        category: 'all'
+      }));
+    } catch (e) {}
     
     renderGames();
     renderPagination();
@@ -441,6 +464,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // إغلاق القائمة الجانبية
     if (sidebar) sidebar.classList.remove("open");
     if (overlay) overlay.classList.remove("open");
+    
+    // ✅ حفظ الحالة في sessionStorage
+    try {
+      sessionStorage.setItem('currentView', JSON.stringify({
+        type: 'top10',
+        category: category
+      }));
+    } catch (e) {}
     
     // الحصول على جميع الألعاب
     const allGames = [...baseGames, ...adminGames];
@@ -501,7 +532,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sports: 'رياضة',
       strategy: 'استراتيجية',
       racing: 'سباق',
-      car: 'سيارات'
+      car: 'سيارات',
+      RL: 'حياه واقعيه',
     };
     
     const titleElement = document.getElementById('mainSectionTitle');
@@ -708,6 +740,31 @@ document.addEventListener("DOMContentLoaded", () => {
      تهيئة أولية
   ========================== */
   (function init() {
+    // ✅ استعادة الحالة السابقة بعد التحديث
+    try {
+      const savedView = sessionStorage.getItem('currentView');
+      if (savedView) {
+        const viewData = JSON.parse(savedView);
+        
+        // تأخير بسيط للتأكد من تحميل كل شيء
+        setTimeout(() => {
+          if (viewData.type === 'top10') {
+            window.renderTop10(viewData.category);
+          } else if (viewData.type === 'category') {
+            window.renderByCategory(viewData.category);
+          } else {
+            renderGames();
+            renderPagination();
+          }
+        }, 100);
+        
+        return; // لا تعرض الصفحة الافتراضية
+      }
+    } catch (e) {
+      console.log('No saved view');
+    }
+    
+    // العرض الافتراضي
     renderGames();
     renderPagination();
   })();
