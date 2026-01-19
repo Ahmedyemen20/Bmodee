@@ -676,7 +676,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (aImg) aImg.value = imgUrl || "/no-image.png";
     
     // الوصف المطلوب: اسم اللعبة + " Mod Ultimate money 💰"
-    if (aDesc) aDesc.value = ;
     
     if (aCategory && aCategory.options.length) {
       aCategory.value = aCategory.options[1]?.value || "";
