@@ -17,11 +17,11 @@
   <style>
     /* ===== تحسينات Navbar المتجاوب ===== */
     .navbar {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 0;
+      z-index: 100;
       background: #1e293b;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
@@ -54,6 +54,78 @@
       flex-shrink: 0;
       order: 3;
       margin-left: 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    /* زر تغيير اللغة */
+    .language-switch {
+      position: relative;
+      width: 56px;
+      height: 28px;
+      background: #0f172a;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .1);
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+    }
+    
+    .language-switch input {
+      display: none;
+    }
+    
+    .language-switch .lang-slider {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #facc15;
+      border-radius: 50%;
+      right: 3px;
+      transition: 0.3s ease;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #000;
+    }
+    
+    .language-switch .lang-icon {
+      font-size: 11px;
+      z-index: 2;
+      opacity: 0.7;
+      font-weight: 600;
+    }
+    
+    .language-switch .lang-ar {
+      color: #facc15;
+    }
+    
+    .language-switch .lang-en {
+      color: #94a3b8;
+    }
+    
+    #langToggle:checked + .language-switch .lang-slider {
+      transform: translateX(-28px);
+    }
+    
+    #langToggle:checked + .language-switch {
+      background: #e5e7eb;
+    }
+    
+    #langToggle:checked + .language-switch .lang-ar {
+      opacity: 0.4;
+    }
+    
+    #langToggle:checked + .language-switch .lang-en {
+      opacity: 1;
+      color: #facc15;
     }
 
     body {
@@ -586,6 +658,15 @@
     <img class="logo" src="/تنزيل.svg" alt="Bmode Logo" onerror="this.style.display='none'">
 
     <div class="theme-switch">
+      <!-- زر اللغة -->
+      <input type="checkbox" id="langToggle">
+      <label for="langToggle" class="language-switch">
+        <span class="lang-icon lang-ar">ع</span>
+        <span class="lang-icon lang-en">EN</span>
+        <span class="lang-slider">ع</span>
+      </label>
+      
+      <!-- زر الوضع المظلم -->
       <input type="checkbox" id="themeToggle">
       <label for="themeToggle">
         <span class="icon sun">☀</span>
@@ -612,8 +693,8 @@
   <div class="menu-item">
     <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
       <div class="menu-link-content">
-        <i class="fa-solid fa-crosshairs"></i>
-        <span>باتل رويال</span>
+        <i class="fas fa-fist-raised"></i>
+        <span>أكشن</span>
       </div>
       <i class="fas fa-chevron-down arrow"></i>
     </a>
@@ -707,50 +788,6 @@
         <span>أفضل 10 ألعاب</span>
       </a>
       <a href="#" onclick="renderByCategory('car')">
-        <i class="fas fa-th"></i>
-        <span>كل الألعاب</span>
-      </a>
-    </div>
-  </div>
-  
-    <!--حياه واقعيه-->
-  
-  <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
-      <div class="menu-link-content">
-        <i class="fas fa-city"></i>
-        <span>حياه واقعيه</span>
-      </div>
-      <i class="fas fa-chevron-down arrow"></i>
-    </a>
-    <div class="submenu">
-      <a href="#" onclick="renderTop10('RL')">
-        <i class="fas fa-trophy"></i>
-        <span>أفضل 10 ألعاب</span>
-      </a>
-      <a href="#" onclick="renderByCategory('RL')">
-        <i class="fas fa-th"></i>
-        <span>كل الألعاب</span>
-      </a>
-    </div>
-  </div>
-  
-  <!--الغاز-->
-  
-  <div class="menu-item">
-    <a href="#" onclick="toggleSubmenu(event, this)" class="menu-link">
-      <div class="menu-link-content">
-        <i class="fas fa-puzzle-piece"></i>
-        <span>ألغاز</span>
-      </div>
-      <i class="fas fa-chevron-down arrow"></i>
-    </a>
-    <div class="submenu">
-      <a href="#" onclick="renderTop10('puzzle')">
-        <i class="fas fa-trophy"></i>
-        <span>أفضل 10 ألعاب</span>
-      </a>
-      <a href="#" onclick="renderByCategory('puzzle')">
         <i class="fas fa-th"></i>
         <span>كل الألعاب</span>
       </a>
@@ -1013,9 +1050,7 @@ window.renderTop10 = function(category) {
     sports: 'رياضة',
     strategy: 'استراتيجية',
     racing: 'سباق',
-    car: 'سيارات',
-    RL: 'حياه واقعيه',
-    puzzle: 'الغاز'
+    car: 'سيارات'
   };
   
   const titleElement = document.getElementById('mainSectionTitle');
@@ -1078,6 +1113,210 @@ toggle.addEventListener("change", () => {
   document.body.classList.toggle("light", toggle.checked);
   localStorage.setItem("theme", toggle.checked ? "light" : "dark");
 });
+
+// ✅ Language Toggle
+const langToggle = document.getElementById("langToggle");
+const htmlElement = document.documentElement;
+
+// التحقق من اللغة المحفوظة
+const savedLang = localStorage.getItem("language") || "ar";
+if (savedLang === "en") {
+  htmlElement.setAttribute("lang", "en");
+  htmlElement.setAttribute("dir", "ltr");
+  langToggle.checked = true;
+  document.querySelector('.lang-slider').textContent = 'EN';
+  translateToEnglish();
+} else {
+  htmlElement.setAttribute("lang", "ar");
+  htmlElement.setAttribute("dir", "rtl");
+  langToggle.checked = false;
+  document.querySelector('.lang-slider').textContent = 'ع';
+}
+
+// تبديل اللغة عند الضغط
+langToggle.addEventListener("change", () => {
+  if (langToggle.checked) {
+    // تحويل للإنجليزية
+    htmlElement.setAttribute("lang", "en");
+    htmlElement.setAttribute("dir", "ltr");
+    document.querySelector('.lang-slider').textContent = 'EN';
+    localStorage.setItem("language", "en");
+    translateToEnglish();
+  } else {
+    // تحويل للعربية
+    htmlElement.setAttribute("lang", "ar");
+    htmlElement.setAttribute("dir", "rtl");
+    document.querySelector('.lang-slider').textContent = 'ع';
+    localStorage.setItem("language", "ar");
+    translateToArabic();
+  }
+});
+
+// دالة الترجمة للإنجليزية
+function translateToEnglish() {
+  // Hero Section
+  document.querySelector('.hero-title').textContent = '🎮 Bmode';
+  document.querySelector('.hero-subtitle').textContent = 'Play. Build. Go Beast Mode.';
+  document.querySelector('#searchInput').placeholder = 'Search for your favorite game...';
+  
+  // Stats
+  document.querySelectorAll('.stat-label')[0].textContent = 'Available Games';
+  document.querySelectorAll('.stat-label')[1].textContent = 'Downloads';
+  document.querySelectorAll('.stat-label')[2].textContent = 'Rating';
+  
+  // Section Title
+  const mainTitle = document.getElementById('mainSectionTitle');
+  if (mainTitle && mainTitle.textContent.includes('أحدث')) {
+    mainTitle.textContent = 'Latest Games';
+  }
+  
+  // Sidebar
+  document.querySelector('.sidebar-main-link span').textContent = 'Home';
+  document.querySelectorAll('.sidebar-info span')[0].textContent = '100+ Games';
+  document.querySelectorAll('.sidebar-info span')[1].textContent = '4.8/5 Rating';
+  
+  // Categories
+  const categories = {
+    'باتل رويال': 'Battle Royale',
+    'رياضة': 'Sports',
+    'استراتيجية': 'Strategy',
+    'سباق': 'Racing',
+    'سيارات': 'Cars',
+    'حياه واقعيه': 'Real Life',
+    'ألغاز': 'Puzzle'
+  };
+  
+  document.querySelectorAll('.menu-link-content span').forEach(el => {
+    const arText = el.textContent.trim();
+    if (categories[arText]) {
+      el.textContent = categories[arText];
+    }
+  });
+  
+  // Submenu
+  document.querySelectorAll('.submenu a').forEach(el => {
+    const text = el.querySelector('span');
+    if (text) {
+      if (text.textContent.includes('أفضل 10')) {
+        text.textContent = 'Top 10 Games';
+      } else if (text.textContent.includes('كل الألعاب')) {
+        text.textContent = 'All Games';
+      }
+    }
+  });
+  
+  // About & Contact
+  const aboutH2 = document.querySelector('#about h2');
+  if (aboutH2) aboutH2.innerHTML = '<i class="fas fa-info-circle"></i> About';
+  
+  const contactH2 = document.querySelector('#contact h2');
+  if (contactH2) contactH2.innerHTML = '<i class="fas fa-envelope"></i> Contact Us';
+  
+  const aboutP = document.querySelectorAll('#about p');
+  if (aboutP.length > 0) {
+    aboutP[0].textContent = 'Bmode is your favorite platform to discover and download the best modded Android games. We provide you with a huge library of games in various categories with safe and direct links.';
+    if (aboutP.length > 1) {
+      aboutP[1].textContent = 'All games are available for free with additional features such as unlimited money, ad removal, and many more features!';
+    }
+  }
+  
+  const contactP = document.querySelector('#contact p');
+  if (contactP) contactP.textContent = 'Have a question or suggestion? We are happy to hear from you!';
+  
+  // Form
+  document.querySelector('input[name="name"]').placeholder = 'Your Name';
+  document.querySelector('input[name="email"]').placeholder = 'Your Email';
+  document.querySelector('textarea[name="message"]').placeholder = 'Your Message';
+  document.querySelector('#contact button').innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+  
+  // Footer
+  document.querySelector('.footer p').textContent = '© 2026 Bmode. All Rights Reserved.';
+  document.querySelectorAll('.footer-links a')[0].innerHTML = '<i class="fas fa-shield-alt"></i> Privacy Policy';
+  document.querySelectorAll('.footer-links a')[1].innerHTML = '<i class="fas fa-file-contract"></i> Terms & Conditions';
+}
+
+// دالة الترجمة للعربية
+function translateToArabic() {
+  // Hero Section
+  document.querySelector('.hero-title').textContent = '🎮 Bmode';
+  document.querySelector('.hero-subtitle').textContent = 'Play. Build. Go Beast Mode.';
+  document.querySelector('#searchInput').placeholder = 'ابحث عن لعبتك المفضلة...';
+  
+  // Stats
+  document.querySelectorAll('.stat-label')[0].textContent = 'لعبة متاحة';
+  document.querySelectorAll('.stat-label')[1].textContent = 'تحميل';
+  document.querySelectorAll('.stat-label')[2].textContent = 'التقييم';
+  
+  // Section Title
+  const mainTitle = document.getElementById('mainSectionTitle');
+  if (mainTitle && mainTitle.textContent.includes('Latest')) {
+    mainTitle.textContent = 'أحدث الألعاب';
+  }
+  
+  // Sidebar
+  document.querySelector('.sidebar-main-link span').textContent = 'الرئيسية';
+  document.querySelectorAll('.sidebar-info span')[0].textContent = 'أكثر من 100+ لعبة';
+  document.querySelectorAll('.sidebar-info span')[1].textContent = 'تقييم 4.8/5';
+  
+  // Categories
+  const categories = {
+    'Battle Royale': 'باتل رويال',
+    'Sports': 'رياضة',
+    'Strategy': 'استراتيجية',
+    'Racing': 'سباق',
+    'Cars': 'سيارات',
+    'Real Life': 'حياه واقعيه',
+    'Puzzle': 'ألغاز'
+  };
+  
+  document.querySelectorAll('.menu-link-content span').forEach(el => {
+    const enText = el.textContent.trim();
+    if (categories[enText]) {
+      el.textContent = categories[enText];
+    }
+  });
+  
+  // Submenu
+  document.querySelectorAll('.submenu a').forEach(el => {
+    const text = el.querySelector('span');
+    if (text) {
+      if (text.textContent.includes('Top 10')) {
+        text.textContent = 'أفضل 10 ألعاب';
+      } else if (text.textContent.includes('All Games')) {
+        text.textContent = 'كل الألعاب';
+      }
+    }
+  });
+  
+  // About & Contact
+  const aboutH2 = document.querySelector('#about h2');
+  if (aboutH2) aboutH2.innerHTML = '<i class="fas fa-info-circle"></i> عن الموقع';
+  
+  const contactH2 = document.querySelector('#contact h2');
+  if (contactH2) contactH2.innerHTML = '<i class="fas fa-envelope"></i> تواصل معنا';
+  
+  const aboutP = document.querySelectorAll('#about p');
+  if (aboutP.length > 0) {
+    aboutP[0].textContent = 'Bmode هو منصتك المفضلة لاكتشاف وتحميل أفضل ألعاب الأندرويد المعدلة. نوفر لك مكتبة ضخمة من الألعاب في مختلف الفئات مع روابط آمنة ومباشرة.';
+    if (aboutP.length > 1) {
+      aboutP[1].textContent = 'جميع الألعاب متوفرة مجاناً مع ميزات إضافية مثل الأموال غير المحدودة، إزالة الإعلانات، والكثير من المميزات الأخرى!';
+    }
+  }
+  
+  const contactP = document.querySelector('#contact p');
+  if (contactP) contactP.textContent = 'هل لديك استفسار أو اقتراح؟ نحن نسعد بسماع رأيك!';
+  
+  // Form
+  document.querySelector('input[name="name"]').placeholder = 'اسمك';
+  document.querySelector('input[name="email"]').placeholder = 'بريدك الإلكتروني';
+  document.querySelector('textarea[name="message"]').placeholder = 'رسالتك';
+  document.querySelector('#contact button').innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+  
+  // Footer
+  document.querySelector('.footer p').textContent = '© 2026 Bmode. جميع الحقوق محفوظة.';
+  document.querySelectorAll('.footer-links a')[0].innerHTML = '<i class="fas fa-shield-alt"></i> سياسة الخصوصية';
+  document.querySelectorAll('.footer-links a')[1].innerHTML = '<i class="fas fa-file-contract"></i> الشروط والأحكام';
+}
 </script>
 
 </body>
